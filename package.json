@@ -19,8 +19,9 @@
   "scripts": {
     "start": "BROWSER=none WDS_SOCKET_PORT=0 vite --port 3000",
     "build": "vite build",
-    "preview": "vite preview",
-    "test": "vitest"
+    "preview": "npm run build && wrangler dev",
+    "test": "vitest",
+    "deploy": "npm run build && wrangler deploy"
   },
   "eslintConfig": {
     "extends": [
@@ -41,6 +42,7 @@
     ]
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.30.3",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -50,6 +52,7 @@
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.2",
     "vite": "^6.3.6",
-    "vitest": "^3.0.7"
+    "vitest": "^3.0.7",
+    "wrangler": "^4.79.0"
   }
 }
