@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react'
 import { useOnboardingStore } from './store/useOnboardingStore'
 import Screen1Category from './components/onboarding/Screen1Category'
 import Screen2AExercise from './components/onboarding/Screen2AExercise'
@@ -23,17 +22,6 @@ function renderScreen(screen: string) {
 
 export default function App() {
   const screen = useOnboardingStore((s) => s.screen)
-  const [displayScreen, setDisplayScreen] = useState(screen)
-  const [animKey, setAnimKey] = useState(0)
-  const prevScreen = useRef(screen)
-
-  useEffect(() => {
-    if (screen !== prevScreen.current) {
-      prevScreen.current = screen
-      setAnimKey((k) => k + 1)
-      setDisplayScreen(screen)
-    }
-  }, [screen])
 
   return (
     <div style={{
@@ -75,8 +63,8 @@ export default function App() {
         </div>
 
         {/* Screen content with animation key */}
-        <div key={animKey}>
-          {renderScreen(displayScreen)}
+        <div key={screen}>
+          {renderScreen(screen)}
         </div>
       </div>
     </div>
