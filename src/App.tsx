@@ -16,6 +16,9 @@ import SpaceReason       from './pages/onboarding/SpaceReason'
 import ReadingReason     from './pages/onboarding/ReadingReason'
 import FirstMission      from './pages/onboarding/FirstMission'
 import Home             from './pages/Home'
+import ABChoice         from './pages/mission/ABChoice'
+import MissionScreen    from './pages/mission/MissionScreen'
+import DailyState       from './pages/mission/DailyState'
 
 function ObLoading() {
   const setScreen = useAppStore(s => s.setScreen)
@@ -61,6 +64,10 @@ function renderScreen(screen: string) {
     case 'ob-reading':        return <ReadingReason />
     case 'ob-loading':        return <ObLoading />
     case 'first-mission':     return <FirstMission />
+    case 'main-choice':       return <ABChoice />
+    case 'mission-grow':      return <MissionScreen choice="grow" />
+    case 'mission-maintain':  return <MissionScreen choice="maintain" />
+    case 'daily-state':       return <DailyState />
     case 'home':              return <Home />
     default:                  return <SelectCategory />
   }
