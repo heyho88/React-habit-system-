@@ -1,5 +1,8 @@
-import { useEffect } from 'react'
-import { useAppStore } from './store/appStore'
+import { useEffect, useState } from 'react'
+import { useAppStore, getAllActiveCatKeys } from './store/appStore'
+import Sidebar from './components/layout/Sidebar'
+import MobileSummaryBar from './components/layout/MobileSummaryBar'
+import MobileStatsSheet from './components/layout/MobileStatsSheet'
 
 import SelectCategory    from './pages/onboarding/SelectCategory'
 import SelectExercise    from './pages/onboarding/SelectExercise'
@@ -73,8 +76,16 @@ function renderScreen(screen: string) {
   }
 }
 
+const LAYOUT_SCREENS = new Set(['home', 'main-choice', 'mission-grow', 'mission-maintain'])
+
 export default function App() {
   const screen = useAppStore(s => s.screen)
+  const [sheetOpen, setSheetOpen] = useState(false)
+
+  // 화면 전환 시 바텀시트 닫기
+  useEffect(() => { setSheetOpen(false) }, [screen])
+
+  const showLayout = LAYOUT_SCREENS.has(screen) && getAllActiveCatKeys().length > 0
 
   return (
     <div style={{
@@ -99,6 +110,10 @@ export default function App() {
           {renderScreen(screen)}
         </div>
       </div>
+
+      {showLayout && <Sidebar />}
+      {showLayout && <MobileSummaryBar onOpen={() => setSheetOpen(true)} />}
+      {showLayout && <MobileStatsSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />}
     </div>
   )
 }
