@@ -1,27 +1,73 @@
-import { useOnboardingStore } from './store/useOnboardingStore'
-import Screen1Category from './components/onboarding/Screen1Category'
-import Screen2AExercise from './components/onboarding/Screen2AExercise'
-import Screen2BRoutine from './components/onboarding/Screen2BRoutine'
-import Screen2CSleep from './components/onboarding/Screen2CSleep'
-import Screen3FailReason from './components/onboarding/Screen3FailReason'
-import Screen4Mission from './components/onboarding/Screen4Mission'
-import ScreenComplete from './components/onboarding/ScreenComplete'
+import { useEffect } from 'react'
+import { useAppStore } from './store/appStore'
+
+import SelectCategory    from './pages/onboarding/SelectCategory'
+import SelectExercise    from './pages/onboarding/SelectExercise'
+import SelectRoutine     from './pages/onboarding/SelectRoutine'
+import FailReason        from './pages/onboarding/FailReason'
+import SleepCurrentPicker from './pages/onboarding/SleepCurrentPicker'
+import SleepTargetPicker  from './pages/onboarding/SleepTargetPicker'
+import SleepConfirm      from './pages/onboarding/SleepConfirm'
+import MentalState       from './pages/onboarding/MentalState'
+import DigitalReason     from './pages/onboarding/DigitalReason'
+import MorningState      from './pages/onboarding/MorningState'
+import EveningState      from './pages/onboarding/EveningState'
+import SpaceReason       from './pages/onboarding/SpaceReason'
+import ReadingReason     from './pages/onboarding/ReadingReason'
+import FirstMission      from './pages/onboarding/FirstMission'
+import Home             from './pages/Home'
+
+function ObLoading() {
+  const setScreen = useAppStore(s => s.setScreen)
+  useEffect(() => {
+    const t = setTimeout(() => setScreen('first-mission'), 2200)
+    return () => clearTimeout(t)
+  }, [setScreen])
+
+  return (
+    <div className="screen-animate" style={{ textAlign: 'center', paddingTop: 80 }}>
+      <div style={{
+        width: 48, height: 48, margin: '0 auto 28px',
+        border: '3px solid rgba(139,92,246,0.2)',
+        borderTop: '3px solid #8b5cf6',
+        borderRadius: '50%',
+        animation: 'spin 0.9s linear infinite',
+      }} />
+      <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>
+        당신만의 맞춤 미션을 만들고 있습니다...
+      </p>
+      <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>잠깐만요 🌱</p>
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  )
+}
+
 
 function renderScreen(screen: string) {
   switch (screen) {
-    case 'category':      return <Screen1Category />
-    case 'exercise-type': return <Screen2AExercise />
-    case 'routine-type':  return <Screen2BRoutine />
-    case 'sleep-picker':  return <Screen2CSleep />
-    case 'fail-reason':   return <Screen3FailReason />
-    case 'mission':       return <Screen4Mission />
-    case 'complete':      return <ScreenComplete />
-    default:              return <Screen1Category />
+    case 'landing':
+    case 'ob-category':       return <SelectCategory />
+    case 'ob-exercise':       return <SelectExercise />
+    case 'ob-routine':        return <SelectRoutine />
+    case 'ob-fail-reason':    return <FailReason />
+    case 'ob-sleep-current':  return <SleepCurrentPicker />
+    case 'ob-sleep-target':   return <SleepTargetPicker />
+    case 'ob-sleep-confirm':  return <SleepConfirm />
+    case 'ob-mental':         return <MentalState />
+    case 'ob-digital':        return <DigitalReason />
+    case 'ob-morning':        return <MorningState />
+    case 'ob-evening':        return <EveningState />
+    case 'ob-space':          return <SpaceReason />
+    case 'ob-reading':        return <ReadingReason />
+    case 'ob-loading':        return <ObLoading />
+    case 'first-mission':     return <FirstMission />
+    case 'home':              return <Home />
+    default:                  return <SelectCategory />
   }
 }
 
 export default function App() {
-  const screen = useOnboardingStore((s) => s.screen)
+  const screen = useAppStore(s => s.screen)
 
   return (
     <div style={{
@@ -33,36 +79,15 @@ export default function App() {
       padding: '48px 20px 80px',
       fontFamily: "'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     }}>
-      {/* Background orbs */}
-      <div style={{
-        position: 'fixed', top: '15%', right: '-10%',
-        width: 400, height: 400,
-        background: 'rgba(139,92,246,0.08)',
-        filter: 'blur(120px)',
-        borderRadius: '50%', zIndex: 0, pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'fixed', bottom: '10%', left: '-10%',
-        width: 500, height: 500,
-        background: 'rgba(244,63,94,0.06)',
-        filter: 'blur(150px)',
-        borderRadius: '50%', zIndex: 0, pointerEvents: 'none',
-      }} />
+      <div style={{ position: 'fixed', top: '15%', right: '-10%', width: 400, height: 400, background: 'rgba(139,92,246,0.08)', filter: 'blur(120px)', borderRadius: '50%', zIndex: 0, pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', bottom: '10%', left: '-10%', width: 500, height: 500, background: 'rgba(244,63,94,0.06)', filter: 'blur(150px)', borderRadius: '50%', zIndex: 0, pointerEvents: 'none' }} />
 
       <div style={{ width: '100%', maxWidth: 420, position: 'relative', zIndex: 1 }}>
-        {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 40 }}>
-          <div style={{
-            width: 8, height: 8, borderRadius: '50%',
-            background: '#8b5cf6',
-            boxShadow: '0 0 12px #8b5cf6',
-          }} />
-          <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.04em', color: '#ffffff' }}>
-            SLOO
-          </span>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6', boxShadow: '0 0 12px #8b5cf6' }} />
+          <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.04em', color: '#ffffff' }}>SLOO</span>
         </div>
 
-        {/* Screen content with animation key */}
         <div key={screen}>
           {renderScreen(screen)}
         </div>
