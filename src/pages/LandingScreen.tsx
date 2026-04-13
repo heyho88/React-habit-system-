@@ -247,7 +247,7 @@ export default function LandingScreen() {
               <div className="ls-hero-right">
                 {/* Gradient border wrapper */}
                 <div style={{
-                  background: 'linear-gradient(135deg, #E040FB 0%, #9C27B0 50%, #6C5CE7 100%)',
+                  background: 'linear-gradient(135deg, #E040FB 0%, #9333EA 40%, #6C5CE7 100%)',
                   borderRadius: 20,
                   padding: 1.5,
                   width: 460,
@@ -256,7 +256,7 @@ export default function LandingScreen() {
                 }}>
                   {/* Inner card */}
                   <div style={{
-                    background: '#080808',
+                    background: '#0a0a0a',
                     borderRadius: 18.5,
                     padding: 32,
                     height: '100%',
@@ -280,6 +280,7 @@ export default function LandingScreen() {
                     <div style={{
                       flex: 1, display: 'flex', flexDirection: 'column',
                       justifyContent: 'center', alignItems: 'center', textAlign: 'center',
+                      position: 'relative', zIndex: 1,
                     }}>
                       <div style={{
                         fontSize: 9, fontFamily: 'monospace',
@@ -296,7 +297,7 @@ export default function LandingScreen() {
                         marginTop: 12, display: 'flex', alignItems: 'center', gap: 6,
                       }}>
                         <div style={{
-                          width: 8, height: 8, borderRadius: '50%', background: '#E040FB',
+                          width: 8, height: 8, borderRadius: '50%', background: '#FF4444',
                         }} />
                         <span style={{
                           fontSize: 10, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em',
@@ -305,7 +306,7 @@ export default function LandingScreen() {
                     </div>
 
                     {/* Bottom */}
-                    <div style={{ flex: 0, display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ flex: 0, display: 'flex', justifyContent: 'flex-end', position: 'relative', zIndex: 1 }}>
                       <div>
                         <div style={{
                           fontSize: 8, fontFamily: 'monospace',
@@ -317,26 +318,26 @@ export default function LandingScreen() {
 
                     {/* SVG exponential curve */}
                     <svg
-                      viewBox="0 0 400 160"
+                      viewBox="0 0 460 200"
                       preserveAspectRatio="none"
-                      style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '160px' }}
+                      style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '200px', zIndex: 0 }}
                     >
                       <defs>
-                        <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.25" />
-                          <stop offset="100%" stopColor="#7C3AED" stopOpacity="0" />
+                        <linearGradient id="expFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#4C1D95" stopOpacity="0.12" />
+                          <stop offset="100%" stopColor="#4C1D95" stopOpacity="0" />
                         </linearGradient>
                       </defs>
-                      <polyline
-                        points="0,158 20,156 40,153 60,149 80,143 100,135 120,124 140,110 160,93 180,73 200,50 220,24 240,5"
+                      <path
+                        d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30"
                         fill="none"
-                        stroke="#8B5CF6"
-                        strokeWidth="1.2"
-                        opacity="0.8"
+                        stroke="#4C1D95"
+                        strokeWidth="1.5"
+                        opacity="0.7"
                       />
-                      <polygon
-                        points="0,158 20,156 40,153 60,149 80,143 100,135 120,124 140,110 160,93 180,73 200,50 220,24 240,5 240,160 0,160"
-                        fill="url(#expGrad)"
+                      <path
+                        d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30 L 460,200 L 0,200 Z"
+                        fill="url(#expFill)"
                       />
                     </svg>
 
