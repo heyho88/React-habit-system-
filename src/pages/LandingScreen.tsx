@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAppStore } from '../store/appStore'
 
 const page1 = [
@@ -22,7 +22,13 @@ const page2 = [
 export default function LandingScreen() {
   const setScreen = useAppStore(s => s.setScreen)
   const [showMore, setShowMore] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const currentCards = showMore ? page2 : page1
+
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 50)
+    return () => clearTimeout(t)
+  }, [])
 
   return (
     <>
@@ -134,7 +140,11 @@ export default function LandingScreen() {
         }
       `}</style>
 
-      <div className="ls-wrap">
+      <div className="ls-wrap" style={{
+        opacity: mounted ? 1 : 0,
+        transform: mounted ? 'translateY(0)' : 'translateY(32px)',
+        transition: 'opacity 0.7s ease, transform 0.7s ease',
+      }}>
 
         {/* ── SECTION 0: Navigation ── */}
         <div className="ls-nav">
@@ -190,7 +200,7 @@ export default function LandingScreen() {
                   <div>
                     <span style={{ color: 'white' }}>작심 </span>
                     <span style={{
-                      background: 'linear-gradient(90deg, #B24BF3, #E040FB)',
+                      background: 'linear-gradient(90deg, #E040FB, #FF4DC4)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
@@ -237,20 +247,24 @@ export default function LandingScreen() {
               <div className="ls-hero-right">
                 {/* Gradient border wrapper */}
                 <div style={{
-                  background: 'linear-gradient(135deg, #E040FB, #6C5CE7)',
-                  borderRadius: 18,
-                  padding: 1,
+                  background: 'linear-gradient(135deg, #E040FB 0%, #9C27B0 50%, #6C5CE7 100%)',
+                  borderRadius: 20,
+                  padding: 1.5,
+                  width: 460,
+                  aspectRatio: '1 / 1',
+                  maxWidth: '100%',
                 }}>
                   {/* Inner card */}
                   <div style={{
-                    background: '#0c0c0e',
-                    borderRadius: 17,
-                    padding: 28,
-                    minHeight: 320,
+                    background: '#080808',
+                    borderRadius: 18.5,
+                    padding: 32,
+                    height: '100%',
                     position: 'relative',
                     overflow: 'hidden',
                     display: 'flex',
                     flexDirection: 'column',
+                    boxSizing: 'border-box',
                   }}>
 
                     {/* Top */}
@@ -301,28 +315,30 @@ export default function LandingScreen() {
                       </div>
                     </div>
 
-                    {/* SVG curve */}
-                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 160 }}>
-                      <svg viewBox="0 0 400 160" preserveAspectRatio="none" width="100%" height="160">
-                        <defs>
-                          <linearGradient id="cardCurveGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#6C5CE7" stopOpacity="0.2" />
-                            <stop offset="100%" stopColor="#6C5CE7" stopOpacity="0" />
-                          </linearGradient>
-                        </defs>
-                        <path
-                          d="M -10,160 C 80,155 180,120 420,60"
-                          stroke="#7B68EE"
-                          strokeWidth="1"
-                          fill="none"
-                          opacity="0.7"
-                        />
-                        <path
-                          d="M -10,160 C 80,155 180,120 420,60 L 420,160 Z"
-                          fill="url(#cardCurveGrad)"
-                        />
-                      </svg>
-                    </div>
+                    {/* SVG exponential curve */}
+                    <svg
+                      viewBox="0 0 400 160"
+                      preserveAspectRatio="none"
+                      style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '160px' }}
+                    >
+                      <defs>
+                        <linearGradient id="expGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#7C3AED" stopOpacity="0.25" />
+                          <stop offset="100%" stopColor="#7C3AED" stopOpacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <polyline
+                        points="0,158 20,156 40,153 60,149 80,143 100,135 120,124 140,110 160,93 180,73 200,50 220,24 240,5"
+                        fill="none"
+                        stroke="#8B5CF6"
+                        strokeWidth="1.2"
+                        opacity="0.8"
+                      />
+                      <polygon
+                        points="0,158 20,156 40,153 60,149 80,143 100,135 120,124 140,110 160,93 180,73 200,50 220,24 240,5 240,160 0,160"
+                        fill="url(#expGrad)"
+                      />
+                    </svg>
 
                   </div>
                 </div>
