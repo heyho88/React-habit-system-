@@ -1,16 +1,28 @@
+import { useState } from 'react'
 import { useAppStore } from '../store/appStore'
 
-const CATEGORIES = [
-  { key: 'BODY',    label: 'BODY',    emoji: '💪' },
-  { key: 'SLEEP',   label: 'SLEEP',   emoji: '🌙' },
-  { key: 'DIGITAL', label: 'DIGITAL', emoji: '📵' },
-  { key: 'READING', label: 'READING', emoji: '📖' },
-  { key: 'MENTAL',  label: 'MENTAL',  emoji: '🧘' },
-  { key: 'ROUTINE', label: 'ROUTINE', emoji: '🗂️' },
+const page1 = [
+  { id: 'body',    label: 'BODY',    emoji: '💪', sub: '운동/건강' },
+  { id: 'sleep',   label: 'SLEEP',   emoji: '🌙', sub: '수면/기상' },
+  { id: 'digital', label: 'DIGITAL', emoji: '📵', sub: '디지털 디톡스' },
+  { id: 'reading', label: 'READING', emoji: '📖', sub: '독서' },
+  { id: 'mental',  label: 'MENTAL',  emoji: '🧘', sub: '멘탈 관리' },
+  { id: 'space',   label: 'ROUTINE', emoji: '🗂️', sub: '공간/루틴' },
+]
+
+const page2 = [
+  { id: 'morning',  label: 'MORNING',     emoji: '🌅' as string | null, sub: '아침 루틴' },
+  { id: 'evening',  label: 'EVENING',     emoji: '🌆' as string | null, sub: '저녁 루틴' },
+  { id: 'coming1',  label: 'COMING SOON', emoji: null,                  sub: '' },
+  { id: 'coming2',  label: 'COMING SOON', emoji: null,                  sub: '' },
+  { id: 'coming3',  label: 'COMING SOON', emoji: null,                  sub: '' },
+  { id: 'coming4',  label: 'COMING SOON', emoji: null,                  sub: '' },
 ]
 
 export default function LandingScreen() {
   const setScreen = useAppStore(s => s.setScreen)
+  const [showMore, setShowMore] = useState(false)
+  const currentCards = showMore ? page2 : page1
 
   return (
     <>
@@ -308,28 +320,57 @@ export default function LandingScreen() {
                 </div>
               </div>
               <div style={{ display: 'flex', gap: 8 }}>
-                <button className="ls-arrow-btn">‹</button>
-                <button className="ls-arrow-btn">›</button>
+                <button
+                  className="ls-arrow-btn"
+                  onClick={() => setShowMore(false)}
+                  style={{ opacity: showMore ? 1 : 0.25, pointerEvents: showMore ? 'auto' : 'none' }}
+                >‹</button>
+                <button
+                  className="ls-arrow-btn"
+                  onClick={() => setShowMore(true)}
+                  style={{ opacity: showMore ? 0.25 : 1, pointerEvents: showMore ? 'none' : 'auto' }}
+                >›</button>
               </div>
             </div>
 
             {/* Category cards */}
-            <div className="ls-cat-list">
-              {CATEGORIES.map(cat => (
-                <div key={cat.key} style={{
+            <div
+              key={showMore ? 'more' : 'base'}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16 }}
+            >
+              {currentCards.map(cat => (
+                <div key={cat.id} style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
                   gap: 12,
                   cursor: 'default',
-                  flexShrink: 0,
                 }}>
-                  <div className="ls-cat-icon">{cat.emoji}</div>
+                  {cat.emoji !== null ? (
+                    <div className="ls-cat-icon" style={{
+                      width: 88, height: 88, borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.04)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 32, transition: 'all 0.2s',
+                    }}>
+                      {cat.emoji}
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: 88, height: 88, borderRadius: '50%',
+                      background: 'rgba(255,255,255,0.015)',
+                      border: '1px dashed rgba(255,255,255,0.12)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 24, color: 'rgba(255,255,255,0.15)',
+                    }}>+</div>
+                  )}
                   <span style={{
-                    fontSize: 11,
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
-                    color: 'rgba(255,255,255,0.7)',
+                    fontSize: cat.emoji !== null ? 11 : 9,
+                    fontWeight: cat.emoji !== null ? 700 : 400,
+                    letterSpacing: cat.emoji !== null ? '0.12em' : '0.1em',
+                    color: cat.emoji !== null ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
+                    textAlign: 'center',
                   }}>{cat.label}</span>
                 </div>
               ))}
