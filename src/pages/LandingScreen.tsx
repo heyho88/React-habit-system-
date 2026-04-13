@@ -235,65 +235,95 @@ export default function LandingScreen() {
 
               {/* Right Card */}
               <div className="ls-hero-right">
+                {/* Gradient border wrapper */}
                 <div style={{
-                  position: 'relative',
-                  borderRadius: 12,
-                  overflow: 'hidden',
-                  background: 'rgba(15,8,25,0.9)',
-                  border: '1px solid rgba(178,75,243,0.5)',
-                  boxShadow: '0 0 40px rgba(108,92,231,0.15), inset 0 0 40px rgba(108,92,231,0.05)',
-                  padding: 28,
-                  minHeight: 300,
+                  background: 'linear-gradient(135deg, #E040FB, #6C5CE7)',
+                  borderRadius: 18,
+                  padding: 1,
                 }}>
-                  {/* Card header */}
-                  <div>
-                    <div style={{
-                      fontSize: 10,
-                      fontFamily: 'monospace',
-                      color: 'rgba(255,255,255,0.5)',
-                      letterSpacing: '0.15em',
-                    }}>MISSION: ACTIVE</div>
-                    <div style={{ height: 2, background: '#ff4444', width: 60, marginTop: 6 }} />
-                  </div>
+                  {/* Inner card */}
+                  <div style={{
+                    background: '#0c0c0e',
+                    borderRadius: 17,
+                    padding: 28,
+                    minHeight: 320,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}>
 
-                  {/* Card center */}
-                  <div style={{ marginTop: 48 }}>
-                    <div style={{
-                      fontSize: 9,
-                      fontFamily: 'monospace',
-                      color: 'rgba(255,255,255,0.35)',
-                      letterSpacing: '0.15em',
-                    }}>COMPOUND MULTIPLIER</div>
-                    <div style={{ display: 'flex', alignItems: 'baseline', marginTop: 8 }}>
-                      <span style={{ fontSize: 72, fontWeight: 800, color: 'white', lineHeight: 1 }}>37.8</span>
-                      <span style={{ fontSize: 28, fontWeight: 400, color: 'rgba(255,255,255,0.6)', marginLeft: 4 }}>x</span>
+                    {/* Top */}
+                    <div style={{ flex: 0 }}>
+                      <div style={{
+                        fontSize: 10, fontFamily: 'monospace',
+                        color: 'rgba(255,255,255,0.5)', letterSpacing: '0.15em',
+                      }}>MISSION: ACTIVE</div>
+                      <div style={{ height: 2, background: '#ff3355', width: 48, marginTop: 6 }} />
                     </div>
+
+                    {/* Center */}
                     <div style={{
-                      fontSize: 10,
-                      color: '#00D2D3',
-                      marginTop: 12,
-                      letterSpacing: '0.1em',
-                    }}>■ GROWTH CALIBRATED</div>
-                  </div>
+                      flex: 1, display: 'flex', flexDirection: 'column',
+                      justifyContent: 'center', alignItems: 'center', textAlign: 'center',
+                    }}>
+                      <div style={{
+                        fontSize: 9, fontFamily: 'monospace',
+                        color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+                      }}>COMPOUND MULTIPLIER</div>
+                      <div style={{
+                        marginTop: 10, display: 'flex',
+                        alignItems: 'baseline', justifyContent: 'center',
+                      }}>
+                        <span style={{ fontSize: 68, fontWeight: 800, color: 'white', lineHeight: 1 }}>37.8</span>
+                        <span style={{ fontSize: 26, fontWeight: 400, color: 'rgba(255,255,255,0.5)', marginLeft: 2 }}>x</span>
+                      </div>
+                      <div style={{
+                        marginTop: 12, display: 'flex', alignItems: 'center', gap: 6,
+                      }}>
+                        <div style={{
+                          width: 8, height: 8, borderRadius: '50%', background: '#E040FB',
+                        }} />
+                        <span style={{
+                          fontSize: 10, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em',
+                        }}>GROWTH CALIBRATED</span>
+                      </div>
+                    </div>
 
-                  {/* SVG curve */}
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
-                    <svg viewBox="0 0 400 200" preserveAspectRatio="none" style={{ width: '100%', height: 200 }}>
-                      <defs>
-                        <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.15" />
-                          <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                      <path d="M 0,180 C 100,175 200,140 400,20" stroke="#8B5CF6" strokeWidth="1.5" fill="none" opacity="0.8" />
-                      <path d="M 0,180 C 100,175 200,140 400,20 L 400,200 L 0,200 Z" fill="url(#curveGrad)" />
-                    </svg>
-                  </div>
+                    {/* Bottom */}
+                    <div style={{ flex: 0, display: 'flex', justifyContent: 'flex-end' }}>
+                      <div>
+                        <div style={{
+                          fontSize: 8, fontFamily: 'monospace',
+                          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em',
+                        }}>EFFICIENCY</div>
+                        <div style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>+1.00%</div>
+                      </div>
+                    </div>
 
-                  {/* Efficiency */}
-                  <div style={{ position: 'absolute', bottom: 24, right: 24 }}>
-                    <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>EFFICIENCY</div>
-                    <div style={{ fontSize: 18, fontWeight: 800, color: 'white' }}>+1.00%</div>
+                    {/* SVG curve */}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 160 }}>
+                      <svg viewBox="0 0 400 160" preserveAspectRatio="none" width="100%" height="160">
+                        <defs>
+                          <linearGradient id="cardCurveGrad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stopColor="#6C5CE7" stopOpacity="0.2" />
+                            <stop offset="100%" stopColor="#6C5CE7" stopOpacity="0" />
+                          </linearGradient>
+                        </defs>
+                        <path
+                          d="M -10,160 C 80,155 180,120 420,60"
+                          stroke="#7B68EE"
+                          strokeWidth="1"
+                          fill="none"
+                          opacity="0.7"
+                        />
+                        <path
+                          d="M -10,160 C 80,155 180,120 420,60 L 420,160 Z"
+                          fill="url(#cardCurveGrad)"
+                        />
+                      </svg>
+                    </div>
+
                   </div>
                 </div>
               </div>
