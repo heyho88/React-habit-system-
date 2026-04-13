@@ -246,17 +246,17 @@ export default function LandingScreen() {
               {/* Right Card */}
               <div className="ls-hero-right">
                 {/* Gradient border wrapper */}
-                <div style={{
-                  background: 'linear-gradient(135deg, #E040FB 0%, #9333EA 40%, #6C5CE7 100%)',
-                  borderRadius: 20,
-                  padding: 1.5,
-                  width: 460,
-                  aspectRatio: '1 / 1',
-                  maxWidth: '100%',
-                }}>
+                <div
+                  className="card-border-animated"
+                  style={{
+                    width: 460,
+                    aspectRatio: '1 / 1',
+                    maxWidth: '100%',
+                  }}
+                >
                   {/* Inner card */}
                   <div style={{
-                    background: '#0a0a0a',
+                    background: '#080808',
                     borderRadius: 18.5,
                     padding: 32,
                     height: '100%',

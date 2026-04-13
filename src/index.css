@@ -69,3 +69,31 @@ body {
   background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
 }
+
+@property --border-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes borderRotate {
+  to { --border-angle: 360deg; }
+}
+
+.card-border-animated {
+  --border-angle: 0deg;
+  animation: borderRotate 4s linear infinite;
+  background: conic-gradient(
+    from var(--border-angle),
+    #6C5CE7 0%,
+    #9C27B0 20%,
+    #E040FB 35%,
+    #FF6B35 50%,
+    #FFD700 65%,
+    #E040FB 80%,
+    #6C5CE7 100%
+  );
+  background-size: 200% 200%;
+  border-radius: 20px;
+  padding: 1.5px;
+}
