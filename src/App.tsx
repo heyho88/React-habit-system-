@@ -22,12 +22,7 @@ import Home             from './pages/Home'
 import ABChoice         from './pages/mission/ABChoice'
 import MissionScreen    from './pages/mission/MissionScreen'
 import DailyState       from './pages/mission/DailyState'
-
-const LandingScreen = () => (
-  <div style={{ color: 'white', background: '#050505', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-    LANDING
-  </div>
-)
+import LandingScreen   from './pages/LandingScreen'
 
 function ObLoading() {
   const setScreen = useAppStore(s => s.setScreen)
