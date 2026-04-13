@@ -140,8 +140,9 @@ export default function LandingScreen() {
         <div className="ls-nav">
           <div style={{
             display: 'flex', alignItems: 'center', gap: 0,
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'rgba(20,20,30,0.8)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid rgba(255,255,255,0.12)',
             borderRadius: 999,
             padding: '8px 20px',
           }}>
@@ -158,7 +159,7 @@ export default function LandingScreen() {
         <div className="ls-container">
 
           {/* ── SECTION 1: Hero ── */}
-          <section style={{ paddingTop: 120, paddingBottom: 80 }}>
+          <section style={{ paddingTop: 100, paddingBottom: 60 }}>
             <div className="ls-hero-grid">
 
               {/* Left */}
@@ -189,9 +190,10 @@ export default function LandingScreen() {
                   <div>
                     <span style={{ color: 'white' }}>작심 </span>
                     <span style={{
-                      background: 'linear-gradient(90deg, #6C5CE7, #E040FB)',
+                      background: 'linear-gradient(90deg, #B24BF3, #E040FB)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
+                      backgroundClip: 'text',
                     }}>365일이</span>
                   </div>
                   <div style={{ color: 'white' }}>되는 방법.</div>
@@ -238,7 +240,8 @@ export default function LandingScreen() {
                   borderRadius: 12,
                   overflow: 'hidden',
                   background: 'rgba(15,8,25,0.9)',
-                  border: '1px solid rgba(108,92,231,0.35)',
+                  border: '1px solid rgba(178,75,243,0.5)',
+                  boxShadow: '0 0 40px rgba(108,92,231,0.15), inset 0 0 40px rgba(108,92,231,0.05)',
                   padding: 28,
                   minHeight: 300,
                 }}>
@@ -278,11 +281,11 @@ export default function LandingScreen() {
                     <svg viewBox="0 0 400 200" preserveAspectRatio="none" style={{ width: '100%', height: 200 }}>
                       <defs>
                         <linearGradient id="curveGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#6C5CE7" stopOpacity="0.15" />
-                          <stop offset="100%" stopColor="#6C5CE7" stopOpacity="0" />
+                          <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.15" />
+                          <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0" />
                         </linearGradient>
                       </defs>
-                      <path d="M 0,180 C 100,175 200,140 400,20" stroke="#6C5CE7" strokeWidth="1.5" fill="none" opacity="0.6" />
+                      <path d="M 0,180 C 100,175 200,140 400,20" stroke="#8B5CF6" strokeWidth="1.5" fill="none" opacity="0.8" />
                       <path d="M 0,180 C 100,175 200,140 400,20 L 400,200 L 0,200 Z" fill="url(#curveGrad)" />
                     </svg>
                   </div>
@@ -290,7 +293,7 @@ export default function LandingScreen() {
                   {/* Efficiency */}
                   <div style={{ position: 'absolute', bottom: 24, right: 24 }}>
                     <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>EFFICIENCY</div>
-                    <div style={{ fontSize: 18, fontWeight: 700, color: 'white' }}>+1.00%</div>
+                    <div style={{ fontSize: 18, fontWeight: 800, color: 'white' }}>+1.00%</div>
                   </div>
                 </div>
               </div>
@@ -299,7 +302,7 @@ export default function LandingScreen() {
           </section>
 
           {/* ── SECTION 2: Categories ── */}
-          <section style={{ padding: '80px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          <section style={{ padding: '40px 0 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
             {/* Header row */}
             <div style={{
               display: 'flex',
@@ -336,7 +339,7 @@ export default function LandingScreen() {
             {/* Category cards */}
             <div
               key={showMore ? 'more' : 'base'}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 16 }}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 20, width: '100%' }}
             >
               {currentCards.map(cat => (
                 <div key={cat.id} style={{
