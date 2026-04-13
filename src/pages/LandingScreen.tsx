@@ -100,8 +100,8 @@ export default function LandingScreen() {
         .ls-cta-btn {
           background: transparent;
           border: 1px solid rgba(255,255,255,0.6);
-          border-radius: 6px;
-          padding: 14px 28px;
+          border-radius: 50px;
+          padding: 14px 32px;
           font-size: 15px;
           font-weight: 600;
           color: white;
@@ -177,9 +177,10 @@ export default function LandingScreen() {
                 {/* Badge */}
                 <div style={{
                   display: 'inline-block',
+                  background: 'rgba(255,255,255,0.07)',
                   border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 4,
-                  padding: '3px 10px',
+                  borderRadius: 20,
+                  padding: '4px 12px',
                   fontSize: 10,
                   fontFamily: 'monospace',
                   color: 'rgba(255,255,255,0.6)',
@@ -191,20 +192,19 @@ export default function LandingScreen() {
                 {/* Headline */}
                 <h1 style={{
                   margin: 0,
-                  fontSize: 'clamp(40px, 6vw, 72px)',
+                  fontSize: 'clamp(36px, 5vw, 62px)',
                   fontWeight: 800,
                   lineHeight: 1.1,
                   letterSpacing: '-0.02em',
                 }}>
                   <div style={{ color: 'white' }}>작심삼일이</div>
                   <div>
-                    <span style={{ color: 'white' }}>작심 </span>
                     <span style={{
-                      background: 'linear-gradient(90deg, #E040FB, #FF4DC4)',
+                      background: 'linear-gradient(90deg, #8B5CF6 0%, #C084FC 30%, #E040FB 60%, #F472B6 100%)',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
                       backgroundClip: 'text',
-                    }}>365일이</span>
+                    }}>작심 365일이</span>
                   </div>
                   <div style={{ color: 'white' }}>되는 방법.</div>
                 </h1>
@@ -214,11 +214,11 @@ export default function LandingScreen() {
                   marginTop: 24,
                   fontSize: 15,
                   lineHeight: 1.7,
-                  color: 'rgba(255,255,255,0.6)',
+                  color: 'rgba(255,255,255,0.7)',
                   maxWidth: 380,
                 }}>
-                  매일 1%의 <b style={{ color: 'white', fontWeight: 700 }}>성장</b>은 1년 뒤{' '}
-                  <b style={{ color: 'white', fontWeight: 700 }}>37.8배</b>의 결과가 됩니다.
+                  매일 1%의 <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>성장</b>은 1년 뒤{' '}
+                  <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>37.8배</b>의 결과가 됩니다.
                   의지력이 아닌 설계된 레벨 미션으로 당신의 습관을 스택하세요.
                 </p>
 
