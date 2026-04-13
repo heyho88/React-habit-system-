@@ -23,6 +23,12 @@ import ABChoice         from './pages/mission/ABChoice'
 import MissionScreen    from './pages/mission/MissionScreen'
 import DailyState       from './pages/mission/DailyState'
 
+const LandingScreen = () => (
+  <div style={{ color: 'white', background: '#050505', height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    LANDING
+  </div>
+)
+
 function ObLoading() {
   const setScreen = useAppStore(s => s.setScreen)
   useEffect(() => {
@@ -51,7 +57,7 @@ function ObLoading() {
 
 function renderScreen(screen: string) {
   switch (screen) {
-    case 'landing':
+    case 'landing':            return <LandingScreen />
     case 'ob-category':       return <SelectCategory />
     case 'ob-exercise':       return <SelectExercise />
     case 'ob-routine':        return <SelectRoutine />
@@ -80,7 +86,10 @@ const LAYOUT_SCREENS = new Set(['home', 'main-choice', 'mission-grow', 'mission-
 
 export default function App() {
   const screen = useAppStore(s => s.screen)
+  const initializeApp = useAppStore(s => s.initializeApp)
   const [sheetOpen, setSheetOpen] = useState(false)
+
+  useEffect(() => { initializeApp() }, [])
 
   // 화면 전환 시 바텀시트 닫기
   useEffect(() => { setSheetOpen(false) }, [screen])

@@ -70,6 +70,7 @@ interface AppActions {
   setCurrentOnboardingCategory: (cat: string | null) => void
   setObPendingType: (type: string | null) => void
   resetObState: () => void
+  initializeApp: () => void
 }
 
 type AppStore = AppState & AppActions
@@ -129,4 +130,11 @@ export const useAppStore = create<AppStore>((set) => ({
   setObPendingType: (type) => set({ obPendingType: type }),
 
   resetObState: () => set({ ...initialObState }),
+
+  initializeApp: () => {
+    const hasData =
+      localStorage.getItem('sloo_health') !== null ||
+      localStorage.getItem('sloo_routine_slots') !== null
+    set({ screen: hasData ? 'home' : 'landing' })
+  },
 }))
