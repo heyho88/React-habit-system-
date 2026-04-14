@@ -170,7 +170,11 @@ function CompoundLabSection() {
                     </linearGradient>
                   </defs>
                   {bars.map((bar, i) => {
-                    const h = (bar.value / maxVal) * GRAPH_H
+                    const minLog = 0
+                    const maxLog = Math.log(maxVal)
+                    const h = maxLog === 0
+                      ? 4
+                      : Math.max(4, (Math.log(bar.value) - minLog) / (maxLog - minLog) * GRAPH_H)
                     return (
                       <rect
                         key={i}
