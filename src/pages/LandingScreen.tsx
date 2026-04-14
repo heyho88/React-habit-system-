@@ -193,7 +193,7 @@ export default function LandingScreen() {
                 <h1 style={{
                   margin: 0,
                   fontSize: 'clamp(36px, 5vw, 62px)',
-                  fontWeight: 800,
+                  fontWeight: 600,
                   lineHeight: 1.1,
                   letterSpacing: '-0.02em',
                 }}>
