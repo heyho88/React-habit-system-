@@ -19,6 +19,118 @@ const page2 = [
   { id: 'coming4',  label: 'COMING SOON', emoji: null,                  sub: '' },
 ]
 
+function CompoundLabSection() {
+  const [rate, setRate] = useState(1.0)
+
+  return (
+    <section id="compound-lab" style={{ padding: '80px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div style={{ fontSize: 32, fontWeight: 700, color: 'white' }}>Compound Lab</div>
+          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 6 }}>
+            Simulate the physics of constant growth.
+          </div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+            SIMULATION ENGINE
+          </div>
+          <div style={{ fontSize: 11, color: '#00D2D3', fontWeight: 600, marginTop: 4 }}>v1.0-STABLE</div>
+        </div>
+      </div>
+
+      {/* Main grid */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: '280px 1fr',
+        gap: 32,
+        marginTop: 48,
+        alignItems: 'start',
+      }}>
+
+        {/* Left control panel */}
+        <div style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 12,
+          padding: 24,
+        }}>
+          {/* ① Slider */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>
+              DAILY GROWTH (%)
+            </span>
+            <span style={{ fontSize: 18, fontWeight: 700, color: 'white' }}>{rate.toFixed(1)}%</span>
+          </div>
+          <input
+            type="range"
+            min="0.1"
+            max="3"
+            step="0.1"
+            value={rate}
+            onChange={e => setRate(parseFloat(e.target.value))}
+            style={{ width: '100%', marginTop: 16, marginBottom: 8, accentColor: '#6C5CE7' }}
+          />
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)' }}>MIN 0.1%</span>
+            <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)' }}>MAX 3.0%</span>
+          </div>
+
+          {/* ② Divider */}
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '20px 0' }} />
+
+          {/* ③ Info rows */}
+          {[
+            { label: 'Initial Value',  value: '1.00 UNIT',         valueColor: 'white' },
+            { label: 'Frequency',      value: 'DAILY RECURRENCE',  valueColor: 'white' },
+            { label: 'Volatility',     value: '0.00% (FIXED)',     valueColor: '#FF6B6B' },
+          ].map((row, i) => (
+            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 14 }}>
+              <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{row.label}</span>
+              <span style={{ fontSize: 12, fontWeight: 600, color: row.valueColor }}>{row.value}</span>
+            </div>
+          ))}
+
+          {/* ④ Divider */}
+          <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '20px 0' }} />
+
+          {/* ⑤ Growth Insight */}
+          <div style={{
+            background: 'rgba(108,92,231,0.08)',
+            border: '1px solid rgba(108,92,231,0.2)',
+            borderRadius: 8,
+            padding: 16,
+            marginTop: 4,
+          }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: '#8B5CF6', marginBottom: 8 }}>⚡ GROWTH INSIGHT</div>
+            <div style={{ fontSize: 12, lineHeight: 1.6, color: 'rgba(255,255,255,0.55)' }}>
+              1%의 일일 개선은 단순히 더해지지 않습니다. 복리로 곱해집니다. 365일이 지나면 당신은 시작했을 때보다 37.8배 더 성장합니다.
+            </div>
+          </div>
+        </div>
+
+        {/* Right placeholder */}
+        <div style={{
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 12,
+          padding: 24,
+          minHeight: 300,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: 12, fontFamily: 'monospace' }}>
+            GRAPH PLACEHOLDER
+          </span>
+        </div>
+
+      </div>
+    </section>
+  )
+}
+
 export default function LandingScreen() {
   const setScreen = useAppStore(s => s.setScreen)
   const [showMore, setShowMore] = useState(false)
@@ -160,7 +272,7 @@ export default function LandingScreen() {
             <span style={{ opacity: 0.2, margin: '0 16px' }}>│</span>
             <button className="ls-nav-link">Missions</button>
             <span style={{ opacity: 0.2, margin: '0 12px', fontSize: 13 }}>·</span>
-            <button className="ls-nav-link">Compound Lab</button>
+            <button className="ls-nav-link" onClick={() => document.getElementById('compound-lab')?.scrollIntoView({ behavior: 'smooth' })}>Compound Lab</button>
             <span style={{ opacity: 0.2, margin: '0 12px', fontSize: 13 }}>·</span>
             <button className="ls-nav-link">Archive</button>
           </div>
@@ -427,7 +539,10 @@ export default function LandingScreen() {
             </div>
           </section>
 
-          {/* ── SECTION 3: Footer ── */}
+          {/* ── SECTION 3: Compound Lab ── */}
+          <CompoundLabSection />
+
+          {/* ── SECTION 4: Footer ── */}
           <footer style={{
             padding: '24px 0',
             borderTop: '1px solid rgba(255,255,255,0.06)',
