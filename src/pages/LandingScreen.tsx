@@ -112,7 +112,8 @@ function CompoundLabSection() {
           </div>
         </div>
 
-        {/* Right graph panel */}
+        {/* Right column: graph panel + cards */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div style={{
           background: 'rgba(255,255,255,0.02)',
           border: '1px solid rgba(255,255,255,0.06)',
@@ -198,6 +199,51 @@ function CompoundLabSection() {
             )
           })()}
 
+        </div>
+
+          {/* Result cards */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+            {[
+              { label: '30 DAYS',  days: 30  },
+              { label: '90 DAYS',  days: 90  },
+              { label: '180 DAYS', days: 180 },
+              { label: '365 DAYS', days: 365, highlight: true },
+            ].map(m => {
+              const val = Math.pow(1 + rate / 100, m.days)
+              const pct = ((val - 1) * 100).toFixed(1)
+              return (
+                <div key={m.label} style={{
+                  background: 'rgba(255,255,255,0.03)',
+                  border: m.highlight
+                    ? '1px solid rgba(139,92,246,0.4)'
+                    : '1px solid rgba(255,255,255,0.07)',
+                  borderRadius: '10px',
+                  padding: '16px',
+                }}>
+                  <div style={{
+                    fontSize: 9,
+                    fontFamily: 'monospace',
+                    color: 'rgba(255,255,255,0.35)',
+                    letterSpacing: '0.08em',
+                    marginBottom: 8,
+                  }}>
+                    {m.label}
+                  </div>
+                  <div style={{
+                    fontSize: 24,
+                    fontWeight: 800,
+                    color: m.highlight ? '#A78BFA' : 'white',
+                    lineHeight: 1,
+                  }}>
+                    {val.toFixed(2)}x
+                  </div>
+                  <div style={{ fontSize: 11, color: '#00D2D3', marginTop: 6 }}>
+                    +{pct}%
+                  </div>
+                </div>
+              )
+            })}
+          </div>
         </div>
 
       </div>
