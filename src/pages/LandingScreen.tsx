@@ -98,19 +98,19 @@ export default function LandingScreen() {
         }
         .ls-nav-link:hover { opacity: 1; }
         .ls-cta-btn {
-          background: transparent;
-          border: 1px solid rgba(255,255,255,0.6);
+          background: white;
+          border: 1px solid white;
           border-radius: 50px;
           padding: 14px 32px;
           font-size: 15px;
           font-weight: 600;
-          color: white;
+          color: black;
           cursor: pointer;
           transition: background 0.15s, border-color 0.15s;
           white-space: nowrap;
         }
         .ls-cta-btn:hover {
-          background: rgba(255,255,255,0.08);
+          background: rgba(255,255,255,0.85);
           border-color: white;
         }
         .ls-arrow-btn {
@@ -409,17 +409,17 @@ export default function LandingScreen() {
                   ) : (
                     <div style={{
                       width: 88, height: 88, borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.015)',
-                      border: '1px dashed rgba(255,255,255,0.12)',
+                      background: 'rgba(255,255,255,0.06)',
+                      border: '1px dashed rgba(255,255,255,0.3)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 24, color: 'rgba(255,255,255,0.15)',
+                      fontSize: 24, color: 'rgba(255,255,255,0.4)',
                     }}>+</div>
                   )}
                   <span style={{
                     fontSize: cat.emoji !== null ? 11 : 9,
                     fontWeight: cat.emoji !== null ? 700 : 400,
                     letterSpacing: cat.emoji !== null ? '0.12em' : '0.1em',
-                    color: cat.emoji !== null ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.2)',
+                    color: cat.emoji !== null ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.45)',
                     textAlign: 'center',
                   }}>{cat.label}</span>
                 </div>
