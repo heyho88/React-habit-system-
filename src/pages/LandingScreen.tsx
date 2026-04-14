@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '../store/appStore'
 
+type PageType = 'home' | 'missions' | 'compound' | 'archive'
+
 const page1 = [
   { id: 'body',    label: 'BODY',    emoji: '💪', sub: '운동/건강' },
   { id: 'sleep',   label: 'SLEEP',   emoji: '🌙', sub: '수면/기상' },
@@ -23,7 +25,7 @@ function CompoundLabSection() {
   const [rate, setRate] = useState(1.0)
 
   return (
-    <section id="compound-lab" style={{ padding: '80px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+    <section style={{ padding: '60px 0' }}>
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
@@ -135,12 +137,19 @@ export default function LandingScreen() {
   const setScreen = useAppStore(s => s.setScreen)
   const [showMore, setShowMore] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [activePage, setActivePage] = useState<PageType>('home')
   const currentCards = showMore ? page2 : page1
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 50)
     return () => clearTimeout(t)
   }, [])
+
+  const navItems: { label: string; page: PageType }[] = [
+    { label: 'Missions',     page: 'missions' },
+    { label: 'Compound Lab', page: 'compound' },
+    { label: 'Archive',      page: 'archive'  },
+  ]
 
   return (
     <>
@@ -200,7 +209,6 @@ export default function LandingScreen() {
         }
         .ls-nav-link {
           font-size: 13px;
-          opacity: 0.5;
           cursor: pointer;
           background: none;
           border: none;
@@ -208,7 +216,7 @@ export default function LandingScreen() {
           padding: 0;
           transition: opacity 0.15s;
         }
-        .ls-nav-link:hover { opacity: 1; }
+        .ls-nav-link:hover { opacity: 1 !important; }
         .ls-cta-btn {
           background: white;
           border: 1px solid white;
@@ -243,6 +251,13 @@ export default function LandingScreen() {
           border-color: rgba(108,92,231,0.6);
           color: var(--color-purple);
         }
+        .ls-page-enter {
+          animation: ls-slide-up 0.45s ease both;
+        }
+        @keyframes ls-slide-up {
+          from { opacity: 0; transform: translateY(20px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
         @media (max-width: 768px) {
           .ls-nav { display: none !important; }
           .ls-container { padding: 0 20px; }
@@ -258,7 +273,7 @@ export default function LandingScreen() {
         transition: 'opacity 0.7s ease, transform 0.7s ease',
       }}>
 
-        {/* ── SECTION 0: Navigation ── */}
+        {/* ── Navigation ── */}
         <div className="ls-nav">
           <div style={{
             display: 'flex', alignItems: 'center', gap: 0,
@@ -268,319 +283,333 @@ export default function LandingScreen() {
             borderRadius: 999,
             padding: '8px 20px',
           }}>
-            <span style={{ fontWeight: 700, fontSize: 13 }}>● SLOO</span>
+            {/* Logo */}
+            <button
+              className="ls-nav-link"
+              onClick={() => setActivePage('home')}
+              style={{ fontWeight: 700, fontSize: 13, opacity: 1 }}
+            >
+              ● SLOO
+            </button>
             <span style={{ opacity: 0.2, margin: '0 16px' }}>│</span>
-            <button className="ls-nav-link">Missions</button>
-            <span style={{ opacity: 0.2, margin: '0 12px', fontSize: 13 }}>·</span>
-            <button className="ls-nav-link" onClick={() => document.getElementById('compound-lab')?.scrollIntoView({ behavior: 'smooth' })}>Compound Lab</button>
-            <span style={{ opacity: 0.2, margin: '0 12px', fontSize: 13 }}>·</span>
-            <button className="ls-nav-link">Archive</button>
+
+            {/* Nav links */}
+            {navItems.map((item, i) => {
+              const isActive = activePage === item.page
+              return (
+                <span key={item.page} style={{ display: 'flex', alignItems: 'center' }}>
+                  {i > 0 && <span style={{ opacity: 0.2, margin: '0 12px', fontSize: 13 }}>·</span>}
+                  <button
+                    className="ls-nav-link"
+                    onClick={() => setActivePage(item.page)}
+                    style={{
+                      opacity: isActive ? 1 : 0.5,
+                      fontWeight: isActive ? 600 : 400,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {item.label}
+                    {isActive && (
+                      <span style={{
+                        width: 4, height: 4, borderRadius: '50%',
+                        background: 'var(--color-purple)',
+                        margin: '4px auto 0',
+                        display: 'block',
+                      }} />
+                    )}
+                  </button>
+                </span>
+              )
+            })}
           </div>
         </div>
 
         <div className="ls-container">
 
-          {/* ── SECTION 1: Hero ── */}
-          <section style={{ paddingTop: 100, paddingBottom: 60 }}>
-            <div className="ls-hero-grid">
+          {/* ── Page content with slide-up animation per page ── */}
+          <div key={activePage} className="ls-page-enter">
 
-              {/* Left */}
-              <div>
-                {/* Badge */}
-                <div style={{
-                  display: 'inline-block',
-                  background: 'rgba(255,255,255,0.07)',
-                  border: '1px solid rgba(255,255,255,0.2)',
-                  borderRadius: 20,
-                  padding: '4px 12px',
-                  fontSize: 10,
-                  fontFamily: 'monospace',
-                  color: 'rgba(255,255,255,0.6)',
-                  marginBottom: 24,
-                }}>
-                  SYSTEM VERSION 1.0.0
-                </div>
+            {/* HOME */}
+            {activePage === 'home' && (
+              <>
+                {/* Hero */}
+                <section style={{ paddingTop: 100, paddingBottom: 60 }}>
+                  <div className="ls-hero-grid">
 
-                {/* Headline */}
-                <h1 style={{
-                  margin: 0,
-                  fontSize: 'clamp(36px, 5vw, 62px)',
-                  fontWeight: 600,
-                  lineHeight: 1.1,
-                  letterSpacing: '-0.02em',
-                }}>
-                  <div style={{ color: 'white' }}>작심삼일이</div>
-                  <div>
-                    <span style={{
-                      background: 'linear-gradient(90deg, #8B5CF6 0%, #C084FC 30%, #E040FB 60%, #F472B6 100%)',
-                      WebkitBackgroundClip: 'text',
-                      WebkitTextFillColor: 'transparent',
-                      backgroundClip: 'text',
-                    }}>작심 365일이</span>
+                    {/* Left */}
+                    <div>
+                      <div style={{
+                        display: 'inline-block',
+                        background: 'rgba(255,255,255,0.07)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: 20,
+                        padding: '4px 12px',
+                        fontSize: 10,
+                        fontFamily: 'monospace',
+                        color: 'rgba(255,255,255,0.6)',
+                        marginBottom: 24,
+                      }}>
+                        SYSTEM VERSION 1.0.0
+                      </div>
+
+                      <h1 style={{
+                        margin: 0,
+                        fontSize: 'clamp(36px, 5vw, 62px)',
+                        fontWeight: 600,
+                        lineHeight: 1.1,
+                        letterSpacing: '-0.02em',
+                      }}>
+                        <div style={{ color: 'white' }}>작심삼일이</div>
+                        <div>
+                          <span style={{
+                            background: 'linear-gradient(90deg, #8B5CF6 0%, #C084FC 30%, #E040FB 60%, #F472B6 100%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                            backgroundClip: 'text',
+                          }}>작심 365일이</span>
+                        </div>
+                        <div style={{ color: 'white' }}>되는 방법.</div>
+                      </h1>
+
+                      <p style={{
+                        marginTop: 24,
+                        fontSize: 15,
+                        lineHeight: 1.7,
+                        color: 'rgba(255,255,255,0.7)',
+                        maxWidth: 380,
+                      }}>
+                        매일 1%의 <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>성장</b>은 1년 뒤{' '}
+                        <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>37.8배</b>의 결과가 됩니다.
+                        의지력이 아닌 설계된 레벨 미션으로 당신의 습관을 스택하세요.
+                      </p>
+
+                      <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 24 }}>
+                        <button className="ls-cta-btn" onClick={() => setScreen('ob-category')}>
+                          지금 무료로 시작하기
+                        </button>
+                        <div>
+                          <div style={{
+                            fontSize: 9,
+                            fontFamily: 'monospace',
+                            color: 'rgba(255,255,255,0.35)',
+                            letterSpacing: '0.1em',
+                          }}>FOUNDING USER</div>
+                          <div style={{
+                            fontSize: 11,
+                            color: 'rgba(255,255,255,0.55)',
+                            fontWeight: 600,
+                          }}>모집 중</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Right Card */}
+                    <div className="ls-hero-right">
+                      <div
+                        className="card-border-animated"
+                        style={{ width: 460, aspectRatio: '1 / 1', maxWidth: '100%' }}
+                      >
+                        <div style={{
+                          background: '#080808',
+                          borderRadius: 18.5,
+                          padding: 32,
+                          height: '100%',
+                          position: 'relative',
+                          overflow: 'hidden',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          boxSizing: 'border-box',
+                        }}>
+                          <div style={{ flex: 0 }}>
+                            <div style={{
+                              fontSize: 10, fontFamily: 'monospace',
+                              color: 'rgba(255,255,255,0.5)', letterSpacing: '0.15em',
+                            }}>MISSION: ACTIVE</div>
+                            <div style={{ height: 2, background: '#ff3355', width: 48, marginTop: 6 }} />
+                          </div>
+
+                          <div style={{
+                            flex: 1, display: 'flex', flexDirection: 'column',
+                            justifyContent: 'center', alignItems: 'center', textAlign: 'center',
+                            position: 'relative', zIndex: 1,
+                          }}>
+                            <div style={{
+                              fontSize: 9, fontFamily: 'monospace',
+                              color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+                            }}>COMPOUND MULTIPLIER</div>
+                            <div style={{ marginTop: 10, display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
+                              <span style={{ fontSize: 68, fontWeight: 800, color: 'white', lineHeight: 1 }}>37.8</span>
+                              <span style={{ fontSize: 26, fontWeight: 400, color: 'rgba(255,255,255,0.5)', marginLeft: 2 }}>x</span>
+                            </div>
+                            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#FF4444' }} />
+                              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em' }}>GROWTH CALIBRATED</span>
+                            </div>
+                          </div>
+
+                          <div style={{ flex: 0, display: 'flex', justifyContent: 'flex-end', position: 'relative', zIndex: 1 }}>
+                            <div>
+                              <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>EFFICIENCY</div>
+                              <div style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>+1.00%</div>
+                            </div>
+                          </div>
+
+                          <svg
+                            viewBox="0 0 460 200"
+                            preserveAspectRatio="none"
+                            style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '200px', zIndex: 0 }}
+                          >
+                            <defs>
+                              <linearGradient id="expFill" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stopColor="#4C1D95" stopOpacity="0.12" />
+                                <stop offset="100%" stopColor="#4C1D95" stopOpacity="0" />
+                              </linearGradient>
+                            </defs>
+                            <path
+                              d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30"
+                              fill="none" stroke="#4C1D95" strokeWidth="1.5" opacity="0.7"
+                            />
+                            <path
+                              d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30 L 460,200 L 0,200 Z"
+                              fill="url(#expFill)"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
                   </div>
-                  <div style={{ color: 'white' }}>되는 방법.</div>
-                </h1>
+                </section>
 
-                {/* Subtext */}
-                <p style={{
-                  marginTop: 24,
-                  fontSize: 15,
-                  lineHeight: 1.7,
-                  color: 'rgba(255,255,255,0.7)',
-                  maxWidth: 380,
-                }}>
-                  매일 1%의 <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>성장</b>은 1년 뒤{' '}
-                  <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>37.8배</b>의 결과가 됩니다.
-                  의지력이 아닌 설계된 레벨 미션으로 당신의 습관을 스택하세요.
-                </p>
-
-                {/* CTA */}
-                <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 24 }}>
-                  <button className="ls-cta-btn" onClick={() => setScreen('ob-category')}>
-                    지금 무료로 시작하기
-                  </button>
-                  <div>
-                    <div style={{
-                      fontSize: 9,
-                      fontFamily: 'monospace',
-                      color: 'rgba(255,255,255,0.35)',
-                      letterSpacing: '0.1em',
-                    }}>FOUNDING USER</div>
-                    <div style={{
-                      fontSize: 11,
-                      color: 'rgba(255,255,255,0.55)',
-                      fontWeight: 600,
-                    }}>모집 중</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Card */}
-              <div className="ls-hero-right">
-                {/* Gradient border wrapper */}
-                <div
-                  className="card-border-animated"
-                  style={{
-                    width: 460,
-                    aspectRatio: '1 / 1',
-                    maxWidth: '100%',
-                  }}
-                >
-                  {/* Inner card */}
+                {/* Categories */}
+                <section style={{ padding: '40px 0 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                   <div style={{
-                    background: '#080808',
-                    borderRadius: 18.5,
-                    padding: 32,
-                    height: '100%',
-                    position: 'relative',
-                    overflow: 'hidden',
                     display: 'flex',
-                    flexDirection: 'column',
-                    boxSizing: 'border-box',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    marginBottom: 40,
                   }}>
-
-                    {/* Top */}
-                    <div style={{ flex: 0 }}>
+                    <div>
                       <div style={{
-                        fontSize: 10, fontFamily: 'monospace',
-                        color: 'rgba(255,255,255,0.5)', letterSpacing: '0.15em',
-                      }}>MISSION: ACTIVE</div>
-                      <div style={{ height: 2, background: '#ff3355', width: 48, marginTop: 6 }} />
-                    </div>
-
-                    {/* Center */}
-                    <div style={{
-                      flex: 1, display: 'flex', flexDirection: 'column',
-                      justifyContent: 'center', alignItems: 'center', textAlign: 'center',
-                      position: 'relative', zIndex: 1,
-                    }}>
-                      <div style={{
-                        fontSize: 9, fontFamily: 'monospace',
-                        color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
-                      }}>COMPOUND MULTIPLIER</div>
-                      <div style={{
-                        marginTop: 10, display: 'flex',
-                        alignItems: 'baseline', justifyContent: 'center',
-                      }}>
-                        <span style={{ fontSize: 68, fontWeight: 800, color: 'white', lineHeight: 1 }}>37.8</span>
-                        <span style={{ fontSize: 26, fontWeight: 400, color: 'rgba(255,255,255,0.5)', marginLeft: 2 }}>x</span>
-                      </div>
-                      <div style={{
-                        marginTop: 12, display: 'flex', alignItems: 'center', gap: 6,
-                      }}>
-                        <div style={{
-                          width: 8, height: 8, borderRadius: '50%', background: '#FF4444',
-                        }} />
-                        <span style={{
-                          fontSize: 10, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em',
-                        }}>GROWTH CALIBRATED</span>
+                        fontSize: 10,
+                        fontFamily: 'monospace',
+                        color: 'var(--color-purple)',
+                        letterSpacing: '0.15em',
+                        marginBottom: 10,
+                      }}>LEVEL MISSIONS</div>
+                      <div style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>
+                        Select Your Focus Area
                       </div>
                     </div>
-
-                    {/* Bottom */}
-                    <div style={{ flex: 0, display: 'flex', justifyContent: 'flex-end', position: 'relative', zIndex: 1 }}>
-                      <div>
-                        <div style={{
-                          fontSize: 8, fontFamily: 'monospace',
-                          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em',
-                        }}>EFFICIENCY</div>
-                        <div style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>+1.00%</div>
-                      </div>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        className="ls-arrow-btn"
+                        onClick={() => setShowMore(false)}
+                        style={{ opacity: showMore ? 1 : 0.25, pointerEvents: showMore ? 'auto' : 'none' }}
+                      >‹</button>
+                      <button
+                        className="ls-arrow-btn"
+                        onClick={() => setShowMore(true)}
+                        style={{ opacity: showMore ? 0.25 : 1, pointerEvents: showMore ? 'none' : 'auto' }}
+                      >›</button>
                     </div>
-
-                    {/* SVG exponential curve */}
-                    <svg
-                      viewBox="0 0 460 200"
-                      preserveAspectRatio="none"
-                      style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '200px', zIndex: 0 }}
-                    >
-                      <defs>
-                        <linearGradient id="expFill" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#4C1D95" stopOpacity="0.12" />
-                          <stop offset="100%" stopColor="#4C1D95" stopOpacity="0" />
-                        </linearGradient>
-                      </defs>
-                      <path
-                        d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30"
-                        fill="none"
-                        stroke="#4C1D95"
-                        strokeWidth="1.5"
-                        opacity="0.7"
-                      />
-                      <path
-                        d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30 L 460,200 L 0,200 Z"
-                        fill="url(#expFill)"
-                      />
-                    </svg>
-
                   </div>
-                </div>
-              </div>
 
-            </div>
-          </section>
+                  <div
+                    key={showMore ? 'more' : 'base'}
+                    style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 20, width: '100%' }}
+                  >
+                    {currentCards.map(cat => (
+                      <div key={cat.id} style={{
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, cursor: 'default',
+                      }}>
+                        {cat.emoji !== null ? (
+                          <div className="ls-cat-icon" style={{
+                            width: 88, height: 88, borderRadius: '50%',
+                            background: 'rgba(255,255,255,0.04)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 32, transition: 'all 0.2s',
+                          }}>
+                            {cat.emoji}
+                          </div>
+                        ) : (
+                          <div style={{
+                            width: 88, height: 88, borderRadius: '50%',
+                            background: 'rgba(255,255,255,0.06)',
+                            border: '1px dashed rgba(255,255,255,0.3)',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 24, color: 'rgba(255,255,255,0.4)',
+                          }}>+</div>
+                        )}
+                        <span style={{
+                          fontSize: cat.emoji !== null ? 11 : 9,
+                          fontWeight: cat.emoji !== null ? 700 : 400,
+                          letterSpacing: cat.emoji !== null ? '0.12em' : '0.1em',
+                          color: cat.emoji !== null ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.45)',
+                          textAlign: 'center',
+                        }}>{cat.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </section>
 
-          {/* ── SECTION 2: Categories ── */}
-          <section style={{ padding: '40px 0 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-            {/* Header row */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'flex-start',
-              marginBottom: 40,
-            }}>
-              <div>
-                <div style={{
-                  fontSize: 10,
-                  fontFamily: 'monospace',
-                  color: 'var(--color-purple)',
-                  letterSpacing: '0.15em',
-                  marginBottom: 10,
-                }}>LEVEL MISSIONS</div>
-                <div style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>
-                  Select Your Focus Area
-                </div>
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button
-                  className="ls-arrow-btn"
-                  onClick={() => setShowMore(false)}
-                  style={{ opacity: showMore ? 1 : 0.25, pointerEvents: showMore ? 'auto' : 'none' }}
-                >‹</button>
-                <button
-                  className="ls-arrow-btn"
-                  onClick={() => setShowMore(true)}
-                  style={{ opacity: showMore ? 0.25 : 1, pointerEvents: showMore ? 'none' : 'auto' }}
-                >›</button>
-              </div>
-            </div>
-
-            {/* Category cards */}
-            <div
-              key={showMore ? 'more' : 'base'}
-              style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 20, width: '100%' }}
-            >
-              {currentCards.map(cat => (
-                <div key={cat.id} style={{
+                {/* Footer */}
+                <footer style={{
+                  padding: '24px 0',
+                  borderTop: '1px solid rgba(255,255,255,0.06)',
                   display: 'flex',
-                  flexDirection: 'column',
+                  justifyContent: 'space-between',
                   alignItems: 'center',
-                  gap: 12,
-                  cursor: 'default',
                 }}>
-                  {cat.emoji !== null ? (
-                    <div className="ls-cat-icon" style={{
-                      width: 88, height: 88, borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.04)',
-                      border: '1px solid rgba(255,255,255,0.1)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 32, transition: 'all 0.2s',
-                    }}>
-                      {cat.emoji}
+                  <div style={{ display: 'flex', gap: 40 }}>
+                    <div>
+                      <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>GLOBAL STATUS</div>
+                      <div style={{ fontSize: 11, marginTop: 2 }}>
+                        <span style={{ color: '#00D2D3' }}>ONLINE</span>
+                        <span style={{ color: 'rgba(255,255,255,0.5)' }}> / SYNCED</span>
+                      </div>
                     </div>
-                  ) : (
-                    <div style={{
-                      width: 88, height: 88, borderRadius: '50%',
-                      background: 'rgba(255,255,255,0.06)',
-                      border: '1px dashed rgba(255,255,255,0.3)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: 24, color: 'rgba(255,255,255,0.4)',
-                    }}>+</div>
-                  )}
-                  <span style={{
-                    fontSize: cat.emoji !== null ? 11 : 9,
-                    fontWeight: cat.emoji !== null ? 700 : 400,
-                    letterSpacing: cat.emoji !== null ? '0.12em' : '0.1em',
-                    color: cat.emoji !== null ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.45)',
-                    textAlign: 'center',
-                  }}>{cat.label}</span>
-                </div>
-              ))}
-            </div>
-          </section>
+                    <div>
+                      <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>FOUNDING USER</div>
+                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>BETA ACCESS</div>
+                    </div>
+                  </div>
+                  <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.2)' }}>
+                    BETA V.01 — COMPOUND ENGINE V.01
+                  </div>
+                </footer>
+              </>
+            )}
 
-          {/* ── SECTION 3: Compound Lab ── */}
-          <CompoundLabSection />
+            {/* COMPOUND */}
+            {activePage === 'compound' && (
+              <div style={{ paddingTop: 80 }}>
+                <CompoundLabSection />
+              </div>
+            )}
 
-          {/* ── SECTION 4: Footer ── */}
-          <footer style={{
-            padding: '24px 0',
-            borderTop: '1px solid rgba(255,255,255,0.06)',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}>
-            <div style={{ display: 'flex', gap: 40 }}>
-              <div>
-                <div style={{
-                  fontSize: 8,
-                  fontFamily: 'monospace',
-                  color: 'rgba(255,255,255,0.3)',
-                  letterSpacing: '0.1em',
-                }}>GLOBAL STATUS</div>
-                <div style={{ fontSize: 11, marginTop: 2 }}>
-                  <span style={{ color: '#00D2D3' }}>ONLINE</span>
-                  <span style={{ color: 'rgba(255,255,255,0.5)' }}> / SYNCED</span>
+            {/* MISSIONS */}
+            {activePage === 'missions' && (
+              <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.2)', fontFamily: 'monospace', fontSize: 12 }}>
+                  MISSIONS — COMING SOON
                 </div>
               </div>
-              <div>
-                <div style={{
-                  fontSize: 8,
-                  fontFamily: 'monospace',
-                  color: 'rgba(255,255,255,0.3)',
-                }}>FOUNDING USER</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginTop: 2 }}>
-                  BETA ACCESS
+            )}
+
+            {/* ARCHIVE */}
+            {activePage === 'archive' && (
+              <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.2)', fontFamily: 'monospace', fontSize: 12 }}>
+                  ARCHIVE — COMING SOON
                 </div>
               </div>
-            </div>
-            <div style={{
-              fontSize: 9,
-              fontFamily: 'monospace',
-              color: 'rgba(255,255,255,0.2)',
-            }}>BETA V.01 — COMPOUND ENGINE V.01</div>
-          </footer>
+            )}
 
+          </div>
         </div>
       </div>
     </>
