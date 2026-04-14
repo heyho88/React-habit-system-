@@ -24,6 +24,33 @@ const page2 = [
 function CompoundLabSection() {
   const [rate, setRate] = useState(1.0)
 
+  const BAR_COUNT = 36
+  const GRAPH_H = 200
+  const GRAPH_W = 600
+  const barW = Math.floor(GRAPH_W / BAR_COUNT) - 2
+  const maxVal = Math.pow(1 + rate / 100, 365)
+  const minLog = 0
+  const maxLog = Math.log(maxVal)
+  const bars = Array.from({ length: BAR_COUNT }, (_, i) => {
+    const day = Math.round((i + 1) * 365 / BAR_COUNT)
+    const value = Math.pow(1 + rate / 100, day)
+    const h = maxLog === 0
+      ? 4
+      : Math.max(4, (Math.log(value) - minLog) / (maxLog - minLog) * GRAPH_H)
+    return { day, value, h }
+  })
+
+  const milestones = [
+    { label: '30 DAYS',  days: 30 },
+    { label: '90 DAYS',  days: 90 },
+    { label: '180 DAYS', days: 180 },
+    { label: '365 DAYS', days: 365, highlight: true },
+  ].map(m => ({
+    ...m,
+    val: Math.pow(1 + rate / 100, m.days),
+    pct: ((Math.pow(1 + rate / 100, m.days) - 1) * 100).toFixed(1),
+  }))
+
   return (
     <section style={{ padding: '60px 0' }}>
       {/* Header */}
@@ -144,109 +171,75 @@ function CompoundLabSection() {
           </div>
 
           {/* Bar chart */}
-          {(() => {
-            const BAR_COUNT = 36
-            const GRAPH_H = 200
-            const GRAPH_W = 600
-            const barW = Math.floor(GRAPH_W / BAR_COUNT) - 2
-            const maxVal = Math.pow(1 + rate / 100, 365)
-            const bars = Array.from({ length: BAR_COUNT }, (_, i) => {
-              const day = Math.round((i + 1) * 365 / BAR_COUNT)
-              const value = Math.pow(1 + rate / 100, day)
-              return { day, value }
-            })
-            return (
-              <div>
-                <svg
-                  viewBox={`0 0 ${GRAPH_W} ${GRAPH_H}`}
-                  width="100%"
-                  height={GRAPH_H}
-                  style={{ display: 'block' }}
-                >
-                  <defs>
-                    <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.95" />
-                      <stop offset="100%" stopColor="#4C1D95" stopOpacity="0.2" />
-                    </linearGradient>
-                  </defs>
-                  {bars.map((bar, i) => {
-                    const minLog = 0
-                    const maxLog = Math.log(maxVal)
-                    const h = maxLog === 0
-                      ? 4
-                      : Math.max(4, (Math.log(bar.value) - minLog) / (maxLog - minLog) * GRAPH_H)
-                    return (
-                      <rect
-                        key={i}
-                        x={i * (GRAPH_W / BAR_COUNT) + 1}
-                        y={GRAPH_H - h}
-                        width={barW}
-                        height={h}
-                        fill="url(#barGrad)"
-                        rx={2}
-                      />
-                    )
-                  })}
-                </svg>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
-                  {['DAY 1', 'DAY 90', 'DAY 180', 'DAY 270', 'DAY 365'].map(label => (
-                    <span key={label} style={{
-                      fontSize: 9,
-                      fontFamily: 'monospace',
-                      color: 'rgba(255,255,255,0.25)',
-                    }}>
-                      {label}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )
-          })()}
+          <div>
+            <svg
+              viewBox={`0 0 ${GRAPH_W} ${GRAPH_H}`}
+              width="100%"
+              height={GRAPH_H}
+              style={{ display: 'block' }}
+            >
+              <defs>
+                <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.95" />
+                  <stop offset="100%" stopColor="#4C1D95" stopOpacity="0.2" />
+                </linearGradient>
+              </defs>
+              {bars.map((bar, i) => (
+                <rect
+                  key={i}
+                  x={i * (GRAPH_W / BAR_COUNT) + 1}
+                  y={GRAPH_H - bar.h}
+                  width={barW}
+                  height={bar.h}
+                  fill="url(#barGrad)"
+                  rx={2}
+                />
+              ))}
+            </svg>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+              {['DAY 1', 'DAY 90', 'DAY 180', 'DAY 270', 'DAY 365'].map(label => (
+                <span key={label} style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)' }}>
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
 
         </div>
 
           {/* Result cards */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
-            {[
-              { label: '30 DAYS',  days: 30  },
-              { label: '90 DAYS',  days: 90  },
-              { label: '180 DAYS', days: 180 },
-              { label: '365 DAYS', days: 365, highlight: true },
-            ].map(m => {
-              const val = Math.pow(1 + rate / 100, m.days)
-              const pct = ((val - 1) * 100).toFixed(1)
-              return (
-                <div key={m.label} style={{
-                  background: 'rgba(255,255,255,0.03)',
-                  border: m.highlight
-                    ? '1px solid rgba(139,92,246,0.4)'
-                    : '1px solid rgba(255,255,255,0.07)',
-                  borderRadius: '10px',
-                  padding: '16px',
+            {milestones.map(m => (
+              <div key={m.label} style={{
+                background: 'rgba(255,255,255,0.03)',
+                border: m.highlight
+                  ? '1px solid rgba(139,92,246,0.4)'
+                  : '1px solid rgba(255,255,255,0.07)',
+                borderRadius: '10px',
+                padding: '16px',
+              }}>
+                <div style={{
+                  fontSize: 9,
+                  fontFamily: 'monospace',
+                  color: 'rgba(255,255,255,0.35)',
+                  letterSpacing: '0.08em',
+                  marginBottom: 8,
                 }}>
-                  <div style={{
-                    fontSize: 9,
-                    fontFamily: 'monospace',
-                    color: 'rgba(255,255,255,0.35)',
-                    letterSpacing: '0.08em',
-                    marginBottom: 8,
-                  }}>
-                    {m.label}
-                  </div>
-                  <div style={{
-                    fontSize: 24,
-                    fontWeight: 800,
-                    color: m.highlight ? '#A78BFA' : 'white',
-                    lineHeight: 1,
-                  }}>
-                    {val.toFixed(2)}x
-                  </div>
-                  <div style={{ fontSize: 11, color: '#00D2D3', marginTop: 6 }}>
-                    +{pct}%
-                  </div>
+                  {m.label}
                 </div>
-              )
-            })}
+                <div style={{
+                  fontSize: 24,
+                  fontWeight: 800,
+                  color: m.highlight ? '#A78BFA' : 'white',
+                  lineHeight: 1,
+                }}>
+                  {m.val.toFixed(2)}x
+                </div>
+                <div style={{ fontSize: 11, color: '#00D2D3', marginTop: 6 }}>
+                  +{m.pct}%
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
