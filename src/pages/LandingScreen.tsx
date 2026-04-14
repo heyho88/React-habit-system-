@@ -112,20 +112,92 @@ function CompoundLabSection() {
           </div>
         </div>
 
-        {/* Right placeholder */}
+        {/* Right graph panel */}
         <div style={{
           background: 'rgba(255,255,255,0.02)',
           border: '1px solid rgba(255,255,255,0.06)',
-          borderRadius: 12,
-          padding: 24,
-          minHeight: 300,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          borderRadius: '12px',
+          padding: '24px',
         }}>
-          <span style={{ color: 'rgba(255,255,255,0.1)', fontSize: 12, fontFamily: 'monospace' }}>
-            GRAPH PLACEHOLDER
-          </span>
+
+          {/* Header */}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px' }}>
+            <div>
+              <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em', marginBottom: 6 }}>
+                PROJECTION CURVE
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: 'white' }}>
+                Exponential Trajectory
+              </div>
+            </div>
+            <div style={{
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: 20,
+              padding: '4px 12px',
+              fontSize: 11,
+              color: 'rgba(255,255,255,0.5)',
+              fontFamily: 'monospace',
+            }}>
+              365 DAYS
+            </div>
+          </div>
+
+          {/* Bar chart */}
+          {(() => {
+            const BAR_COUNT = 36
+            const GRAPH_H = 200
+            const GRAPH_W = 600
+            const barW = Math.floor(GRAPH_W / BAR_COUNT) - 2
+            const maxVal = Math.pow(1 + rate / 100, 365)
+            const bars = Array.from({ length: BAR_COUNT }, (_, i) => {
+              const day = Math.round((i + 1) * 365 / BAR_COUNT)
+              const value = Math.pow(1 + rate / 100, day)
+              return { day, value }
+            })
+            return (
+              <div>
+                <svg
+                  viewBox={`0 0 ${GRAPH_W} ${GRAPH_H}`}
+                  width="100%"
+                  height={GRAPH_H}
+                  style={{ display: 'block' }}
+                >
+                  <defs>
+                    <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.95" />
+                      <stop offset="100%" stopColor="#4C1D95" stopOpacity="0.2" />
+                    </linearGradient>
+                  </defs>
+                  {bars.map((bar, i) => {
+                    const h = (bar.value / maxVal) * GRAPH_H
+                    return (
+                      <rect
+                        key={i}
+                        x={i * (GRAPH_W / BAR_COUNT) + 1}
+                        y={GRAPH_H - h}
+                        width={barW}
+                        height={h}
+                        fill="url(#barGrad)"
+                        rx={2}
+                      />
+                    )
+                  })}
+                </svg>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+                  {['DAY 1', 'DAY 90', 'DAY 180', 'DAY 270', 'DAY 365'].map(label => (
+                    <span key={label} style={{
+                      fontSize: 9,
+                      fontFamily: 'monospace',
+                      color: 'rgba(255,255,255,0.25)',
+                    }}>
+                      {label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )
+          })()}
+
         </div>
 
       </div>
