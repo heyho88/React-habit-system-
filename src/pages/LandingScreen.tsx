@@ -26,15 +26,31 @@ function CompoundLabSection() {
 
   const BAR_COUNT = 36
   const GRAPH_H = 200
-  const GRAPH_W = 600
+  const GRAPH_W = 610
   const barW = Math.floor(GRAPH_W / BAR_COUNT) - 2
   const maxVal = Math.pow(1 + rate / 100, 365)
   const bars = Array.from({ length: BAR_COUNT }, (_, i) => {
     const day = Math.round((i + 1) * 365 / BAR_COUNT)
     const value = Math.pow(1 + rate / 100, day)
-    const h = Math.max(4, (value / maxVal) * GRAPH_H)
+    const h = Math.max(2, (value / maxVal) * GRAPH_H)
     return { day, value, h }
   })
+
+  const fmtVal = (v: number): string => {
+    if (v >= 10000) return `${(v / 1000).toFixed(0)}kx`
+    if (v >= 1000)  return `${(v / 1000).toFixed(1)}kx`
+    if (v >= 100)   return `${Math.round(v)}x`
+    if (v >= 10)    return `${v.toFixed(1)}x`
+    return `${v.toFixed(2)}x`
+  }
+
+  const yTicks = [
+    { label: fmtVal(maxVal),        y: 8   },
+    { label: fmtVal(maxVal * 0.75), y: 53  },
+    { label: fmtVal(maxVal * 0.5),  y: 103 },
+    { label: fmtVal(maxVal * 0.25), y: 153 },
+    { label: '1.0x',                y: 198 },
+  ]
 
   const milestones = [
     { label: '30 DAYS',  days: 30 },
@@ -169,7 +185,7 @@ function CompoundLabSection() {
           {/* Bar chart */}
           <div>
             <svg
-              viewBox={`0 0 ${GRAPH_W} ${GRAPH_H}`}
+              viewBox="0 0 660 210"
               width="100%"
               height={GRAPH_H}
               style={{ display: 'block' }}
@@ -180,10 +196,33 @@ function CompoundLabSection() {
                   <stop offset="100%" stopColor="#4C1D95" stopOpacity="0.2" />
                 </linearGradient>
               </defs>
+              {yTicks.map((tick, i) => (
+                <g key={i}>
+                  <text
+                    x={44}
+                    y={tick.y}
+                    textAnchor="end"
+                    fontSize={8}
+                    fill="rgba(255,255,255,0.3)"
+                    fontFamily="monospace"
+                    dominantBaseline="middle"
+                  >
+                    {tick.label}
+                  </text>
+                  <line
+                    x1={50}
+                    y1={tick.y}
+                    x2={660}
+                    y2={tick.y}
+                    stroke="rgba(255,255,255,0.04)"
+                    strokeWidth={1}
+                  />
+                </g>
+              ))}
               {bars.map((bar, i) => (
                 <rect
                   key={i}
-                  x={i * (GRAPH_W / BAR_COUNT) + 1}
+                  x={50 + i * (GRAPH_W / BAR_COUNT) + 1}
                   y={GRAPH_H - bar.h}
                   width={barW}
                   height={bar.h}
