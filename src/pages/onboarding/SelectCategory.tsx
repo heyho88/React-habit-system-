@@ -1,10 +1,11 @@
+import { useState } from 'react'
 import { useAppStore } from '../../store/appStore'
-import { CAT_META, type CategoryKey } from '../../lib/missions'
+import { type CategoryKey } from '../../lib/missions'
 
-const cats: { value: CategoryKey; icon: string }[] = [
-  { value: 'health',  icon: '🏃' },
-  { value: 'sleep',   icon: '😴' },
-  { value: 'routine', icon: '📋' },
+const cats: { id: CategoryKey; label: string; desc: string; emoji: string; color: string }[] = [
+  { id: 'health',  label: '운동/건강',     desc: '신체 에너지는 모든 성장의 기초입니다. 체계적인 운동으로 성과를 만드세요.',  emoji: '💪', color: '#FF6B6B' },
+  { id: 'sleep',   label: '수면/기상',     desc: '수면의 질이 하루의 질을 결정합니다. 최적의 기상 루틴을 설계하세요.',       emoji: '🌙', color: '#6C5CE7' },
+  { id: 'routine', label: '루틴/생활습관', desc: '작은 습관의 복리가 삶을 바꿉니다. 일상을 시스템으로 만드세요.',            emoji: '⚡', color: '#00D2D3' },
 ]
 
 const screenFor: Record<string, string> = {
@@ -15,36 +16,43 @@ const screenFor: Record<string, string> = {
 
 export default function SelectCategory() {
   const { setScreen, setCategory, setCurrentOnboardingCategory, resetObState } = useAppStore()
+  const [selected, setSelected] = useState<CategoryKey | null>(null)
 
   function handleSelect(val: CategoryKey) {
+    setSelected(val)
+  }
+
+  function handleNext() {
+    if (!selected) return
     resetObState()
-    setCategory(val)
-    setCurrentOnboardingCategory(val)
-    setScreen(screenFor[val])
+    setCategory(selected)
+    setCurrentOnboardingCategory(selected)
+    setScreen(screenFor[selected])
   }
 
   return (
     <div style={{
-      minHeight: '100vh',
+      position: 'fixed',
+      top: 0, left: 0, right: 0, bottom: 0,
+      width: '100vw', height: '100vh',
       background: '#050505',
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px 20px',
+      zIndex: 100,
+      overflow: 'auto',
     }}>
 
-      {/* 상단 네비바 */}
+      {/* 상단 네비 */}
       <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
+        position: 'absolute',
+        top: 0, left: 0, right: 0,
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '20px 40px',
-        zIndex: 50,
+        zIndex: 10,
       }}>
         <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>● SLOO</span>
         <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
@@ -55,27 +63,21 @@ export default function SelectCategory() {
       {/* 중앙 카드 컨테이너 */}
       <div style={{
         width: '100%',
-        maxWidth: '860px',
+        maxWidth: '900px',
         background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '20px',
-        padding: '40px',
-        position: 'relative',
+        padding: '40px 48px',
       }}>
 
         {/* 진행 바 */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '40px' }}>
-          <div style={{
-            height: 3,
-            borderRadius: 2,
-            flex: 1,
-            background: 'linear-gradient(90deg, #E040FB, #6C5CE7)',
-          }} />
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '48px' }}>
+          <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'linear-gradient(90deg, #E040FB, #6C5CE7)' }} />
           <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'rgba(255,255,255,0.15)' }} />
           <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'rgba(255,255,255,0.15)' }} />
         </div>
 
-        {/* 메인 그리드 */}
+        {/* 메인 2컬럼 그리드 */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: '1fr 1fr',
@@ -83,7 +85,7 @@ export default function SelectCategory() {
           alignItems: 'start',
         }}>
 
-          {/* 좌측 콘텐츠 */}
+          {/* 좌측 */}
           <div>
             {/* ① 스텝 라벨 */}
             <div style={{
@@ -91,18 +93,13 @@ export default function SelectCategory() {
               fontFamily: 'monospace',
               color: '#8B5CF6',
               letterSpacing: '0.15em',
-              marginBottom: 20,
+              marginBottom: 24,
             }}>
               STEP 01 : CATEGORY SELECTION
             </div>
 
             {/* ② 헤드라인 */}
-            <div style={{
-              fontSize: 'clamp(26px, 3.5vw, 34px)',
-              fontWeight: 800,
-              lineHeight: 1.2,
-              marginBottom: 16,
-            }}>
+            <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
               <div style={{ color: 'white' }}>당신의 성장을 위한</div>
               <div>
                 <span style={{
@@ -122,7 +119,7 @@ export default function SelectCategory() {
               lineHeight: 1.6,
               marginBottom: 32,
             }}>
-              한 번에 하나의 분야에만 집중하는 것이 복리 시스템의 핵심입니다.
+              우리는 매일 1%의 작은 성과가 만드는 복리의 마법을 믿습니다. 지금 가장 집중하고 싶은 영역을 선택해 주세요.
             </p>
 
             {/* ④ PROJECTIONS 카드 */}
@@ -130,16 +127,13 @@ export default function SelectCategory() {
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: 10,
-              padding: 20,
+              padding: '20px',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00D2D3' }} />
-                <span style={{
-                  fontSize: 9,
-                  fontFamily: 'monospace',
-                  color: 'rgba(255,255,255,0.4)',
-                  letterSpacing: '0.1em',
-                }}>PROJECTIONS</span>
+                <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00D2D3', flexShrink: 0 }} />
+                <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>
+                  PROJECTIONS
+                </span>
               </div>
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>
                 미션 완료 시 1년 후 예상 성장치:
@@ -150,38 +144,69 @@ export default function SelectCategory() {
             </div>
           </div>
 
-          {/* 우측 콘텐츠 — 기존 카테고리 카드 그대로 */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
-            {cats.map(({ value, icon }) => (
-              <button
-                key={value}
-                onClick={() => handleSelect(value)}
-                style={{
-                  background: 'rgba(255,255,255,0.05)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 16,
-                  padding: '24px 8px',
-                  cursor: 'pointer',
-                  color: '#fff',
-                  fontSize: 13,
-                  fontWeight: 600,
-                  textAlign: 'center',
-                  lineHeight: 1.5,
-                  transition: 'all 0.15s',
-                }}
-                onMouseEnter={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(139,92,246,0.12)'
-                  ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(139,92,246,0.4)'
-                }}
-                onMouseLeave={e => {
-                  (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)'
-                  ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.08)'
-                }}
-              >
-                <div style={{ fontSize: 28, marginBottom: 8 }}>{icon}</div>
-                {CAT_META[value].label}
-              </button>
-            ))}
+          {/* 우측 — 카테고리 카드 */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {cats.map(cat => {
+              const isSelected = selected === cat.id
+              return (
+                <div
+                  key={cat.id}
+                  onClick={() => handleSelect(cat.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 16,
+                    padding: '16px 20px',
+                    borderRadius: 12,
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                    background: isSelected ? 'rgba(108,92,231,0.1)' : 'rgba(255,255,255,0.03)',
+                    border: isSelected ? '1px solid rgba(139,92,246,0.6)' : '1px solid rgba(255,255,255,0.08)',
+                  }}
+                >
+                  {/* 썸네일 */}
+                  <div style={{
+                    width: 56, height: 56,
+                    borderRadius: 8,
+                    flexShrink: 0,
+                    background: `linear-gradient(135deg,${cat.color}22,${cat.color}44)`,
+                    border: `1px solid ${cat.color}55`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 26,
+                  }}>
+                    {cat.emoji}
+                  </div>
+
+                  {/* 텍스트 */}
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: 16, fontWeight: 700, color: 'white', marginBottom: 4 }}>
+                      {cat.label}
+                    </div>
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>
+                      {cat.desc}
+                    </div>
+                  </div>
+
+                  {/* 라디오 */}
+                  <div style={{
+                    width: 20, height: 20,
+                    borderRadius: '50%',
+                    flexShrink: 0,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    border: isSelected ? '2px solid #8B5CF6' : '2px solid rgba(255,255,255,0.2)',
+                    background: 'transparent',
+                  }}>
+                    {isSelected && (
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#8B5CF6' }} />
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
 
         </div>
@@ -195,54 +220,56 @@ export default function SelectCategory() {
           gap: 24,
         }}>
           <button
+            onClick={() => setScreen('home')}
             style={{
-              fontSize: 13,
-              color: 'rgba(255,255,255,0.35)',
-              cursor: 'pointer',
               background: 'none',
               border: 'none',
+              cursor: 'pointer',
+              fontSize: 13,
+              color: 'rgba(255,255,255,0.35)',
             }}
-            onClick={() => setScreen('home')}
           >
             건너뛰기
           </button>
           <button
+            onClick={handleNext}
             style={{
               background: 'white',
               color: '#050505',
-              borderRadius: '50px',
+              borderRadius: 50,
               padding: '14px 32px',
               fontSize: 14,
               fontWeight: 700,
-              cursor: 'pointer',
+              cursor: selected ? 'pointer' : 'default',
               border: 'none',
+              opacity: selected ? 1 : 0.4,
+              pointerEvents: selected ? 'auto' : 'none',
             }}
-            onClick={() => setScreen('home')}
           >
-            다음
+            다음 →
           </button>
         </div>
 
       </div>
 
       {/* 하단 푸터 */}
-      <div style={{ marginTop: 32, display: 'flex', gap: 48, justifyContent: 'center' }}>
+      <div style={{
+        position: 'absolute',
+        bottom: 24, left: 0, right: 0,
+        display: 'flex',
+        gap: 48,
+        justifyContent: 'center',
+      }}>
         <div>
-          <div style={{
-            fontSize: 8,
-            fontFamily: 'monospace',
-            color: 'rgba(255,255,255,0.25)',
-            letterSpacing: '0.1em',
-          }}>DATA PRIVACY</div>
+          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>
+            DATA PRIVACY
+          </div>
           <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>AES-256 ENCRYPTED</div>
         </div>
         <div>
-          <div style={{
-            fontSize: 8,
-            fontFamily: 'monospace',
-            color: 'rgba(255,255,255,0.25)',
-            letterSpacing: '0.1em',
-          }}>NETWORK</div>
+          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>
+            NETWORK
+          </div>
           <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>SYSTEM READY</div>
         </div>
       </div>
