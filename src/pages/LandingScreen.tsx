@@ -29,14 +29,10 @@ function CompoundLabSection() {
   const GRAPH_W = 600
   const barW = Math.floor(GRAPH_W / BAR_COUNT) - 2
   const maxVal = Math.pow(1 + rate / 100, 365)
-  const minLog = 0
-  const maxLog = Math.log(maxVal)
   const bars = Array.from({ length: BAR_COUNT }, (_, i) => {
     const day = Math.round((i + 1) * 365 / BAR_COUNT)
     const value = Math.pow(1 + rate / 100, day)
-    const h = maxLog === 0
-      ? 4
-      : Math.max(4, (Math.log(value) - minLog) / (maxLog - minLog) * GRAPH_H)
+    const h = Math.max(4, (value / maxVal) * GRAPH_H)
     return { day, value, h }
   })
 
