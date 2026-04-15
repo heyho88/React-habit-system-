@@ -308,9 +308,9 @@ export default function LandingScreen() {
           position: fixed;
           inset: 0;
           overflow-y: auto;
-          background: #050505;
+          background: transparent;
           color: white;
-          z-index: 100;
+          z-index: 1;
           font-family: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         .ls-nav {
