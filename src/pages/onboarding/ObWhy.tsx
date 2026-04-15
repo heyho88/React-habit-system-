@@ -1,34 +1,16 @@
 import { useState } from 'react'
 import { useAppStore } from '../../store/appStore'
-import { type CategoryKey } from '../../lib/missions'
 
-const cats: { id: CategoryKey; label: string; desc: string; emoji: string; color: string }[] = [
-  { id: 'health',  label: '운동/건강',     desc: '신체 에너지는 모든 성장의 기초입니다. 체계적인 운동으로 성과를 만드세요.',  emoji: '💪', color: '#FF6B6B' },
-  { id: 'sleep',   label: '수면/기상',     desc: '수면의 질이 하루의 질을 결정합니다. 최적의 기상 루틴을 설계하세요.',       emoji: '🌙', color: '#6C5CE7' },
-  { id: 'routine', label: '루틴/생활습관', desc: '작은 습관의 복리가 삶을 바꿉니다. 일상을 시스템으로 만드세요.',            emoji: '⚡', color: '#00D2D3' },
+const reasons = [
+  { id: 'willpower', label: '의지력 부족',   desc: '시작은 하지만 며칠 못 가고 포기했어요.',           emoji: '😤' },
+  { id: 'method',    label: '방법을 몰라서', desc: '어떻게 해야 하는지 몰라서 방황했어요.',             emoji: '🤔' },
+  { id: 'busy',      label: '너무 바빠서',   desc: '하려고 했지만 시간이 없었어요.',                   emoji: '⏰' },
+  { id: 'env',       label: '환경이 안 돼서', desc: '주변 환경이 습관 형성에 도움이 안 됐어요.',        emoji: '🌍' },
 ]
 
-const screenFor: Record<string, string> = {
-  health:  'ob-exercise',
-  sleep:   'ob-sleep-current',
-  routine: 'ob-routine',
-}
-
-export default function SelectCategory() {
-  const { setScreen, setCategory, setCurrentOnboardingCategory, resetObState } = useAppStore()
-  const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null)
-
-  function handleSelect(val: CategoryKey) {
-    setSelectedCategory(val)
-  }
-
-  function handleNext() {
-    if (!selectedCategory) return
-    resetObState()
-    setCategory(selectedCategory)
-    setCurrentOnboardingCategory(selectedCategory)
-    setScreen('ob-why')
-  }
+export default function ObWhy() {
+  const { setScreen } = useAppStore()
+  const [selectedReason, setSelectedReason] = useState<string | null>(null)
 
   return (
     <div style={{
@@ -87,7 +69,7 @@ export default function SelectCategory() {
 
           {/* 좌측 */}
           <div>
-            {/* ① 스텝 라벨 */}
+            {/* 스텝 라벨 */}
             <div style={{
               fontSize: 10,
               fontFamily: 'monospace',
@@ -95,34 +77,34 @@ export default function SelectCategory() {
               letterSpacing: '0.15em',
               marginBottom: 24,
             }}>
-              STEP 01 : CATEGORY SELECTION
+              STEP 01 : ANALYSIS
             </div>
 
-            {/* ② 헤드라인 */}
+            {/* 헤드라인 */}
             <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
-              <div style={{ color: 'white' }}>당신의 성장을 위한</div>
+              <div style={{ color: 'white' }}>이전에 습관이</div>
               <div>
                 <span style={{
                   background: 'linear-gradient(90deg, #E040FB, #6C5CE7)',
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
-                }}>첫 번째 영역을</span>
+                }}>실패했던 이유가</span>
               </div>
-              <div style={{ color: 'white' }}>선택하세요.</div>
+              <div style={{ color: 'white' }}>무엇인가요?</div>
             </div>
 
-            {/* ③ 서브텍스트 */}
+            {/* 서브텍스트 */}
             <p style={{
               fontSize: 13,
               color: 'rgba(255,255,255,0.5)',
               lineHeight: 1.6,
               marginBottom: 32,
             }}>
-              우리는 매일 1%의 작은 성과가 만드는 복리의 마법을 믿습니다. 지금 가장 집중하고 싶은 영역을 선택해 주세요.
+              솔직한 답변이 당신에게 맞는 시스템을 설계하는 데 도움이 됩니다.
             </p>
 
-            {/* ④ PROJECTIONS 카드 */}
+            {/* INFO 카드 */}
             <div style={{
               background: 'rgba(255,255,255,0.04)',
               border: '1px solid rgba(255,255,255,0.08)',
@@ -132,27 +114,23 @@ export default function SelectCategory() {
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
                 <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00D2D3', flexShrink: 0 }} />
                 <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>
-                  PROJECTIONS
+                  SYSTEM ANALYSIS
                 </span>
               </div>
-              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>
-                미션 완료 시 1년 후 예상 성장치:
-              </div>
-              <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'monospace', display: 'flex', alignItems: 'baseline', gap: 8 }}>
-                <span style={{ color: 'white' }}>+37.8x</span>
-                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, fontWeight: 600 }}>Efficiency</span>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
+                선택 결과를 기반으로 최적의 루틴을 설계합니다.
               </div>
             </div>
           </div>
 
-          {/* 우측 — 카테고리 카드 */}
+          {/* 우측 — 이유 카드 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {cats.map(cat => {
-              const isSelected = selectedCategory === cat.id
+            {reasons.map(r => {
+              const isSelected = selectedReason === r.id
               return (
                 <div
-                  key={cat.id}
-                  onClick={() => handleSelect(cat.id)}
+                  key={r.id}
+                  onClick={() => setSelectedReason(r.id)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
@@ -167,26 +145,26 @@ export default function SelectCategory() {
                 >
                   {/* 썸네일 */}
                   <div style={{
-                    width: 56, height: 56,
+                    width: 48, height: 48,
                     borderRadius: 8,
                     flexShrink: 0,
-                    background: `linear-gradient(135deg,${cat.color}22,${cat.color}44)`,
-                    border: `1px solid ${cat.color}55`,
+                    background: 'rgba(255,255,255,0.05)',
+                    border: '1px solid rgba(255,255,255,0.1)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    fontSize: 26,
+                    fontSize: 22,
                   }}>
-                    {cat.emoji}
+                    {r.emoji}
                   </div>
 
                   {/* 텍스트 */}
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: 'white', marginBottom: 4 }}>
-                      {cat.label}
+                    <div style={{ fontSize: 15, fontWeight: 700, color: 'white', marginBottom: 3 }}>
+                      {r.label}
                     </div>
                     <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>
-                      {cat.desc}
+                      {r.desc}
                     </div>
                   </div>
 
@@ -221,7 +199,7 @@ export default function SelectCategory() {
           gap: 24,
         }}>
           <button
-            onClick={() => setScreen('home')}
+            onClick={() => setScreen('ob-category')}
             style={{
               background: 'none',
               border: 'none',
@@ -230,10 +208,10 @@ export default function SelectCategory() {
               color: 'rgba(255,255,255,0.35)',
             }}
           >
-            건너뛰기
+            이전 단계로
           </button>
           <button
-            onClick={handleNext}
+            onClick={() => selectedReason && setScreen('ob-loading')}
             style={{
               background: 'white',
               color: '#050505',
@@ -241,13 +219,13 @@ export default function SelectCategory() {
               padding: '14px 32px',
               fontSize: 14,
               fontWeight: 700,
-              cursor: selectedCategory ? 'pointer' : 'default',
+              cursor: selectedReason ? 'pointer' : 'default',
               border: 'none',
-              opacity: selectedCategory ? 1 : 0.4,
-              pointerEvents: selectedCategory ? 'auto' : 'none',
+              opacity: selectedReason ? 1 : 0.4,
+              pointerEvents: selectedReason ? 'auto' : 'none',
             }}
           >
-            다음 →
+            분석 시작 →
           </button>
         </div>
 

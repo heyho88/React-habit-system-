@@ -5,6 +5,8 @@ import MobileSummaryBar from './components/layout/MobileSummaryBar'
 import MobileStatsSheet from './components/layout/MobileStatsSheet'
 
 import SelectCategory    from './pages/onboarding/SelectCategory'
+import ObWhy            from './pages/onboarding/ObWhy'
+import ObLoading        from './pages/onboarding/ObLoading'
 import SelectExercise    from './pages/onboarding/SelectExercise'
 import SelectRoutine     from './pages/onboarding/SelectRoutine'
 import FailReason        from './pages/onboarding/FailReason'
@@ -24,36 +26,12 @@ import MissionScreen    from './pages/mission/MissionScreen'
 import DailyState       from './pages/mission/DailyState'
 import LandingScreen   from './pages/LandingScreen'
 
-function ObLoading() {
-  const setScreen = useAppStore(s => s.setScreen)
-  useEffect(() => {
-    const t = setTimeout(() => setScreen('first-mission'), 2200)
-    return () => clearTimeout(t)
-  }, [setScreen])
-
-  return (
-    <div className="screen-animate" style={{ textAlign: 'center', paddingTop: 80 }}>
-      <div style={{
-        width: 48, height: 48, margin: '0 auto 28px',
-        border: '3px solid rgba(139,92,246,0.2)',
-        borderTop: '3px solid #8b5cf6',
-        borderRadius: '50%',
-        animation: 'spin 0.9s linear infinite',
-      }} />
-      <p style={{ fontSize: 16, fontWeight: 600, marginBottom: 8 }}>
-        당신만의 맞춤 미션을 만들고 있습니다...
-      </p>
-      <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14 }}>잠깐만요 🌱</p>
-      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
-    </div>
-  )
-}
-
 
 function renderScreen(screen: string) {
   switch (screen) {
     case 'landing':            return <LandingScreen />
     case 'ob-category':       return <SelectCategory />
+    case 'ob-why':            return <ObWhy />
     case 'ob-exercise':       return <SelectExercise />
     case 'ob-routine':        return <SelectRoutine />
     case 'ob-fail-reason':    return <FailReason />
