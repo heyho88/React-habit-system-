@@ -16,18 +16,18 @@ const screenFor: Record<string, string> = {
 
 export default function SelectCategory() {
   const { setScreen, setCategory, setCurrentOnboardingCategory, resetObState } = useAppStore()
-  const [selected, setSelected] = useState<CategoryKey | null>(null)
+  const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null)
 
   function handleSelect(val: CategoryKey) {
-    setSelected(val)
+    setSelectedCategory(val)
   }
 
   function handleNext() {
-    if (!selected) return
+    if (!selectedCategory) return
     resetObState()
-    setCategory(selected)
-    setCurrentOnboardingCategory(selected)
-    setScreen(screenFor[selected])
+    setCategory(selectedCategory)
+    setCurrentOnboardingCategory(selectedCategory)
+    setScreen(screenFor[selectedCategory])
   }
 
   return (
@@ -138,8 +138,9 @@ export default function SelectCategory() {
               <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>
                 미션 완료 시 1년 후 예상 성장치:
               </div>
-              <div style={{ fontSize: 24, fontWeight: 800, color: 'white', fontFamily: 'monospace' }}>
-                +37.8x &nbsp; Efficiency
+              <div style={{ fontSize: 24, fontWeight: 800, fontFamily: 'monospace', display: 'flex', alignItems: 'baseline', gap: 8 }}>
+                <span style={{ color: 'white' }}>+37.8x</span>
+                <span style={{ color: 'rgba(255,255,255,0.7)', fontSize: 16, fontWeight: 600 }}>Efficiency</span>
               </div>
             </div>
           </div>
@@ -147,7 +148,7 @@ export default function SelectCategory() {
           {/* 우측 — 카테고리 카드 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {cats.map(cat => {
-              const isSelected = selected === cat.id
+              const isSelected = selectedCategory === cat.id
               return (
                 <div
                   key={cat.id}
@@ -240,10 +241,10 @@ export default function SelectCategory() {
               padding: '14px 32px',
               fontSize: 14,
               fontWeight: 700,
-              cursor: selected ? 'pointer' : 'default',
+              cursor: selectedCategory ? 'pointer' : 'default',
               border: 'none',
-              opacity: selected ? 1 : 0.4,
-              pointerEvents: selected ? 'auto' : 'none',
+              opacity: selectedCategory ? 1 : 0.4,
+              pointerEvents: selectedCategory ? 'auto' : 'none',
             }}
           >
             다음 →
