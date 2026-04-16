@@ -5,8 +5,6 @@ import MobileSummaryBar from './components/layout/MobileSummaryBar'
 import MobileStatsSheet from './components/layout/MobileStatsSheet'
 
 import SelectCategory    from './pages/onboarding/SelectCategory'
-import ObWhy            from './pages/onboarding/ObWhy'
-import ObLoading        from './pages/onboarding/ObLoading'
 import SelectExercise    from './pages/onboarding/SelectExercise'
 import SelectRoutine     from './pages/onboarding/SelectRoutine'
 import FailReason        from './pages/onboarding/FailReason'
@@ -31,7 +29,6 @@ function renderScreen(screen: string) {
   switch (screen) {
     case 'landing':            return <LandingScreen />
     case 'ob-category':       return <SelectCategory />
-    case 'ob-why':            return <ObWhy />
     case 'ob-exercise':       return <SelectExercise />
     case 'ob-routine':        return <SelectRoutine />
     case 'ob-fail-reason':    return <FailReason />
@@ -44,7 +41,6 @@ function renderScreen(screen: string) {
     case 'ob-evening':        return <EveningState />
     case 'ob-space':          return <SpaceReason />
     case 'ob-reading':        return <ReadingReason />
-    case 'ob-loading':        return <ObLoading />
     case 'first-mission':     return <FirstMission />
     case 'main-choice':       return <ABChoice />
     case 'mission-grow':      return <MissionScreen choice="grow" />
