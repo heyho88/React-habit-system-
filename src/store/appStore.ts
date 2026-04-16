@@ -58,6 +58,9 @@ interface AppState {
   obMorningState: string | null
   obEveningState: string | null
   obSpaceReason: string | null
+  obExerciseType: string | null
+  obRoutineType: string | null
+  obFailReason: number | null
   dailyEnergy: string | null
   dailyMental: string | null
   pendingResetCategory: string | null
@@ -69,6 +72,9 @@ interface AppActions {
   setCurrentMissionCategory: (cat: string | null) => void
   setCurrentOnboardingCategory: (cat: string | null) => void
   setObPendingType: (type: string | null) => void
+  setObExerciseType: (v: string) => void
+  setObRoutineType: (v: string) => void
+  setObFailReason: (v: number) => void
   resetObState: () => void
   initializeApp: () => void
 }
@@ -92,6 +98,9 @@ const initialObState: Pick<
   | 'obMorningState'
   | 'obEveningState'
   | 'obSpaceReason'
+  | 'obExerciseType'
+  | 'obRoutineType'
+  | 'obFailReason'
 > = {
   currentOnboardingCategory: null,
   obPendingType: null,
@@ -106,6 +115,9 @@ const initialObState: Pick<
   obMorningState: null,
   obEveningState: null,
   obSpaceReason: null,
+  obExerciseType: null,
+  obRoutineType: null,
+  obFailReason: null,
 }
 
 // ── Store ──
@@ -128,6 +140,10 @@ export const useAppStore = create<AppStore>((set) => ({
   setCurrentOnboardingCategory: (cat) => set({ currentOnboardingCategory: cat }),
 
   setObPendingType: (type) => set({ obPendingType: type }),
+
+  setObExerciseType: (v) => set({ obExerciseType: v }),
+  setObRoutineType:  (v) => set({ obRoutineType: v }),
+  setObFailReason:   (v) => set({ obFailReason: v }),
 
   resetObState: () => set({ ...initialObState }),
 
