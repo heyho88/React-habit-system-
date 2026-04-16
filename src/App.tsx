@@ -20,6 +20,7 @@ import ReadingReason     from './pages/onboarding/ReadingReason'
 import FirstMission      from './pages/onboarding/FirstMission'
 import ObStep2          from './pages/onboarding/ObStep2'
 import ObProfile        from './pages/onboarding/ObProfile'
+import ObNeuralSync     from './pages/onboarding/ObNeuralSync'
 import Home             from './pages/Home'
 import ABChoice         from './pages/mission/ABChoice'
 import MissionScreen    from './pages/mission/MissionScreen'
@@ -45,7 +46,8 @@ function renderScreen(screen: string) {
     case 'ob-reading':        return <ReadingReason />
     case 'ob-step2':          return <ObStep2 />
     case 'ob-profile':        return <ObProfile />
-    case 'ob-complete':       return <div style={{color:'white',background:'#050505',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>OB-COMPLETE</div>
+    case 'ob-complete':       return <ObNeuralSync />
+    case 'ob-complete-final': return <div style={{color:'white',background:'#050505',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>OB-COMPLETE-FINAL</div>
     case 'first-mission':     return <FirstMission />
     case 'main-choice':       return <ABChoice />
     case 'mission-grow':      return <MissionScreen choice="grow" />
