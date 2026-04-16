@@ -18,6 +18,7 @@ import EveningState      from './pages/onboarding/EveningState'
 import SpaceReason       from './pages/onboarding/SpaceReason'
 import ReadingReason     from './pages/onboarding/ReadingReason'
 import FirstMission      from './pages/onboarding/FirstMission'
+import ObStep2          from './pages/onboarding/ObStep2'
 import Home             from './pages/Home'
 import ABChoice         from './pages/mission/ABChoice'
 import MissionScreen    from './pages/mission/MissionScreen'
@@ -41,6 +42,8 @@ function renderScreen(screen: string) {
     case 'ob-evening':        return <EveningState />
     case 'ob-space':          return <SpaceReason />
     case 'ob-reading':        return <ReadingReason />
+    case 'ob-step2':          return <ObStep2 />
+    case 'ob-profile':        return <div style={{color:'white',background:'#050505',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>OB-PROFILE</div>
     case 'first-mission':     return <FirstMission />
     case 'main-choice':       return <ABChoice />
     case 'mission-grow':      return <MissionScreen choice="grow" />
