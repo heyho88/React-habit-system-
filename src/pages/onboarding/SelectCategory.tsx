@@ -160,9 +160,9 @@ export default function SelectCategory() {
                     padding: '16px 20px',
                     borderRadius: 12,
                     cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    background: isSelected ? 'rgba(108,92,231,0.1)' : 'rgba(255,255,255,0.03)',
-                    border: isSelected ? '1px solid rgba(139,92,246,0.6)' : '1px solid rgba(255,255,255,0.08)',
+                    background: isSelected ? 'rgba(108,92,231,0.12)' : 'rgba(255,255,255,0.03)',
+                    border: isSelected ? '1px solid rgba(139,92,246,0.7)' : '1px solid rgba(255,255,255,0.08)',
+                    transition: 'all 0.15s',
                   }}
                 >
                   {/* 썸네일 */}
