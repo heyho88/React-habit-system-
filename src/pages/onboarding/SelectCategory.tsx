@@ -12,6 +12,11 @@ type Step =
   | 'routine-fail'
   | 'loading'
 
+// ── 상수 ──
+
+const SLEEP_HOURS   = [20, 21, 22, 23, 0, 1, 2, 3]
+const SLEEP_MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+
 // ── 데이터 ──
 
 const cats: { id: CategoryKey; label: string; desc: string; emoji: string; color: string }[] = [
@@ -137,10 +142,16 @@ export default function SelectCategory() {
     setObSleepTargetM(sleepTargetM)
   }, [sleepTargetH, sleepTargetM])
 
-  const formatTime = (h: number, m: string) => {
+  const formatTime = (h: number, m: number) => {
     const period  = h >= 12 ? '오후' : '오전'
-    const displayH = h > 12 ? h - 12 : h === 0 ? 12 : h
-    return `${period} ${displayH}:${m}`
+    const display = h === 0 ? 12 : h > 12 ? h - 12 : h
+    return `${period} ${display}:${String(m).padStart(2, '0')}`
+  }
+
+  const formatHour = (h: number) => {
+    const period  = h >= 12 ? '오후' : '오전'
+    const display = h === 0 ? 12 : h > 12 ? h - 12 : h
+    return `${period} ${display}시`
   }
 
   const ArrowBtn = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
@@ -438,7 +449,7 @@ export default function SelectCategory() {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: 48, fontWeight: 800, color: 'white', fontFamily: 'monospace', marginBottom: 8 }}>
-                      {formatTime(sleepCurrentH, String(sleepCurrentM).padStart(2, '0'))}
+                      {formatTime(sleepCurrentH, sleepCurrentM)}
                     </div>
                     <div style={{ fontSize: 11, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
                       취침 시간
@@ -448,21 +459,33 @@ export default function SelectCategory() {
                     {/* 시 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>시간</div>
-                      <ArrowBtn onClick={() => setSleepCurrentH(h => h >= 3 ? 20 : h + 1)}>▲</ArrowBtn>
-                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
-                        {sleepCurrentH}
+                      <ArrowBtn onClick={() => setSleepCurrentH(h => {
+                        const idx = SLEEP_HOURS.indexOf(h)
+                        return SLEEP_HOURS[(idx + 1) % SLEEP_HOURS.length]
+                      })}>▲</ArrowBtn>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: 'white', minWidth: 72, textAlign: 'center' }}>
+                        {formatHour(sleepCurrentH)}
                       </div>
-                      <ArrowBtn onClick={() => setSleepCurrentH(h => h <= 20 ? 3 : h - 1)}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepCurrentH(h => {
+                        const idx = SLEEP_HOURS.indexOf(h)
+                        return SLEEP_HOURS[(idx - 1 + SLEEP_HOURS.length) % SLEEP_HOURS.length]
+                      })}>▼</ArrowBtn>
                     </div>
                     <div style={{ fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>:</div>
                     {/* 분 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>분</div>
-                      <ArrowBtn onClick={() => setSleepCurrentM(m => m >= 50 ? 0 : m + 10)}>▲</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepCurrentM(m => {
+                        const idx = SLEEP_MINUTES.indexOf(m)
+                        return SLEEP_MINUTES[(idx + 1) % SLEEP_MINUTES.length]
+                      })}>▲</ArrowBtn>
                       <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
                         {String(sleepCurrentM).padStart(2, '0')}
                       </div>
-                      <ArrowBtn onClick={() => setSleepCurrentM(m => m <= 0 ? 50 : m - 10)}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepCurrentM(m => {
+                        const idx = SLEEP_MINUTES.indexOf(m)
+                        return SLEEP_MINUTES[(idx - 1 + SLEEP_MINUTES.length) % SLEEP_MINUTES.length]
+                      })}>▼</ArrowBtn>
                     </div>
                   </div>
                 </div>
@@ -495,7 +518,7 @@ export default function SelectCategory() {
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
                   <div style={{ textAlign: 'center' }}>
                     <div style={{ fontSize: 48, fontWeight: 800, color: 'white', fontFamily: 'monospace', marginBottom: 8 }}>
-                      {formatTime(sleepTargetH, String(sleepTargetM).padStart(2, '0'))}
+                      {formatTime(sleepTargetH, sleepTargetM)}
                     </div>
                     <div style={{ fontSize: 11, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
                       목표 취침 시간
@@ -505,21 +528,33 @@ export default function SelectCategory() {
                     {/* 시 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>시간</div>
-                      <ArrowBtn onClick={() => setSleepTargetH(h => h >= 3 ? 20 : h + 1)}>▲</ArrowBtn>
-                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
-                        {sleepTargetH}
+                      <ArrowBtn onClick={() => setSleepTargetH(h => {
+                        const idx = SLEEP_HOURS.indexOf(h)
+                        return SLEEP_HOURS[(idx + 1) % SLEEP_HOURS.length]
+                      })}>▲</ArrowBtn>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: 'white', minWidth: 72, textAlign: 'center' }}>
+                        {formatHour(sleepTargetH)}
                       </div>
-                      <ArrowBtn onClick={() => setSleepTargetH(h => h <= 20 ? 3 : h - 1)}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepTargetH(h => {
+                        const idx = SLEEP_HOURS.indexOf(h)
+                        return SLEEP_HOURS[(idx - 1 + SLEEP_HOURS.length) % SLEEP_HOURS.length]
+                      })}>▼</ArrowBtn>
                     </div>
                     <div style={{ fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>:</div>
                     {/* 분 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>분</div>
-                      <ArrowBtn onClick={() => setSleepTargetM(m => m >= 50 ? 0 : m + 10)}>▲</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepTargetM(m => {
+                        const idx = SLEEP_MINUTES.indexOf(m)
+                        return SLEEP_MINUTES[(idx + 1) % SLEEP_MINUTES.length]
+                      })}>▲</ArrowBtn>
                       <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
                         {String(sleepTargetM).padStart(2, '0')}
                       </div>
-                      <ArrowBtn onClick={() => setSleepTargetM(m => m <= 0 ? 50 : m - 10)}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepTargetM(m => {
+                        const idx = SLEEP_MINUTES.indexOf(m)
+                        return SLEEP_MINUTES[(idx - 1 + SLEEP_MINUTES.length) % SLEEP_MINUTES.length]
+                      })}>▼</ArrowBtn>
                     </div>
                   </div>
                 </div>
