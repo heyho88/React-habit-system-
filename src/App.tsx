@@ -19,6 +19,7 @@ import SpaceReason       from './pages/onboarding/SpaceReason'
 import ReadingReason     from './pages/onboarding/ReadingReason'
 import FirstMission      from './pages/onboarding/FirstMission'
 import ObStep2          from './pages/onboarding/ObStep2'
+import ObProfile        from './pages/onboarding/ObProfile'
 import Home             from './pages/Home'
 import ABChoice         from './pages/mission/ABChoice'
 import MissionScreen    from './pages/mission/MissionScreen'
@@ -43,7 +44,8 @@ function renderScreen(screen: string) {
     case 'ob-space':          return <SpaceReason />
     case 'ob-reading':        return <ReadingReason />
     case 'ob-step2':          return <ObStep2 />
-    case 'ob-profile':        return <div style={{color:'white',background:'#050505',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>OB-PROFILE</div>
+    case 'ob-profile':        return <ObProfile />
+    case 'ob-complete':       return <div style={{color:'white',background:'#050505',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}}>OB-COMPLETE</div>
     case 'first-mission':     return <FirstMission />
     case 'main-choice':       return <ABChoice />
     case 'mission-grow':      return <MissionScreen choice="grow" />

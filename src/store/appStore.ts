@@ -61,6 +61,8 @@ interface AppState {
   obExerciseType: string | null
   obRoutineType: string | null
   obFailReason: number | null
+  obDisplayName: string
+  obBio: string
   dailyEnergy: string | null
   dailyMental: string | null
   pendingResetCategory: string | null
@@ -79,6 +81,8 @@ interface AppActions {
   setObSleepCurrentM: (v: number) => void
   setObSleepTargetH: (v: number) => void
   setObSleepTargetM: (v: number) => void
+  setObDisplayName: (v: string) => void
+  setObBio: (v: string) => void
   resetObState: () => void
   initializeApp: () => void
 }
@@ -105,6 +109,8 @@ const initialObState: Pick<
   | 'obExerciseType'
   | 'obRoutineType'
   | 'obFailReason'
+  | 'obDisplayName'
+  | 'obBio'
 > = {
   currentOnboardingCategory: null,
   obPendingType: null,
@@ -122,7 +128,11 @@ const initialObState: Pick<
   obExerciseType: null,
   obRoutineType: null,
   obFailReason: null,
+  obDisplayName: '',
+  obBio: '',
 }
+
+
 
 // ── Store ──
 
@@ -152,6 +162,8 @@ export const useAppStore = create<AppStore>((set) => ({
   setObSleepCurrentM:  (v) => set({ obSleepCurrentM: v }),
   setObSleepTargetH:   (v) => set({ obSleepTargetH: v }),
   setObSleepTargetM:   (v) => set({ obSleepTargetM: v }),
+  setObDisplayName:    (v) => set({ obDisplayName: v }),
+  setObBio:            (v) => set({ obBio: v }),
 
   resetObState: () => set({ ...initialObState }),
 

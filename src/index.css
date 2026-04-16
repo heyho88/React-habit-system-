@@ -85,6 +85,11 @@ body {
   to { --border-angle: 360deg; }
 }
 
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255,255,255,0.25);
+}
+
 .card-border-animated {
   --border-angle: 0deg;
   animation: borderRotate 4s linear infinite;
