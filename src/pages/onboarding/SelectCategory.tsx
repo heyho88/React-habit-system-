@@ -2,7 +2,15 @@ import { useState, useEffect } from 'react'
 import { useAppStore } from '../../store/appStore'
 import { type CategoryKey } from '../../lib/missions'
 
-type Step = 'category' | 'why' | 'loading'
+type Step =
+  | 'category'
+  | 'health-exercise'
+  | 'health-fail'
+  | 'sleep-current'
+  | 'sleep-target'
+  | 'routine-select'
+  | 'routine-fail'
+  | 'loading'
 
 const cats: { id: CategoryKey; label: string; desc: string; emoji: string; color: string }[] = [
   { id: 'health',  label: '운동/건강',     desc: '신체 에너지는 모든 성장의 기초입니다. 체계적인 운동으로 성과를 만드세요.',  emoji: '💪', color: '#FF6B6B' },
@@ -10,18 +18,10 @@ const cats: { id: CategoryKey; label: string; desc: string; emoji: string; color
   { id: 'routine', label: '루틴/생활습관', desc: '작은 습관의 복리가 삶을 바꿉니다. 일상을 시스템으로 만드세요.',            emoji: '⚡', color: '#00D2D3' },
 ]
 
-const reasons = [
-  { id: 'willpower', label: '의지력 부족',    desc: '시작은 하지만 며칠 못 가고 포기했어요.',              emoji: '😤' },
-  { id: 'method',    label: '방법을 몰라서',  desc: '어떻게 해야 하는지 몰라서 방황했어요.',                emoji: '🤔' },
-  { id: 'busy',      label: '너무 바빠서',    desc: '하려고 했지만 시간이 없었어요.',                       emoji: '⏰' },
-  { id: 'env',       label: '환경이 안 돼서', desc: '주변 환경이 습관 형성에 도움이 안 됐어요.',             emoji: '🌍' },
-]
-
 export default function SelectCategory() {
   const { setScreen, setCategory, setCurrentOnboardingCategory, resetObState } = useAppStore()
 
   const [selectedCategory, setSelectedCategory] = useState<CategoryKey | null>(null)
-  const [selectedReason, setSelectedReason]     = useState<string | null>(null)
   const [step, setStep]                         = useState<Step>('category')
   const [animating, setAnimating]               = useState(false)
   const [loadingPhase, setLoadingPhase]         = useState<'spinning' | 'done'>('spinning')
@@ -35,17 +35,14 @@ export default function SelectCategory() {
     }, 250)
   }
 
-  function handleCategoryNext() {
+  const handleCategoryNext = () => {
     if (!selectedCategory) return
     resetObState()
     setCategory(selectedCategory)
     setCurrentOnboardingCategory(selectedCategory)
-    goTo('why')
-  }
-
-  function handleWhyNext() {
-    if (!selectedReason) return
-    goTo('loading')
+    if (selectedCategory === 'health') goTo('health-exercise')
+    else if (selectedCategory === 'sleep') goTo('sleep-current')
+    else if (selectedCategory === 'routine') goTo('routine-select')
   }
 
   useEffect(() => {
@@ -226,82 +223,39 @@ export default function SelectCategory() {
             </>
           )}
 
-          {/* ─── STEP: WHY ─── */}
-          {step === 'why' && (
+          {/* ─── PLACEHOLDER STEPS ─── */}
+          {(step === 'health-exercise' || step === 'health-fail' || step === 'sleep-current' || step === 'sleep-target' || step === 'routine-select' || step === 'routine-fail') && (
             <>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'start' }}>
-
-                <div>
-                  <div style={{ fontSize: 10, fontFamily: 'monospace', color: '#8B5CF6', letterSpacing: '0.15em', marginBottom: 24 }}>
-                    STEP 01 : ANALYSIS
-                  </div>
-                  <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
-                    <div style={{ color: 'white' }}>이전에 습관이</div>
-                    <div>
-                      <span style={{
-                        background: 'linear-gradient(90deg, #E040FB, #6C5CE7)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        backgroundClip: 'text',
-                      }}>실패했던 이유가</span>
-                    </div>
-                    <div style={{ color: 'white' }}>무엇인가요?</div>
-                  </div>
-                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 32 }}>
-                    솔직한 답변이 당신에게 맞는 시스템을 설계하는 데 도움이 됩니다.
-                  </p>
-                  <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#00D2D3', flexShrink: 0 }} />
-                      <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em' }}>SYSTEM ANALYSIS</span>
-                    </div>
-                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6 }}>
-                      선택 결과를 기반으로 최적의 루틴을 설계합니다.
-                    </div>
-                  </div>
+              {step === 'health-exercise' && (
+                <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
+                  HEALTH-EXERCISE (다음 작업에서 구현)
                 </div>
-
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {reasons.map(r => {
-                    const isSelected = selectedReason === r.id
-                    return (
-                      <div
-                        key={r.id}
-                        onClick={() => setSelectedReason(r.id)}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: 16,
-                          padding: '16px 20px', borderRadius: 12, cursor: 'pointer',
-                          background: isSelected ? 'rgba(108,92,231,0.12)' : 'rgba(255,255,255,0.03)',
-                          border: isSelected ? '1px solid rgba(139,92,246,0.7)' : '1px solid rgba(255,255,255,0.08)',
-                          transition: 'all 0.15s',
-                        }}
-                      >
-                        <div style={{
-                          width: 48, height: 48, borderRadius: 8, flexShrink: 0,
-                          background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22,
-                        }}>
-                          {r.emoji}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <div style={{ fontSize: 15, fontWeight: 700, color: 'white', marginBottom: 3 }}>{r.label}</div>
-                          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>{r.desc}</div>
-                        </div>
-                        <div style={{
-                          width: 20, height: 20, borderRadius: '50%', flexShrink: 0,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          border: isSelected ? '2px solid #8B5CF6' : '2px solid rgba(255,255,255,0.2)',
-                          background: 'transparent',
-                        }}>
-                          {isSelected && <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#8B5CF6' }} />}
-                        </div>
-                      </div>
-                    )
-                  })}
+              )}
+              {step === 'health-fail' && (
+                <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
+                  HEALTH-FAIL (다음 작업에서 구현)
                 </div>
-
-              </div>
-
+              )}
+              {step === 'sleep-current' && (
+                <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
+                  SLEEP-CURRENT (다음 작업에서 구현)
+                </div>
+              )}
+              {step === 'sleep-target' && (
+                <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
+                  SLEEP-TARGET (다음 작업에서 구현)
+                </div>
+              )}
+              {step === 'routine-select' && (
+                <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
+                  ROUTINE-SELECT (다음 작업에서 구현)
+                </div>
+              )}
+              {step === 'routine-fail' && (
+                <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
+                  ROUTINE-FAIL (다음 작업에서 구현)
+                </div>
+              )}
               <div style={{ marginTop: 40, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 24 }}>
                 <button
                   onClick={() => goTo('category')}
@@ -310,16 +264,13 @@ export default function SelectCategory() {
                   이전 단계로
                 </button>
                 <button
-                  onClick={handleWhyNext}
+                  onClick={() => goTo('loading')}
                   style={{
                     background: 'white', color: '#050505', borderRadius: 50,
-                    padding: '14px 32px', fontSize: 14, fontWeight: 700, border: 'none',
-                    cursor: selectedReason ? 'pointer' : 'default',
-                    opacity: selectedReason ? 1 : 0.4,
-                    pointerEvents: selectedReason ? 'auto' : 'none',
+                    padding: '14px 32px', fontSize: 14, fontWeight: 700, border: 'none', cursor: 'pointer',
                   }}
                 >
-                  분석 시작 →
+                  다음 →
                 </button>
               </div>
             </>
