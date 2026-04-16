@@ -12,11 +12,6 @@ type Step =
   | 'routine-fail'
   | 'loading'
 
-// ── 상수 ──
-
-const SLEEP_HOURS   = [20, 21, 22, 23, 0, 1, 2, 3]
-const SLEEP_MINUTES = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
-
 // ── 데이터 ──
 
 const cats: { id: CategoryKey; label: string; desc: string; emoji: string; color: string }[] = [
@@ -114,9 +109,9 @@ export default function SelectCategory() {
   const [selectedHealthFail,  setSelectedHealthFail] = useState<number | null>(null)
   const [selectedRoutine,     setSelectedRoutine]    = useState<string | null>(null)
   const [selectedRoutineFail, setSelectedRoutineFail]= useState<number | null>(null)
-  const [sleepCurrentH,       setSleepCurrentH]      = useState(23)
+  const [sleepCurrentH,       setSleepCurrentH]      = useState(22)
   const [sleepCurrentM,       setSleepCurrentM]      = useState(0)
-  const [sleepTargetH,        setSleepTargetH]       = useState(23)
+  const [sleepTargetH,        setSleepTargetH]       = useState(22)
   const [sleepTargetM,        setSleepTargetM]       = useState(0)
 
   const [step,          setStep]          = useState<Step>('category')
@@ -142,17 +137,8 @@ export default function SelectCategory() {
     setObSleepTargetM(sleepTargetM)
   }, [sleepTargetH, sleepTargetM])
 
-  const formatTime = (h: number, m: number) => {
-    const period  = h >= 12 ? '오후' : '오전'
-    const display = h === 0 ? 12 : h > 12 ? h - 12 : h
-    return `${period} ${display}:${String(m).padStart(2, '0')}`
-  }
-
-  const formatHour = (h: number) => {
-    const period  = h >= 12 ? '오후' : '오전'
-    const display = h === 0 ? 12 : h > 12 ? h - 12 : h
-    return `${period} ${display}시`
-  }
+  const formatTime = (h: number, m: number) =>
+    `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 
   const ArrowBtn = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
     <button onClick={onClick} style={{
@@ -459,33 +445,21 @@ export default function SelectCategory() {
                     {/* 시 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>시간</div>
-                      <ArrowBtn onClick={() => setSleepCurrentH(h => {
-                        const idx = SLEEP_HOURS.indexOf(h)
-                        return SLEEP_HOURS[(idx + 1) % SLEEP_HOURS.length]
-                      })}>▲</ArrowBtn>
-                      <div style={{ fontSize: 20, fontWeight: 700, color: 'white', minWidth: 72, textAlign: 'center' }}>
-                        {formatHour(sleepCurrentH)}
+                      <ArrowBtn onClick={() => setSleepCurrentH(h => (h + 1) % 24)}>▲</ArrowBtn>
+                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
+                        {String(sleepCurrentH).padStart(2, '0')}
                       </div>
-                      <ArrowBtn onClick={() => setSleepCurrentH(h => {
-                        const idx = SLEEP_HOURS.indexOf(h)
-                        return SLEEP_HOURS[(idx - 1 + SLEEP_HOURS.length) % SLEEP_HOURS.length]
-                      })}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepCurrentH(h => (h - 1 + 24) % 24)}>▼</ArrowBtn>
                     </div>
                     <div style={{ fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>:</div>
                     {/* 분 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>분</div>
-                      <ArrowBtn onClick={() => setSleepCurrentM(m => {
-                        const idx = SLEEP_MINUTES.indexOf(m)
-                        return SLEEP_MINUTES[(idx + 1) % SLEEP_MINUTES.length]
-                      })}>▲</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepCurrentM(m => (m + 5) % 60)}>▲</ArrowBtn>
                       <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
                         {String(sleepCurrentM).padStart(2, '0')}
                       </div>
-                      <ArrowBtn onClick={() => setSleepCurrentM(m => {
-                        const idx = SLEEP_MINUTES.indexOf(m)
-                        return SLEEP_MINUTES[(idx - 1 + SLEEP_MINUTES.length) % SLEEP_MINUTES.length]
-                      })}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepCurrentM(m => (m - 5 + 60) % 60)}>▼</ArrowBtn>
                     </div>
                   </div>
                 </div>
@@ -528,33 +502,21 @@ export default function SelectCategory() {
                     {/* 시 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>시간</div>
-                      <ArrowBtn onClick={() => setSleepTargetH(h => {
-                        const idx = SLEEP_HOURS.indexOf(h)
-                        return SLEEP_HOURS[(idx + 1) % SLEEP_HOURS.length]
-                      })}>▲</ArrowBtn>
-                      <div style={{ fontSize: 20, fontWeight: 700, color: 'white', minWidth: 72, textAlign: 'center' }}>
-                        {formatHour(sleepTargetH)}
+                      <ArrowBtn onClick={() => setSleepTargetH(h => (h + 1) % 24)}>▲</ArrowBtn>
+                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
+                        {String(sleepTargetH).padStart(2, '0')}
                       </div>
-                      <ArrowBtn onClick={() => setSleepTargetH(h => {
-                        const idx = SLEEP_HOURS.indexOf(h)
-                        return SLEEP_HOURS[(idx - 1 + SLEEP_HOURS.length) % SLEEP_HOURS.length]
-                      })}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepTargetH(h => (h - 1 + 24) % 24)}>▼</ArrowBtn>
                     </div>
                     <div style={{ fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>:</div>
                     {/* 분 컨트롤 */}
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
                       <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>분</div>
-                      <ArrowBtn onClick={() => setSleepTargetM(m => {
-                        const idx = SLEEP_MINUTES.indexOf(m)
-                        return SLEEP_MINUTES[(idx + 1) % SLEEP_MINUTES.length]
-                      })}>▲</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepTargetM(m => (m + 5) % 60)}>▲</ArrowBtn>
                       <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
                         {String(sleepTargetM).padStart(2, '0')}
                       </div>
-                      <ArrowBtn onClick={() => setSleepTargetM(m => {
-                        const idx = SLEEP_MINUTES.indexOf(m)
-                        return SLEEP_MINUTES[(idx - 1 + SLEEP_MINUTES.length) % SLEEP_MINUTES.length]
-                      })}>▼</ArrowBtn>
+                      <ArrowBtn onClick={() => setSleepTargetM(m => (m - 5 + 60) % 60)}>▼</ArrowBtn>
                     </div>
                   </div>
                 </div>
