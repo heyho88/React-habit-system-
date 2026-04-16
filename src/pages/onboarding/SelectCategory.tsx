@@ -101,13 +101,18 @@ function NavButtons({
 
 export default function SelectCategory() {
   const { setScreen, setCategory, setCurrentOnboardingCategory, resetObState,
-          setObExerciseType, setObRoutineType, setObFailReason } = useAppStore()
+          setObExerciseType, setObRoutineType, setObFailReason,
+          setObSleepCurrentH, setObSleepCurrentM, setObSleepTargetH, setObSleepTargetM } = useAppStore()
 
-  const [selectedCategory,   setSelectedCategory]   = useState<CategoryKey | null>(null)
-  const [selectedExercise,   setSelectedExercise]   = useState<string | null>(null)
-  const [selectedHealthFail, setSelectedHealthFail] = useState<number | null>(null)
-  const [selectedRoutine,    setSelectedRoutine]    = useState<string | null>(null)
-  const [selectedRoutineFail,setSelectedRoutineFail]= useState<number | null>(null)
+  const [selectedCategory,    setSelectedCategory]   = useState<CategoryKey | null>(null)
+  const [selectedExercise,    setSelectedExercise]   = useState<string | null>(null)
+  const [selectedHealthFail,  setSelectedHealthFail] = useState<number | null>(null)
+  const [selectedRoutine,     setSelectedRoutine]    = useState<string | null>(null)
+  const [selectedRoutineFail, setSelectedRoutineFail]= useState<number | null>(null)
+  const [sleepCurrentH,       setSleepCurrentH]      = useState(23)
+  const [sleepCurrentM,       setSleepCurrentM]      = useState(0)
+  const [sleepTargetH,        setSleepTargetH]       = useState(23)
+  const [sleepTargetM,        setSleepTargetM]       = useState(0)
 
   const [step,          setStep]          = useState<Step>('category')
   const [animating,     setAnimating]     = useState(false)
@@ -121,6 +126,33 @@ export default function SelectCategory() {
       setAnimating(false)
     }, 250)
   }
+
+  useEffect(() => {
+    setObSleepCurrentH(sleepCurrentH)
+    setObSleepCurrentM(sleepCurrentM)
+  }, [sleepCurrentH, sleepCurrentM])
+
+  useEffect(() => {
+    setObSleepTargetH(sleepTargetH)
+    setObSleepTargetM(sleepTargetM)
+  }, [sleepTargetH, sleepTargetM])
+
+  const formatTime = (h: number, m: string) => {
+    const period  = h >= 12 ? '오후' : '오전'
+    const displayH = h > 12 ? h - 12 : h === 0 ? 12 : h
+    return `${period} ${displayH}:${m}`
+  }
+
+  const ArrowBtn = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
+    <button onClick={onClick} style={{
+      width: 36, height: 36, borderRadius: '50%',
+      background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
+      color: 'white', cursor: 'pointer', fontSize: 14,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      {children}
+    </button>
+  )
 
   const handleCategoryNext = () => {
     if (!selectedCategory) return
@@ -386,11 +418,54 @@ export default function SelectCategory() {
             </>
           )}
 
-          {/* ─── SLEEP-CURRENT (placeholder) ─── */}
+          {/* ─── SLEEP-CURRENT ─── */}
           {step === 'sleep-current' && (
             <>
-              <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
-                SLEEP-CURRENT (다음 작업에서 구현)
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'start', flex: 1 }}>
+                <div>
+                  <div style={{ fontSize: 10, fontFamily: 'monospace', color: '#8B5CF6', letterSpacing: '0.15em', marginBottom: 24 }}>
+                    STEP 01 : SLEEP BASELINE
+                  </div>
+                  <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
+                    <div style={{ color: 'white' }}>보통 몇 시에</div>
+                    <div><span style={gradientText}>주무시나요?</span></div>
+                  </div>
+                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 32 }}>
+                    현재 수면 패턴을 파악합니다. 정확할수록 더 나은 목표를 설계합니다.
+                  </p>
+                  <InfoCard dot="#00D2D3" label="BASELINE CALIBRATION" body="현재 취침 시간을 기준으로 단계적 목표를 설정합니다." />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 48, fontWeight: 800, color: 'white', fontFamily: 'monospace', marginBottom: 8 }}>
+                      {formatTime(sleepCurrentH, String(sleepCurrentM).padStart(2, '0'))}
+                    </div>
+                    <div style={{ fontSize: 11, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+                      취침 시간
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+                    {/* 시 컨트롤 */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                      <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>시간</div>
+                      <ArrowBtn onClick={() => setSleepCurrentH(h => h >= 3 ? 20 : h + 1)}>▲</ArrowBtn>
+                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
+                        {sleepCurrentH}
+                      </div>
+                      <ArrowBtn onClick={() => setSleepCurrentH(h => h <= 20 ? 3 : h - 1)}>▼</ArrowBtn>
+                    </div>
+                    <div style={{ fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>:</div>
+                    {/* 분 컨트롤 */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                      <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>분</div>
+                      <ArrowBtn onClick={() => setSleepCurrentM(m => m >= 50 ? 0 : m + 10)}>▲</ArrowBtn>
+                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
+                        {String(sleepCurrentM).padStart(2, '0')}
+                      </div>
+                      <ArrowBtn onClick={() => setSleepCurrentM(m => m <= 0 ? 50 : m - 10)}>▼</ArrowBtn>
+                    </div>
+                  </div>
+                </div>
               </div>
               <NavButtons
                 onBack={() => goTo('category')}
@@ -400,16 +475,60 @@ export default function SelectCategory() {
             </>
           )}
 
-          {/* ─── SLEEP-TARGET (placeholder) ─── */}
+          {/* ─── SLEEP-TARGET ─── */}
           {step === 'sleep-target' && (
             <>
-              <div style={{ color: 'white', fontSize: 20, padding: 40 }}>
-                SLEEP-TARGET (다음 작업에서 구현)
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '48px', alignItems: 'start', flex: 1 }}>
+                <div>
+                  <div style={{ fontSize: 10, fontFamily: 'monospace', color: '#8B5CF6', letterSpacing: '0.15em', marginBottom: 24 }}>
+                    STEP 01 : SLEEP TARGET
+                  </div>
+                  <div style={{ fontSize: 32, fontWeight: 800, lineHeight: 1.2, marginBottom: 16 }}>
+                    <div style={{ color: 'white' }}>목표 취침 시간은</div>
+                    <div><span style={gradientText}>언제인가요?</span></div>
+                  </div>
+                  <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 32 }}>
+                    달성 가능한 목표부터 시작합니다. 너무 급격한 변화보다 작은 개선이 효과적입니다.
+                  </p>
+                  <InfoCard dot="#00D2D3" label="TARGET PROJECTION" body="설정한 목표로 단계적으로 수면 시간을 조정합니다." />
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 32 }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontSize: 48, fontWeight: 800, color: 'white', fontFamily: 'monospace', marginBottom: 8 }}>
+                      {formatTime(sleepTargetH, String(sleepTargetM).padStart(2, '0'))}
+                    </div>
+                    <div style={{ fontSize: 11, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+                      목표 취침 시간
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 40, alignItems: 'center' }}>
+                    {/* 시 컨트롤 */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                      <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>시간</div>
+                      <ArrowBtn onClick={() => setSleepTargetH(h => h >= 3 ? 20 : h + 1)}>▲</ArrowBtn>
+                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
+                        {sleepTargetH}
+                      </div>
+                      <ArrowBtn onClick={() => setSleepTargetH(h => h <= 20 ? 3 : h - 1)}>▼</ArrowBtn>
+                    </div>
+                    <div style={{ fontSize: 28, fontWeight: 700, color: 'rgba(255,255,255,0.3)' }}>:</div>
+                    {/* 분 컨트롤 */}
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                      <div style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>분</div>
+                      <ArrowBtn onClick={() => setSleepTargetM(m => m >= 50 ? 0 : m + 10)}>▲</ArrowBtn>
+                      <div style={{ fontSize: 28, fontWeight: 700, color: 'white', minWidth: 40, textAlign: 'center' }}>
+                        {String(sleepTargetM).padStart(2, '0')}
+                      </div>
+                      <ArrowBtn onClick={() => setSleepTargetM(m => m <= 0 ? 50 : m - 10)}>▼</ArrowBtn>
+                    </div>
+                  </div>
+                </div>
               </div>
               <NavButtons
                 onBack={() => goTo('sleep-current')}
                 onNext={() => goTo('loading')}
                 nextEnabled={true}
+                nextLabel="분석 시작 →"
               />
             </>
           )}

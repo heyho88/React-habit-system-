@@ -75,6 +75,10 @@ interface AppActions {
   setObExerciseType: (v: string) => void
   setObRoutineType: (v: string) => void
   setObFailReason: (v: number) => void
+  setObSleepCurrentH: (v: number) => void
+  setObSleepCurrentM: (v: number) => void
+  setObSleepTargetH: (v: number) => void
+  setObSleepTargetM: (v: number) => void
   resetObState: () => void
   initializeApp: () => void
 }
@@ -141,9 +145,13 @@ export const useAppStore = create<AppStore>((set) => ({
 
   setObPendingType: (type) => set({ obPendingType: type }),
 
-  setObExerciseType: (v) => set({ obExerciseType: v }),
-  setObRoutineType:  (v) => set({ obRoutineType: v }),
-  setObFailReason:   (v) => set({ obFailReason: v }),
+  setObExerciseType:   (v) => set({ obExerciseType: v }),
+  setObRoutineType:    (v) => set({ obRoutineType: v }),
+  setObFailReason:     (v) => set({ obFailReason: v }),
+  setObSleepCurrentH:  (v) => set({ obSleepCurrentH: v }),
+  setObSleepCurrentM:  (v) => set({ obSleepCurrentM: v }),
+  setObSleepTargetH:   (v) => set({ obSleepTargetH: v }),
+  setObSleepTargetM:   (v) => set({ obSleepTargetM: v }),
 
   resetObState: () => set({ ...initialObState }),
 
