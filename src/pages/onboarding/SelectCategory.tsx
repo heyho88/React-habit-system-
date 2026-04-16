@@ -70,14 +70,13 @@ export default function SelectCategory() {
     <div style={{
       position: 'fixed',
       top: 0, left: 0, right: 0, bottom: 0,
-      width: '100vw', height: '100vh',
       background: '#050505',
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
+      padding: '24px 20px',
       zIndex: 100,
-      overflow: 'auto',
+      overflowY: 'auto',
     }}>
 
       {/* 상단 네비 */}
@@ -100,10 +99,14 @@ export default function SelectCategory() {
       <div style={{
         width: '100%',
         maxWidth: '900px',
+        minHeight: '580px',
         background: 'rgba(255,255,255,0.03)',
         border: '1px solid rgba(255,255,255,0.08)',
         borderRadius: '20px',
         padding: '40px 48px',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
       }}>
 
         {/* 진행 바 */}
@@ -115,6 +118,7 @@ export default function SelectCategory() {
 
         {/* 콘텐츠 래퍼 — 내부만 fade+slide 전환 */}
         <div style={{
+          flex: 1,
           opacity: animating ? 0 : 1,
           transform: animating ? 'translateY(8px)' : 'translateY(0)',
           transition: 'opacity 0.25s ease, transform 0.25s ease',
@@ -324,9 +328,10 @@ export default function SelectCategory() {
           {/* ─── STEP: LOADING ─── */}
           {step === 'loading' && (
             <div style={{
+              flex: 1,
               display: 'flex', flexDirection: 'column',
               alignItems: 'center', justifyContent: 'center',
-              minHeight: '360px', textAlign: 'center',
+              textAlign: 'center',
             }}>
               <div style={{ opacity: phaseAnimating ? 0 : 1, transition: 'opacity 0.2s' }}>
                 {loadingPhase === 'spinning' ? (
