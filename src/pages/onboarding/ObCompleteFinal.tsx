@@ -13,8 +13,8 @@ const FALLBACK = { title: 'Body Architecture', sub: 'Physical Foundation' };
 
 const STYLES = `
 @keyframes scaleIn {
-  from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-  to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
 }
 @keyframes fadeInUp {
   from { transform: translateY(16px); opacity: 0; }
@@ -96,7 +96,7 @@ export default function ObCompleteFinal() {
           </span>
         </div>
 
-        {/* 외부 카드 컨테이너 */}
+        {/* 외부 카드 컨테이너 — SelectCategory와 동일 */}
         <div style={{
           width: '100%',
           maxWidth: '900px',
@@ -105,60 +105,10 @@ export default function ObCompleteFinal() {
           border: '1px solid rgba(255,255,255,0.08)',
           borderRadius: '20px',
           padding: '40px 48px',
-          paddingTop: '80px',
           display: 'flex',
           flexDirection: 'column',
           position: 'relative',
-          overflow: 'visible',
         }}>
-
-          {/* 카드 상단 장식선 */}
-          <div style={{
-            position: 'absolute',
-            top: 0, left: 0, right: 0,
-            height: 2,
-            background: 'linear-gradient(90deg, #8b5cf6, #22d3ee)',
-            borderRadius: '20px 20px 0 0',
-          }} />
-
-          {/* 체크마크 — 카드 상단 경계선에 걸침 */}
-          <div style={{
-            position: 'absolute',
-            top: 0,
-            left: '50%',
-            width: 80, height: 80,
-            animation: mounted ? 'scaleIn 0.5s ease-out forwards' : 'none',
-            opacity: mounted ? undefined : 0,
-            zIndex: 2,
-          }}>
-            {/* 가장 바깥 희미한 테두리 원 */}
-            <div style={{
-              position: 'absolute',
-              inset: 0, borderRadius: '50%',
-              border: '1px solid rgba(139,92,246,0.2)',
-            }} />
-            {/* 중간 원 */}
-            <div style={{
-              position: 'absolute',
-              top: 8, left: 8, right: 8, bottom: 8,
-              borderRadius: '50%',
-              border: '1px solid rgba(139,92,246,0.35)',
-              background: 'rgba(139,92,246,0.06)',
-            }} />
-            {/* 안쪽 보라-핑크 그라디언트 채움 원 */}
-            <div style={{
-              position: 'absolute',
-              top: 16, left: 16, right: 16, bottom: 16,
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 0 20px rgba(139,92,246,0.5)',
-            }}>
-              <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
-                <path d="M2 8L8.5 14L20 2" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </div>
-          </div>
 
           {/* 진행 바 — 3개 모두 완료(보라색) */}
           <div style={{ display: 'flex', gap: '8px', marginBottom: '48px' }}>
@@ -176,6 +126,45 @@ export default function ObCompleteFinal() {
             justifyContent: 'center',
           }}>
             <div style={{ width: '100%', maxWidth: 440 }}>
+
+              {/* 체크마크 — 카드 내부 정상 flow */}
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 28 }}>
+                <div style={{
+                  position: 'relative',
+                  width: 80, height: 80,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  animation: mounted ? 'scaleIn 0.5s ease-out forwards' : 'none',
+                  opacity: mounted ? 1 : 0,
+                }}>
+                  {/* 가장 바깥 희미한 테두리 원 */}
+                  <div style={{
+                    position: 'absolute',
+                    inset: 0, borderRadius: '50%',
+                    border: '1px solid rgba(139,92,246,0.2)',
+                  }} />
+                  {/* 중간 원 */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 8, left: 8, right: 8, bottom: 8,
+                    borderRadius: '50%',
+                    border: '1px solid rgba(139,92,246,0.35)',
+                    background: 'rgba(139,92,246,0.06)',
+                  }} />
+                  {/* 안쪽 보라-핑크 그라디언트 채움 원 */}
+                  <div style={{
+                    position: 'absolute',
+                    top: 16, left: 16, right: 16, bottom: 16,
+                    borderRadius: '50%',
+                    background: 'linear-gradient(135deg, #8b5cf6, #ec4899)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 0 20px rgba(139,92,246,0.5)',
+                  }}>
+                    <svg width="22" height="16" viewBox="0 0 22 16" fill="none">
+                      <path d="M2 8L8.5 14L20 2" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                </div>
+              </div>
 
               {/* 타이틀 */}
               <div style={{ textAlign: 'center', marginBottom: 28 }}>
