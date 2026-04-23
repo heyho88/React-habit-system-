@@ -1,119 +1,188 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import {
   useAppStore, getAllActiveCatKeys, getCatData,
   getRoutineSlots, getRoutineUnlocked,
 } from '../store/appStore'
 import {
-  today, multStr, isRoutineCat, getRoutineType, getCatIcon, getCatName,
-  getExerciseMission, isSleepMaxLevel, sleepTimeToMins,
+  today, isRoutineCat, getRoutineType, isSleepMaxLevel,
 } from '../lib/helpers'
-import { MISSIONS, CAT_META, type RoutineType } from '../lib/missions'
+import type { RoutineType } from '../lib/missions'
 
-// ── 유틸 ──
-function pad(n: number) { return String(n).padStart(2, '0') }
+// ── 타입 ──
 
-function useClock() {
-  const [now, setNow] = useState(new Date())
-  useEffect(() => {
-    const id = setInterval(() => setNow(new Date()), 1000)
-    return () => clearInterval(id)
-  }, [])
-  return `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`
+type StatusKey = 'active' | 'completed' | 'pending'
+type DifficultyKey = 'low' | 'medium' | 'high'
+type BucketKey = 'architecture' | 'intellect' | 'social' | 'vitality'
+
+type StatusFilter = 'all' | StatusKey
+type DifficultyFilter = 'all' | DifficultyKey
+type BucketFilter = 'all' | BucketKey
+
+interface Protocol {
+  title: string
+  desc: string
+  bucket: BucketKey
+  difficulty: DifficultyKey
+  accent: string
 }
 
 // ── 프로토콜 메타 ──
-// 카테고리별로 대시보드와 동일한 사이버틱한 프로토콜 네이밍
-interface ProtocolMeta {
-  title: string
-  sub: string
-  accent: string  // 카드 내부 포인트 컬러 (배지, 링 등)
-}
 
-function getProtocolMeta(cat: string, type: string): ProtocolMeta {
+function getProtocol(cat: string, type: string): Protocol {
   if (cat === 'health') {
-    if (type === 'gym')          return { title: 'Gym Protocol',          sub: 'Strength Architecture', accent: '#8b5cf6' }
-    if (type === 'hometraining') return { title: 'Home Training Protocol', sub: 'Body Architecture',     accent: '#8b5cf6' }
-    if (type === 'walking')      return { title: 'Cardio Protocol',        sub: 'Endurance System',      accent: '#8b5cf6' }
-    return { title: 'Body Architecture', sub: 'Physical Foundation', accent: '#8b5cf6' }
+    if (type === 'gym') return {
+      title: 'Gym Protocol',
+      desc: 'Systematic optimization of physical strength and cardiovascular endurance via high-intensity protocols.',
+      bucket: 'architecture', difficulty: 'high', accent: '#8b5cf6',
+    }
+    if (type === 'hometraining') return {
+      title: 'Home Training',
+      desc: 'Daily bodyweight conditioning to build sustainable strength without external equipment.',
+      bucket: 'architecture', difficulty: 'medium', accent: '#8b5cf6',
+    }
+    if (type === 'walking') return {
+      title: 'Cardio Protocol',
+      desc: 'Low-impact cardiovascular training to establish endurance and movement consistency.',
+      bucket: 'vitality', difficulty: 'low', accent: '#8b5cf6',
+    }
+    return {
+      title: 'Body Architecture',
+      desc: 'Physical foundation training tuned for compound daily gains in strength and endurance.',
+      bucket: 'architecture', difficulty: 'high', accent: '#8b5cf6',
+    }
   }
-  if (cat === 'sleep') return { title: 'Sleep Protocol', sub: 'Recovery System', accent: '#22d3ee' }
+  if (cat === 'sleep') return {
+    title: 'Sleep Protocol',
+    desc: 'Engineered rest cycles to optimize recovery, cognitive function, and long-term health.',
+    bucket: 'vitality', difficulty: 'low', accent: '#22d3ee',
+  }
   if (isRoutineCat(cat)) {
     const t = getRoutineType(cat) as RoutineType
-    const meta: Record<RoutineType, ProtocolMeta> = {
-      morning: { title: 'Ignition Sequence',  sub: 'Morning Protocol',      accent: '#fb923c' },
-      evening: { title: 'Shutdown Sequence',  sub: 'Evening Protocol',      accent: '#818cf8' },
-      space:   { title: 'Spatial Order',      sub: 'Environmental Control', accent: '#34d399' },
-      digital: { title: 'Focus Reclaim',      sub: 'Digital Detox',         accent: '#f472b6' },
-      mental:  { title: 'Cognitive Reset',    sub: 'Mental Protocol',       accent: '#a78bfa' },
-      reading: { title: 'Knowledge Compound', sub: 'Reading Protocol',      accent: '#fbbf24' },
+    const meta: Record<RoutineType, Protocol> = {
+      morning: {
+        title: 'Ignition Sequence',
+        desc: 'Structured morning ritual to engage focus and intention at the start of each cycle.',
+        bucket: 'architecture', difficulty: 'medium', accent: '#fb923c',
+      },
+      evening: {
+        title: 'Shutdown Sequence',
+        desc: 'Wind-down ritual to consolidate the day and prepare the system for recovery.',
+        bucket: 'vitality', difficulty: 'low', accent: '#818cf8',
+      },
+      space: {
+        title: 'Spatial Order',
+        desc: 'Environmental discipline as the foundation for sustained mental clarity.',
+        bucket: 'architecture', difficulty: 'low', accent: '#34d399',
+      },
+      digital: {
+        title: 'Focus Reclaim',
+        desc: 'Reclaim attention and cognitive bandwidth by engineering boundaries with digital systems.',
+        bucket: 'intellect', difficulty: 'medium', accent: '#f472b6',
+      },
+      mental: {
+        title: 'Cognitive Reset',
+        desc: 'Emotional regulation and cognitive reset protocols for sustained clarity under load.',
+        bucket: 'social', difficulty: 'medium', accent: '#a78bfa',
+      },
+      reading: {
+        title: 'Knowledge Compound',
+        desc: 'Compounding knowledge acquisition through consistent, focused reading intervals.',
+        bucket: 'intellect', difficulty: 'high', accent: '#fbbf24',
+      },
     }
     return meta[t]
   }
-  return { title: 'Unknown Protocol', sub: '—', accent: '#8b5cf6' }
+  return {
+    title: 'Unknown Protocol',
+    desc: '—',
+    bucket: 'architecture', difficulty: 'low', accent: '#8b5cf6',
+  }
 }
 
-// ── 공통 스타일 ──
-const cardBase: React.CSSProperties = {
-  background: 'rgba(255,255,255,0.025)',
-  border: '1px solid rgba(255,255,255,0.07)',
-  borderRadius: 20,
-  padding: 24,
-  position: 'relative',
-  overflow: 'hidden',
+function getStatus(data: Record<string, unknown> | null, todayStr: string): StatusKey {
+  if (!data) return 'pending'
+  const level = Number(data.level) || 1
+  const lastDate = data.last_date
+  const gc = Number(data.growth_count) || 0
+  if (level >= 7) return 'completed'
+  if (!lastDate && gc === 0) return 'pending'
+  // 오늘 완료 + 장기 진행 중
+  if (String(lastDate) === todayStr && level >= 4) return 'active'
+  return 'active'
 }
 
-const sectionLabel: React.CSSProperties = {
+function getProgressPct(data: Record<string, unknown>): number {
+  const level = Number(data.level) || 1
+  return Math.min(100, Math.round((level / 7) * 100))
+}
+
+// ── 스타일 상수 ──
+
+const MONO_LABEL: React.CSSProperties = {
   fontSize: 10, fontFamily: 'monospace',
   color: 'rgba(255,255,255,0.45)',
   letterSpacing: '0.15em', textTransform: 'uppercase',
 }
 
-type FilterKey = 'all' | 'pending' | 'done'
+const STATUS_META: Record<StatusKey, { label: string; bg: string; border: string; color: string }> = {
+  active:    { label: 'ACTIVE',    bg: 'rgba(139,92,246,0.14)', border: 'rgba(139,92,246,0.4)', color: '#a78bfa' },
+  completed: { label: 'COMPLETED', bg: 'rgba(52,211,153,0.12)', border: 'rgba(52,211,153,0.4)', color: '#34d399' },
+  pending:   { label: 'PENDING',   bg: 'rgba(244,63,94,0.12)',  border: 'rgba(244,63,94,0.4)',  color: '#fb7185' },
+}
 
-// ─────────────────────────────────────────────────
+const BUCKET_LABEL: Record<BucketKey, string> = {
+  architecture: 'Architecture',
+  intellect:    'Intellect',
+  social:       'Social',
+  vitality:     'Vitality',
+}
+
+// ─────────────────────────────────────────────
 // Missions 페이지
-// ─────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+
 export default function Missions() {
   const setScreen = useAppStore(s => s.setScreen)
   const setCurrentMissionCategory = useAppStore(s => s.setCurrentMissionCategory)
   const setCurrentOnboardingCategory = useAppStore(s => s.setCurrentOnboardingCategory)
   const resetObState = useAppStore(s => s.resetObState)
 
-  const [tick, setTick] = useState(0)
-  const clock = useClock()
-  const [filter, setFilter] = useState<FilterKey>('all')
+  const [statusF, setStatusF] = useState<StatusFilter>('all')
+  const [diffF, setDiffF] = useState<DifficultyFilter>('all')
+  const [bucketF, setBucketF] = useState<BucketFilter>('all')
+  const [query, setQuery] = useState('')
 
   const todayStr = today()
   const keys = getAllActiveCatKeys()
   const slots = getRoutineSlots()
-
-  // 활성 카테고리 분류
-  const hasHealth  = !!getCatData('health')
-  const hasSleep   = !!getCatData('sleep')
-  const hasRoutine = slots.length > 0
   const routineUnlocked = getRoutineUnlocked()
-  const canAddRoutine = hasRoutine && slots.length < routineUnlocked && slots.length < 7
+  const canAddRoutine = slots.length > 0 && slots.length < Math.min(routineUnlocked, 7)
+  const hasHealth = !!getCatData('health')
+  const hasSleep = !!getCatData('sleep')
+  const canAddNewMission = !hasHealth || !hasSleep || canAddRoutine
 
-  const inactiveCats: string[] = [
-    !hasHealth  && 'health',
-    !hasSleep   && 'sleep',
-    !hasRoutine && 'routine',
-  ].filter(Boolean) as string[]
+  const cards = useMemo(() => {
+    return keys.map(cat => {
+      const data = getCatData(cat)
+      if (!data) return null
+      const type = String(data.type ?? '')
+      const protocol = getProtocol(cat, type)
+      const status = getStatus(data, todayStr)
+      const streak = Number(data.streak) || 0
+      const progress = getProgressPct(data)
+      const doneToday = String(data.last_date) === todayStr
+      return { cat, type, data, protocol, status, streak, progress, doneToday }
+    }).filter((x): x is NonNullable<typeof x> => x !== null)
+  }, [keys.join('|'), todayStr])
 
-  // 전체 통계
-  const activeCount  = keys.length
-  const doneToday    = keys.filter(k => getCatData(k)?.last_date === todayStr).length
-  const pendingToday = activeCount - doneToday
-  const totalGc      = keys.reduce((s, k) => s + (Number(getCatData(k)?.growth_count) || 0), 0)
-  const totalMult    = multStr(totalGc)
+  const filtered = cards.filter(c => {
+    if (statusF !== 'all' && c.status !== statusF) return false
+    if (diffF !== 'all' && c.protocol.difficulty !== diffF) return false
+    if (bucketF !== 'all' && c.protocol.bucket !== bucketF) return false
+    if (query && !c.protocol.title.toLowerCase().includes(query.toLowerCase())) return false
+    return true
+  })
 
-  const filteredKeys = useMemo(() => {
-    if (filter === 'pending') return keys.filter(k => getCatData(k)?.last_date !== todayStr)
-    if (filter === 'done')    return keys.filter(k => getCatData(k)?.last_date === todayStr)
-    return keys
-  }, [filter, tick, keys.join('|')])
-
-  // ── 미션 시작 ──
   function startMission(cat: string) {
     const data = getCatData(cat)
     if (!data) return
@@ -122,524 +191,492 @@ export default function Missions() {
       setScreen('first-mission'); return
     }
     if (!data.last_date) { setScreen('first-mission'); return }
-    if (String(data.last_date) === todayStr) return // 이미 완료
+    if (String(data.last_date) === todayStr) return
     setScreen('main-choice')
   }
 
-  function openAdd(cat: string) {
+  function openNewMission() {
     resetObState()
-    setCurrentOnboardingCategory(cat)
-    if (cat === 'health')       setScreen('ob-exercise')
-    else if (cat === 'sleep')   { useAppStore.setState({ obSleepCurrentH: 2, obSleepCurrentM: 0, obSleepTargetH: 0, obSleepTargetM: 0 }); setScreen('ob-sleep-current') }
-    else                        setScreen('ob-routine')
+    if (!hasHealth) {
+      setCurrentOnboardingCategory('health')
+      setScreen('ob-exercise')
+    } else if (!hasSleep) {
+      setCurrentOnboardingCategory('sleep')
+      useAppStore.setState({ obSleepCurrentH: 2, obSleepCurrentM: 0, obSleepTargetH: 0, obSleepTargetM: 0 })
+      setScreen('ob-sleep-current')
+    } else {
+      setCurrentOnboardingCategory('routine')
+      setScreen('ob-routine')
+    }
   }
-
-  function openAddRoutineSlot() {
-    setCurrentOnboardingCategory('routine')
-    setScreen('ob-routine')
-  }
-
-  // refresh helper (필요 시 즉시 재렌더 — e.g. 미션 완료 후 돌아올 때)
-  useEffect(() => {
-    const id = setInterval(() => setTick(t => t + 1), 5000)
-    return () => clearInterval(id)
-  }, [])
 
   return (
-    <div key={tick} style={{
-      maxWidth: 1200, margin: '0 auto', padding: '40px 40px 60px',
+    <div style={{
+      maxWidth: 1200, margin: '0 auto', padding: '48px 40px 80px',
       color: '#fff', fontFamily: "'Geist Sans', -apple-system, sans-serif",
     }}>
       {/* ── 헤더 ── */}
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-        marginBottom: 32, gap: 24, flexWrap: 'wrap',
+        gap: 24, flexWrap: 'wrap', marginBottom: 36,
       }}>
         <div>
-          <div style={{ ...sectionLabel, marginBottom: 10 }}>MISSION DIRECTIVES</div>
+          <div style={{ ...MONO_LABEL, color: '#a78bfa', marginBottom: 12 }}>
+            OPERATION CENTER
+          </div>
           <h1 style={{
-            fontSize: 32, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.2,
+            fontSize: 40, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, margin: 0,
           }}>
-            Active Protocols.
+            Missions
           </h1>
-          <p style={{
-            marginTop: 8, fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.55,
-          }}>
-            매일의 1%가 복리로 쌓입니다. 오늘 배치된 미션을 수행하세요.
-          </p>
         </div>
 
-        <div style={{ display: 'flex', gap: 36, alignItems: 'flex-start' }}>
-          <HeaderStat label="ACTIVE"          value={String(activeCount)} valueColor="#fff" />
-          <HeaderStat label="PENDING TODAY"   value={String(pendingToday)} valueColor={pendingToday > 0 ? '#fbbf24' : '#34d399'} />
-          <HeaderStat label="COMPOUND RATE"   value={`×${totalMult}`} valueColor="#a78bfa" />
-          <HeaderStat label="SYSTEM TIME"     value={clock} valueColor="#fff" />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <SearchBox value={query} onChange={setQuery} />
+          <button
+            onClick={openNewMission}
+            disabled={!canAddNewMission}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 8,
+              padding: '12px 22px',
+              background: canAddNewMission
+                ? 'linear-gradient(135deg, #8b5cf6, #a855f7)'
+                : 'rgba(255,255,255,0.08)',
+              color: canAddNewMission ? '#fff' : 'rgba(255,255,255,0.35)',
+              border: 'none', borderRadius: 50,
+              fontSize: 13, fontWeight: 700,
+              cursor: canAddNewMission ? 'pointer' : 'not-allowed',
+              boxShadow: canAddNewMission ? '0 8px 24px rgba(139,92,246,0.35)' : 'none',
+              letterSpacing: '-0.01em',
+              transition: 'opacity 0.15s',
+            }}
+            onMouseEnter={e => { if (canAddNewMission) (e.currentTarget as HTMLButtonElement).style.opacity = '0.9' }}
+            onMouseLeave={e => { if (canAddNewMission) (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
+          >
+            <span style={{ fontSize: 16, lineHeight: 1 }}>+</span>
+            New Mission
+          </button>
         </div>
       </div>
 
-      {/* ── 필터 칩 ── */}
-      {keys.length > 0 && (
-        <div style={{ display: 'flex', gap: 8, marginBottom: 20, flexWrap: 'wrap' }}>
-          <FilterChip label="ALL"            count={activeCount}  active={filter === 'all'}     onClick={() => setFilter('all')} />
-          <FilterChip label="IN PROGRESS"    count={pendingToday} active={filter === 'pending'} onClick={() => setFilter('pending')} />
-          <FilterChip label="COMPLETED TODAY" count={doneToday}   active={filter === 'done'}    onClick={() => setFilter('done')} />
-        </div>
-      )}
-
-      {/* ── 미션 카드 리스트 ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
-        {filteredKeys.length === 0 && keys.length > 0 && (
-          <div style={{
-            ...cardBase, textAlign: 'center', padding: '40px 24px',
-            color: 'rgba(255,255,255,0.4)', fontSize: 13,
-          }}>
-            {filter === 'done'    && '아직 완료한 미션이 없어요. 하나라도 해보세요.'}
-            {filter === 'pending' && '오늘의 모든 미션을 완료했어요 🌱'}
-          </div>
-        )}
-
-        {filteredKeys.map(cat => (
-          <MissionCard
-            key={cat}
-            cat={cat}
-            todayStr={todayStr}
-            onLog={() => startMission(cat)}
-            onDetails={() => {
-              setCurrentMissionCategory(cat)
-              // 상세 페이지는 추후 구현 — 현재는 no-op
-            }}
-          />
-        ))}
+      {/* ── 필터 그룹 ── */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 28 }}>
+        <FilterRow
+          label="STATUS"
+          items={[
+            { key: 'all', label: 'All' },
+            { key: 'active', label: 'Active' },
+            { key: 'completed', label: 'Completed' },
+          ]}
+          value={statusF}
+          onChange={v => setStatusF(v as StatusFilter)}
+        />
+        <FilterRow
+          label="DIFFICULTY"
+          items={[
+            { key: 'all', label: 'All' },
+            { key: 'low', label: 'Low' },
+            { key: 'medium', label: 'Medium' },
+            { key: 'high', label: 'High-End' },
+          ]}
+          value={diffF}
+          onChange={v => setDiffF(v as DifficultyFilter)}
+        />
+        <FilterRow
+          label="CATEGORY"
+          items={[
+            { key: 'all', label: 'All' },
+            { key: 'architecture', label: 'Architecture' },
+            { key: 'intellect', label: 'Intellect' },
+            { key: 'social', label: 'Social' },
+            { key: 'vitality', label: 'Vitality' },
+          ]}
+          value={bucketF}
+          onChange={v => setBucketF(v as BucketFilter)}
+        />
       </div>
 
-      {/* ── 루틴 슬롯 확장 ── */}
-      {hasRoutine && canAddRoutine && (
-        <div style={{
-          ...cardBase,
-          background: 'rgba(139,92,246,0.06)',
-          border: '1px solid rgba(139,92,246,0.25)',
-          marginBottom: 20,
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-        }}>
-          <div>
-            <div style={{ ...sectionLabel, color: '#c4b5fd', marginBottom: 6 }}>NEW SLOT UNLOCKED</div>
-            <p style={{ fontSize: 15, fontWeight: 700 }}>
-              루틴 슬롯을 추가할 수 있어요 · {slots.length} / {Math.min(routineUnlocked, 7)}
-            </p>
-            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', marginTop: 4 }}>
-              7일 연속 유지할 때마다 슬롯이 열립니다.
-            </p>
-          </div>
-          <button
-            onClick={openAddRoutineSlot}
-            style={{
-              padding: '12px 22px',
-              background: 'rgba(139,92,246,0.2)',
-              border: '1px solid rgba(139,92,246,0.4)',
-              borderRadius: 40, color: '#c4b5fd',
-              fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              whiteSpace: 'nowrap',
-            }}
-          >+ Add Routine Slot</button>
-        </div>
-      )}
+      {/* ── 디바이더 ── */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '8px 0 28px' }} />
 
-      {/* ── 비활성 모듈 ── */}
-      {inactiveCats.length > 0 && (
-        <div>
-          <div style={{ ...sectionLabel, marginBottom: 14 }}>INACTIVE MODULES</div>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: `repeat(${Math.min(inactiveCats.length, 3)}, minmax(0, 1fr))`,
-            gap: 12,
-          }}>
-            {inactiveCats.map(cat => (
-              <InactiveModule key={cat} cat={cat} onClick={() => openAdd(cat)} />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* ── 카테고리 완전 미설정 시 엠프티 스테이트 ── */}
-      {keys.length === 0 && (
+      {/* ── 미션 그리드 ── */}
+      {filtered.length === 0 && cards.length > 0 ? (
         <div style={{
-          ...cardBase, textAlign: 'center', padding: '64px 24px',
+          textAlign: 'center', padding: '60px 24px',
+          color: 'rgba(255,255,255,0.4)', fontSize: 13,
+          background: 'rgba(255,255,255,0.02)',
+          border: '1px dashed rgba(255,255,255,0.08)',
+          borderRadius: 16,
         }}>
-          <div style={{ fontSize: 42, marginBottom: 12 }}>🌱</div>
-          <p style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>아직 등록된 프로토콜이 없어요</p>
-          <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 20 }}>
-            첫 카테고리를 추가하고 1% 시스템을 가동하세요.
-          </p>
-          <button
-            onClick={() => setScreen('ob-category')}
-            style={{
-              padding: '12px 22px',
-              background: '#fff', color: '#050505',
-              border: 'none', borderRadius: 40,
-              fontSize: 13, fontWeight: 700, cursor: 'pointer',
-            }}
-          >+ Initialize Protocol</button>
+          해당 조건에 맞는 프로토콜이 없어요.
+        </div>
+      ) : cards.length === 0 ? (
+        <EmptyState onStart={() => setScreen('ob-category')} />
+      ) : (
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(440px, 1fr))',
+          gap: 20,
+        }}>
+          {filtered.map(c => (
+            <MissionCard
+              key={c.cat}
+              protocol={c.protocol}
+              status={c.status}
+              streak={c.streak}
+              progress={c.progress}
+              doneToday={c.doneToday}
+              onAction={() => startMission(c.cat)}
+            />
+          ))}
+          {canAddNewMission && (
+            <UnlockCard onClick={openNewMission} />
+          )}
         </div>
       )}
     </div>
   )
 }
 
-// ─────────────────────────────────────────────────
-// 미션 카드
-// ─────────────────────────────────────────────────
-function MissionCard({
-  cat, todayStr, onLog, onDetails,
+// ─────────────────────────────────────────────
+// 서브 컴포넌트
+// ─────────────────────────────────────────────
+
+function SearchBox({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [focus, setFocus] = useState(false)
+  return (
+    <div style={{
+      position: 'relative',
+      display: 'flex', alignItems: 'center',
+      width: 320, maxWidth: '100%',
+      padding: '0 16px',
+      background: 'rgba(255,255,255,0.04)',
+      border: focus ? '1px solid rgba(139,92,246,0.4)' : '1px solid rgba(255,255,255,0.08)',
+      borderRadius: 50,
+      transition: 'border 0.15s',
+    }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="rgba(255,255,255,0.45)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8" />
+        <path d="m21 21-4.3-4.3" />
+      </svg>
+      <input
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onFocus={() => setFocus(true)}
+        onBlur={() => setFocus(false)}
+        placeholder="Search directives..."
+        style={{
+          flex: 1, padding: '12px 12px',
+          background: 'transparent', border: 'none', outline: 'none',
+          color: '#fff', fontSize: 13,
+          fontFamily: 'inherit',
+        }}
+      />
+    </div>
+  )
+}
+
+function FilterRow<T extends string>({
+  label, items, value, onChange,
 }: {
-  cat: string
-  todayStr: string
-  onLog: () => void
-  onDetails: () => void
+  label: string
+  items: { key: T; label: string }[]
+  value: T
+  onChange: (v: T) => void
 }) {
-  const data = getCatData(cat)
-  if (!data) return null
+  return (
+    <div>
+      <div style={{ ...MONO_LABEL, marginBottom: 10 }}>{label}</div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+        {items.map(item => {
+          const active = value === item.key
+          return (
+            <button
+              key={item.key}
+              onClick={() => onChange(item.key)}
+              style={{
+                padding: '8px 18px',
+                background: active ? '#fff' : 'rgba(255,255,255,0.03)',
+                color: active ? '#050505' : 'rgba(255,255,255,0.6)',
+                border: active ? '1px solid #fff' : '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 50,
+                fontSize: 13, fontWeight: active ? 700 : 500,
+                letterSpacing: '-0.01em',
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+              onMouseEnter={e => {
+                if (!active) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.9)'
+              }}
+              onMouseLeave={e => {
+                if (!active) (e.currentTarget as HTMLButtonElement).style.color = 'rgba(255,255,255,0.6)'
+              }}
+            >
+              {item.label}
+            </button>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
 
-  const type       = String(data.type ?? '')
-  const level      = Number(data.level) || 1
-  const streak     = Number(data.streak) || 0
-  const totalCnt   = Number(data.total_count) || 0
-  const gc         = Number(data.growth_count) || 0
-  const mult       = multStr(gc)
-  const doneToday  = String(data.last_date) === todayStr
+function MissionCard({
+  protocol, status, streak, progress, doneToday, onAction,
+}: {
+  protocol: Protocol
+  status: StatusKey
+  streak: number
+  progress: number
+  doneToday: boolean
+  onAction: () => void
+}) {
+  const statusMeta = STATUS_META[status]
 
-  const protocol = getProtocolMeta(cat, type)
+  // 진행률 바 그라데이션
+  let barFill: string
+  if (status === 'completed') barFill = '#34d399'
+  else if (status === 'pending') barFill = 'rgba(255,255,255,0.18)'
+  else barFill = `linear-gradient(90deg, ${protocol.accent}, #fb923c)`
 
-  // DAY n/100: 연속 스트릭이 있으면 그것, 없으면 누적 회차 기반
-  const dayN = Math.min(streak > 0 ? streak : totalCnt, 100)
+  // 퍼센트 색
+  let pctColor: string
+  if (status === 'completed') pctColor = '#34d399'
+  else if (status === 'pending') pctColor = 'rgba(255,255,255,0.4)'
+  else pctColor = '#fff'
 
-  // Progress ring: 레벨 기반 (7단계)
-  const pct = Math.min(Math.round((level / 7) * 100), 100)
-
-  // 오늘의 미션 텍스트
-  let missionText = ''
-  if (cat === 'sleep') {
-    const isMax = isSleepMaxLevel(data as Parameters<typeof isSleepMaxLevel>[0])
-    if (isMax) {
-      missionText = `목표 ${String(data.target_bedtime)} 유지하기. 지금의 리듬을 습관으로 굳힙니다.`
-    } else if (data.current_target && data.target_bedtime) {
-      const diff = Math.max(0,
-        sleepTimeToMins(String(data.current_target)) - sleepTimeToMins(String(data.target_bedtime)))
-      missionText = `오늘 목표 취침: ${String(data.current_target)}. 최종 목표까지 ${diff}분 남았습니다.`
-    } else {
-      missionText = getExerciseMission('sleep', level) || '오늘 취침 목표 시간 확인하기'
-    }
-  } else if (type && MISSIONS[type as keyof typeof MISSIONS]) {
-    missionText = getExerciseMission(type, level) || '—'
-  } else {
-    missionText = '오늘의 상태를 체크인하세요.'
-  }
-
-  const icon = getCatIcon(cat, type)
-  const fallbackName = getCatName(cat, type)
+  // CTA 버튼 라벨/스타일
+  let ctaLabel: string
+  let ctaPrimary: boolean
+  if (status === 'completed') { ctaLabel = 'View Log'; ctaPrimary = false }
+  else if (status === 'pending') { ctaLabel = 'Initialize'; ctaPrimary = false }
+  else if (doneToday) { ctaLabel = 'Completed Today'; ctaPrimary = false }
+  else { ctaLabel = 'Resume Mission'; ctaPrimary = true }
 
   return (
     <div style={{
-      ...cardBase,
-      borderColor: doneToday ? 'rgba(52,211,153,0.22)' : 'rgba(255,255,255,0.07)',
-      background: doneToday ? 'rgba(52,211,153,0.04)' : 'rgba(255,255,255,0.025)',
+      background: 'rgba(255,255,255,0.025)',
+      border: '1px solid rgba(255,255,255,0.07)',
+      borderRadius: 20,
+      padding: 28,
+      display: 'flex', flexDirection: 'column', gap: 20,
+      minHeight: 320,
     }}>
-      {/* 상단 뱃지 + 메타 */}
+      {/* 상단: 상태 뱃지 + 스트릭 */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        marginBottom: 18, gap: 12, flexWrap: 'wrap',
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{
-            padding: '5px 10px',
-            background: doneToday ? 'rgba(52,211,153,0.15)' : `${protocol.accent}33`,
-            border: `1px solid ${doneToday ? 'rgba(52,211,153,0.4)' : `${protocol.accent}66`}`,
-            borderRadius: 6,
-            fontSize: 10, fontFamily: 'monospace',
-            letterSpacing: '0.15em',
-            color: doneToday ? '#34d399' : protocol.accent,
-          }}>
-            {doneToday ? 'SYNCED TODAY' : 'ACTIVE MISSION'}
-          </span>
-          <span style={sectionLabel}>DAY {dayN} / 100</span>
-          <span style={{ ...sectionLabel, color: 'rgba(255,255,255,0.3)' }}>LV {level}/7</span>
-        </div>
-
         <span style={{
-          fontSize: 11, fontFamily: 'monospace',
-          color: 'rgba(255,255,255,0.4)', letterSpacing: '0.1em',
+          padding: '6px 12px',
+          background: statusMeta.bg,
+          border: `1px solid ${statusMeta.border}`,
+          borderRadius: 6,
+          fontSize: 10, fontFamily: 'monospace', fontWeight: 700,
+          letterSpacing: '0.15em',
+          color: statusMeta.color,
         }}>
-          ×{mult}
+          {statusMeta.label}
         </span>
+        <StreakBadge streak={streak} />
       </div>
 
-      {/* 본문 */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 6 }}>
-            <span style={{ fontSize: 22 }}>{icon}</span>
-            <h2 style={{
-              fontSize: 26, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.2,
-            }}>
-              {protocol.title}
-            </h2>
-          </div>
-
-          <p style={{
-            fontSize: 11, fontFamily: 'monospace',
-            color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em',
-            textTransform: 'uppercase', marginBottom: 14,
-          }}>
-            {protocol.sub} · {fallbackName}
-          </p>
-
-          <p style={{
-            fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.65,
-            marginBottom: 22,
-          }}>
-            {missionText}
-          </p>
-
-          {/* 레벨 프로그레스 */}
-          <div style={{ marginBottom: 22 }}>
-            <div style={{
-              display: 'flex', justifyContent: 'space-between',
-              marginBottom: 6,
-            }}>
-              <span style={{
-                fontSize: 9, fontFamily: 'monospace',
-                color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em',
-              }}>LEVEL PROGRESSION</span>
-              <span style={{
-                fontSize: 9, fontFamily: 'monospace',
-                color: 'rgba(255,255,255,0.55)', letterSpacing: '0.12em',
-              }}>{level} / 7</span>
-            </div>
-            <div style={{
-              height: 4, background: 'rgba(255,255,255,0.06)',
-              borderRadius: 99, overflow: 'hidden',
-            }}>
-              <div style={{
-                height: '100%',
-                width: `${pct}%`,
-                background: `linear-gradient(90deg, ${protocol.accent}, #ec4899)`,
-                borderRadius: 99,
-                transition: 'width 0.6s ease',
-              }} />
-            </div>
-          </div>
-
-          {/* 버튼 */}
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-            <button
-              onClick={onLog}
-              disabled={doneToday}
-              style={{
-                padding: '12px 22px',
-                background: doneToday ? 'rgba(52,211,153,0.12)' : '#fff',
-                color: doneToday ? '#34d399' : '#050505',
-                border: doneToday ? '1px solid rgba(52,211,153,0.3)' : 'none',
-                borderRadius: 40,
-                fontSize: 13, fontWeight: 700,
-                cursor: doneToday ? 'default' : 'pointer',
-                display: 'inline-flex', alignItems: 'center', gap: 8,
-                transition: 'opacity 0.15s, transform 0.15s',
-              }}
-              onMouseEnter={e => { if (!doneToday) (e.currentTarget as HTMLButtonElement).style.opacity = '0.88' }}
-              onMouseLeave={e => { if (!doneToday) (e.currentTarget as HTMLButtonElement).style.opacity = '1' }}
-            >
-              {doneToday ? (
-                <>
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                  Completed
-                </>
-              ) : (
-                <>
-                  <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor"><polygon points="0,0 12,7 0,14" /></svg>
-                  Log Activity
-                </>
-              )}
-            </button>
-            <button
-              onClick={onDetails}
-              style={{
-                padding: '12px 22px',
-                background: 'rgba(255,255,255,0.06)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 40, color: '#fff',
-                fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              }}
-            >
-              View Details
-            </button>
-          </div>
-        </div>
-
-        {/* 오른쪽: 진행률 링 + 통계 */}
-        <div style={{
-          display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14,
-          flexShrink: 0,
+      {/* 타이틀 + 설명 */}
+      <div>
+        <h2 style={{
+          fontSize: 26, fontWeight: 800,
+          letterSpacing: '-0.02em', lineHeight: 1.2,
+          margin: '0 0 10px',
         }}>
-          <ProgressRing pct={pct} accent={protocol.accent} />
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 1fr',
-            gap: 8, minWidth: 140,
+          {protocol.title}
+        </h2>
+        <p style={{
+          fontSize: 13, color: 'rgba(255,255,255,0.5)',
+          lineHeight: 1.6, margin: 0,
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+        }}>
+          {protocol.desc}
+        </p>
+      </div>
+
+      {/* 프로그레스 */}
+      <div style={{ marginTop: 'auto' }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'baseline',
+          marginBottom: 10,
+        }}>
+          <span style={MONO_LABEL}>PROGRESS</span>
+          <span style={{
+            fontSize: 14, fontWeight: 700, color: pctColor,
+            letterSpacing: '-0.01em',
           }}>
-            <MiniStat label="TOTAL"  value={String(totalCnt)} />
-            <MiniStat label="STREAK" value={String(streak)} />
-          </div>
+            {progress}%
+          </span>
         </div>
+        <div style={{
+          height: 3, background: 'rgba(255,255,255,0.06)',
+          borderRadius: 99, overflow: 'hidden',
+        }}>
+          <div style={{
+            height: '100%',
+            width: `${progress}%`,
+            background: barFill,
+            borderRadius: 99,
+            transition: 'width 0.8s ease',
+          }} />
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          onClick={onAction}
+          disabled={doneToday && status !== 'pending'}
+          style={{
+            flex: 1,
+            padding: '14px 20px',
+            background: ctaPrimary ? '#fff' : 'rgba(255,255,255,0.04)',
+            color: ctaPrimary ? '#050505' : '#fff',
+            border: ctaPrimary ? 'none' : '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 10,
+            fontSize: 13, fontWeight: 700,
+            letterSpacing: '-0.01em',
+            cursor: doneToday && status !== 'pending' ? 'default' : 'pointer',
+            opacity: doneToday && status !== 'pending' ? 0.6 : 1,
+            transition: 'opacity 0.15s, transform 0.15s',
+          }}
+          onMouseEnter={e => {
+            if (!(doneToday && status !== 'pending')) {
+              (e.currentTarget as HTMLButtonElement).style.opacity = '0.88'
+            }
+          }}
+          onMouseLeave={e => {
+            if (!(doneToday && status !== 'pending')) {
+              (e.currentTarget as HTMLButtonElement).style.opacity = '1'
+            }
+          }}
+        >
+          {ctaLabel}
+        </button>
+        {status !== 'completed' && (
+          <button
+            style={{
+              width: 44, padding: 0,
+              background: 'rgba(255,255,255,0.04)',
+              color: 'rgba(255,255,255,0.5)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              borderRadius: 10,
+              fontSize: 16, fontWeight: 700,
+              cursor: 'pointer',
+              letterSpacing: '0.08em',
+            }}
+            title="More options"
+          >
+            ···
+          </button>
+        )}
       </div>
     </div>
   )
 }
 
-// ─────────────────────────────────────────────────
-// 비활성 모듈 카드
-// ─────────────────────────────────────────────────
-function InactiveModule({ cat, onClick }: { cat: string; onClick: () => void }) {
-  const meta = CAT_META[cat as keyof typeof CAT_META]
-  const [hover, setHover] = useState(false)
+function StreakBadge({ streak }: { streak: number }) {
+  let color: string
+  if (streak >= 14) color = '#34d399'
+  else if (streak >= 7) color = '#a78bfa'
+  else if (streak >= 1) color = '#fb923c'
+  else color = 'rgba(255,255,255,0.35)'
 
+  return (
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 6,
+      fontSize: 11, fontFamily: 'monospace', fontWeight: 700,
+      color, letterSpacing: '0.1em',
+    }}>
+      <svg width="13" height="14" viewBox="0 0 24 24" fill={streak > 0 ? color : 'none'}
+        stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8.5 14.5A2.5 2.5 0 0 0 11 17c1.38 0 2.5-1 2.5-2.5 0-2-2.5-4-2.5-4s-2.5 2-2.5 3.5Z" />
+        <path d="M12 2s3 6 5 9a7 7 0 1 1-10 0c2-3 5-9 5-9Z" />
+      </svg>
+      {streak}D STREAK
+    </div>
+  )
+}
+
+function UnlockCard({ onClick }: { onClick: () => void }) {
+  const [hover, setHover] = useState(false)
   return (
     <button
       onClick={onClick}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
-        background: 'rgba(255,255,255,0.015)',
-        border: `1px dashed ${hover ? 'rgba(139,92,246,0.4)' : 'rgba(255,255,255,0.12)'}`,
-        borderRadius: 16,
-        padding: '20px 18px',
-        color: hover ? '#c4b5fd' : 'rgba(255,255,255,0.55)',
-        cursor: 'pointer',
-        textAlign: 'left',
-        transition: 'all 0.15s ease',
-        display: 'flex', flexDirection: 'column', gap: 8,
-      }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ fontSize: 20 }}>{meta?.icon}</span>
-        <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{meta?.label}</span>
-      </div>
-      <p style={{
-        fontSize: 11, fontFamily: 'monospace',
-        color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em',
-      }}>
-        + INITIALIZE MODULE
-      </p>
-    </button>
-  )
-}
-
-// ─────────────────────────────────────────────────
-// 서브 컴포넌트
-// ─────────────────────────────────────────────────
-function HeaderStat({ label, value, valueColor }: { label: string; value: string; valueColor: string }) {
-  return (
-    <div>
-      <div style={{ ...sectionLabel, marginBottom: 8 }}>{label}</div>
-      <div style={{
-        fontSize: 22, fontWeight: 700, color: valueColor,
-        fontFamily: 'monospace', letterSpacing: '-0.01em',
-      }}>
-        {value}
-      </div>
-    </div>
-  )
-}
-
-function FilterChip({ label, count, active, onClick }: {
-  label: string; count: number; active: boolean; onClick: () => void
-}) {
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        padding: '8px 14px',
-        background: active ? 'rgba(139,92,246,0.14)' : 'rgba(255,255,255,0.03)',
-        border: `1px solid ${active ? 'rgba(139,92,246,0.4)' : 'rgba(255,255,255,0.07)'}`,
-        borderRadius: 10,
-        color: active ? '#c4b5fd' : 'rgba(255,255,255,0.6)',
-        fontSize: 11, fontFamily: 'monospace',
-        letterSpacing: '0.12em',
-        cursor: 'pointer',
-        display: 'inline-flex', alignItems: 'center', gap: 8,
-        transition: 'all 0.15s',
-      }}
-    >
-      {label}
-      <span style={{
-        padding: '1px 6px', borderRadius: 4, fontSize: 10,
-        background: active ? 'rgba(139,92,246,0.25)' : 'rgba(255,255,255,0.06)',
-        color: active ? '#ddd6fe' : 'rgba(255,255,255,0.5)',
-      }}>{count}</span>
-    </button>
-  )
-}
-
-function MiniStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div style={{
-      background: 'rgba(255,255,255,0.03)',
-      border: '1px solid rgba(255,255,255,0.06)',
-      borderRadius: 10,
-      padding: '10px 8px',
-      textAlign: 'center',
-    }}>
-      <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.02em' }}>{value}</div>
-      <div style={{
-        fontSize: 8, fontFamily: 'monospace',
-        color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', marginTop: 2,
-      }}>{label}</div>
-    </div>
-  )
-}
-
-function ProgressRing({ pct, accent }: { pct: number; accent: string }) {
-  const size = 110
-  const stroke = 6
-  const r = (size - stroke) / 2
-  const c = 2 * Math.PI * r
-  const offset = c - (pct / 100) * c
-  const gradId = `ring-${accent.replace('#', '')}`
-
-  return (
-    <div style={{
-      width: size, height: size, position: 'relative', flexShrink: 0,
-    }}>
-      <svg width={size} height={size}>
-        <defs>
-          <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor={accent} />
-            <stop offset="100%" stopColor="#ec4899" />
-          </linearGradient>
-        </defs>
-        <circle cx={size / 2} cy={size / 2} r={r}
-          stroke="rgba(255,255,255,0.08)" strokeWidth={stroke} fill="none" />
-        <circle cx={size / 2} cy={size / 2} r={r}
-          stroke={`url(#${gradId})`} strokeWidth={stroke} fill="none"
-          strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round"
-          transform={`rotate(-90 ${size / 2} ${size / 2})`}
-          style={{ transition: 'stroke-dashoffset 0.8s ease' }}
-        />
-      </svg>
-      <div style={{
-        position: 'absolute', inset: 0,
+        background: hover ? 'rgba(139,92,246,0.04)' : 'transparent',
+        border: `1.5px dashed ${hover ? 'rgba(139,92,246,0.4)' : 'rgba(255,255,255,0.14)'}`,
+        borderRadius: 20,
+        padding: 28,
+        minHeight: 320,
         display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center',
+        alignItems: 'center', justifyContent: 'center', gap: 18,
+        cursor: 'pointer',
+        color: 'rgba(255,255,255,0.5)',
+        transition: 'all 0.15s ease',
+      }}
+    >
+      <div style={{
+        width: 56, height: 56, borderRadius: '50%',
+        background: hover ? 'rgba(139,92,246,0.12)' : 'rgba(255,255,255,0.05)',
+        border: `1px solid ${hover ? 'rgba(139,92,246,0.3)' : 'rgba(255,255,255,0.08)'}`,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        transition: 'all 0.15s',
       }}>
-        <div style={{
-          fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1,
-        }}>
-          {pct}<span style={{ fontSize: 11, marginLeft: 2 }}>%</span>
-        </div>
-        <div style={{
-          fontSize: 8, fontFamily: 'monospace',
-          color: 'rgba(255,255,255,0.4)', letterSpacing: '0.12em', marginTop: 4,
-        }}>LEVEL SYNC</div>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+          stroke={hover ? '#c4b5fd' : 'rgba(255,255,255,0.5)'}
+          strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
+        </svg>
       </div>
+      <span style={{
+        fontSize: 11, fontFamily: 'monospace', fontWeight: 700,
+        letterSpacing: '0.18em',
+        color: hover ? '#c4b5fd' : 'rgba(255,255,255,0.4)',
+      }}>
+        UNLOCK NEW DIRECTIVE
+      </span>
+    </button>
+  )
+}
+
+function EmptyState({ onStart }: { onStart: () => void }) {
+  return (
+    <div style={{
+      textAlign: 'center', padding: '80px 24px',
+      background: 'rgba(255,255,255,0.02)',
+      border: '1px dashed rgba(255,255,255,0.1)',
+      borderRadius: 20,
+    }}>
+      <div style={{ fontSize: 42, marginBottom: 14 }}>🌱</div>
+      <p style={{ fontSize: 16, fontWeight: 700, marginBottom: 6 }}>
+        아직 등록된 프로토콜이 없어요
+      </p>
+      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', marginBottom: 22 }}>
+        첫 카테고리를 추가하고 1% 시스템을 가동하세요.
+      </p>
+      <button
+        onClick={onStart}
+        style={{
+          padding: '12px 22px',
+          background: '#fff', color: '#050505',
+          border: 'none', borderRadius: 40,
+          fontSize: 13, fontWeight: 700, cursor: 'pointer',
+        }}
+      >
+        + Initialize Protocol
+      </button>
     </div>
   )
 }
