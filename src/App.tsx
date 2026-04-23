@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppStore, getAllActiveCatKeys } from './store/appStore'
 
 import SelectCategory    from './pages/onboarding/SelectCategory'
@@ -78,11 +78,86 @@ function MainContent() {
 
 const MAIN_APP_SCREENS = new Set(['home'])
 
+const DESKTOP_MIN_WIDTH = 900
+
+function DesktopOnlyNotice() {
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#050505',
+      color: '#fff',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '32px 24px',
+      textAlign: 'center',
+      fontFamily: "'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    }}>
+      <div style={{ position: 'fixed', top: '15%', right: '-20%', width: 320, height: 320, background: 'rgba(139,92,246,0.08)', filter: 'blur(120px)', borderRadius: '50%', pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', bottom: '10%', left: '-20%', width: 360, height: 360, background: 'rgba(244,63,94,0.06)', filter: 'blur(150px)', borderRadius: '50%', pointerEvents: 'none' }} />
+
+      <div style={{ position: 'relative', zIndex: 1, maxWidth: 360 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 32 }}>
+          <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6', boxShadow: '0 0 12px #8b5cf6' }} />
+          <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.04em' }}>SLOO</span>
+        </div>
+
+        <div style={{ fontSize: 48, marginBottom: 20 }}>🖥️</div>
+
+        <h1 style={{ fontSize: 22, fontWeight: 700, letterSpacing: '-0.03em', margin: '0 0 12px' }}>
+          데스크탑 전용 서비스
+        </h1>
+
+        <p style={{ fontSize: 14, lineHeight: 1.6, color: 'rgba(255,255,255,0.6)', margin: 0 }}>
+          현재 모바일 환경은 지원하지 않습니다.<br />
+          PC나 태블릿(가로 모드)에서<br />
+          접속해주세요.
+        </p>
+
+        <div style={{
+          marginTop: 32,
+          padding: '10px 16px',
+          display: 'inline-block',
+          background: 'rgba(139,92,246,0.1)',
+          border: '1px solid rgba(139,92,246,0.25)',
+          borderRadius: 999,
+          fontSize: 12,
+          color: 'rgba(255,255,255,0.7)',
+        }}>
+          최소 화면 폭: {DESKTOP_MIN_WIDTH}px
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function useIsMobile(breakpoint: number) {
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.innerWidth < breakpoint
+  })
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint - 1}px)`)
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches)
+    setIsMobile(mq.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [breakpoint])
+
+  return isMobile
+}
+
 export default function App() {
   const screen = useAppStore(s => s.screen)
   const initializeApp = useAppStore(s => s.initializeApp)
+  const isMobile = useIsMobile(DESKTOP_MIN_WIDTH)
 
   useEffect(() => { initializeApp() }, [])
+
+  if (isMobile) return <DesktopOnlyNotice />
+
 
   const inMainApp = MAIN_APP_SCREENS.has(screen) && getAllActiveCatKeys().length > 0
 
