@@ -1,10 +1,19 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAppStore } from '../../store/appStore';
 
 const ObProfile = () => {
-  const { setScreen, setObDisplayName, setObBio } = useAppStore();
+  const { setScreen, setObDisplayName, setObBio, setObAvatar, obAvatar, obDisplayName, obBio } = useAppStore();
   const [nameFocus, setNameFocus] = useState(false);
   const [bioFocus, setBioFocus] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => setObAvatar(typeof reader.result === 'string' ? reader.result : null);
+    reader.readAsDataURL(f);
+  }
 
   return (
     <div style={{
@@ -92,22 +101,28 @@ const ObProfile = () => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {/* 아바타 업로드 */}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, marginBottom: 32 }}>
+              <input ref={fileRef} type="file" accept="image/*" onChange={handleFile} style={{ display: 'none' }} />
               <div
+                onClick={() => fileRef.current?.click()}
                 style={{
                   width: 96, height: 96, borderRadius: '50%',
-                  border: '1.5px dashed rgba(255,255,255,0.25)',
-                  background: 'rgba(255,255,255,0.03)',
+                  border: obAvatar ? '1.5px solid rgba(139,92,246,0.5)' : '1.5px dashed rgba(255,255,255,0.25)',
+                  background: obAvatar ? `center/cover no-repeat url(${obAvatar})` : 'rgba(255,255,255,0.03)',
                   display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
-                  cursor: 'pointer',
+                  cursor: 'pointer', overflow: 'hidden',
                 }}
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M12 16V8M12 8L8 12M12 8L16 12" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <rect x="3" y="18" width="18" height="1.5" rx="0.75" fill="rgba(255,255,255,0.15)"/>
-                </svg>
+                {!obAvatar && (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 16V8M12 8L8 12M12 8L16 12" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    <rect x="3" y="18" width="18" height="1.5" rx="0.75" fill="rgba(255,255,255,0.15)"/>
+                  </svg>
+                )}
               </div>
-              <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>UPLOAD AVATAR</span>
+              <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+                {obAvatar ? 'CHANGE AVATAR' : 'UPLOAD AVATAR'}
+              </span>
             </div>
 
             {/* DISPLAY NAME */}
@@ -118,6 +133,7 @@ const ObProfile = () => {
               <input
                 type="text"
                 placeholder="당신의 이름을 입력하세요"
+                value={obDisplayName}
                 onChange={(e) => setObDisplayName(e.target.value)}
                 onFocus={() => setNameFocus(true)}
                 onBlur={() => setNameFocus(false)}
@@ -138,6 +154,7 @@ const ObProfile = () => {
               </div>
               <textarea
                 placeholder="당신의 비전이나 현재의 목표를 간단히 공유해 주세요"
+                value={obBio}
                 onChange={(e) => setObBio(e.target.value)}
                 onFocus={() => setBioFocus(true)}
                 onBlur={() => setBioFocus(false)}

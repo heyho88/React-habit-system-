@@ -37,6 +37,34 @@ export function getAllActiveCatKeys(): string[] {
   return keys
 }
 
+// ── 프로필 ──
+
+export interface ProfileData {
+  displayName: string
+  bio: string
+  avatar: string | null
+}
+
+export function getProfile(): ProfileData {
+  try {
+    const raw = localStorage.getItem('sloo_profile')
+    if (!raw) return { displayName: '', bio: '', avatar: null }
+    const parsed = JSON.parse(raw)
+    return {
+      displayName: String(parsed.displayName || ''),
+      bio: String(parsed.bio || ''),
+      avatar: parsed.avatar ?? null,
+    }
+  } catch {
+    return { displayName: '', bio: '', avatar: null }
+  }
+}
+
+export function setProfile(p: Partial<ProfileData>): void {
+  const cur = getProfile()
+  localStorage.setItem('sloo_profile', JSON.stringify({ ...cur, ...p }))
+}
+
 // ── Store 타입 ──
 
 type CategoryKey = 'health' | 'sleep' | 'routine' | null
@@ -63,6 +91,8 @@ interface AppState {
   obFailReason: number | null
   obDisplayName: string
   obBio: string
+  obAvatar: string | null
+  mainTab: 'dashboard' | 'missions' | 'analytics' | 'settings'
   dailyEnergy: string | null
   dailyMental: string | null
   pendingResetCategory: string | null
@@ -83,6 +113,9 @@ interface AppActions {
   setObSleepTargetM: (v: number) => void
   setObDisplayName: (v: string) => void
   setObBio: (v: string) => void
+  setObAvatar: (v: string | null) => void
+  setMainTab: (v: 'dashboard' | 'missions' | 'analytics' | 'settings') => void
+  commitProfile: () => void
   resetObState: () => void
   initializeApp: () => void
 }
@@ -111,6 +144,7 @@ const initialObState: Pick<
   | 'obFailReason'
   | 'obDisplayName'
   | 'obBio'
+  | 'obAvatar'
 > = {
   currentOnboardingCategory: null,
   obPendingType: null,
@@ -130,6 +164,7 @@ const initialObState: Pick<
   obFailReason: null,
   obDisplayName: '',
   obBio: '',
+  obAvatar: null,
 }
 
 
@@ -140,6 +175,7 @@ export const useAppStore = create<AppStore>((set) => ({
   screen: 'landing',
   category: null,
   currentMissionCategory: null,
+  mainTab: 'dashboard',
   dailyEnergy: null,
   dailyMental: null,
   pendingResetCategory: null,
@@ -164,6 +200,17 @@ export const useAppStore = create<AppStore>((set) => ({
   setObSleepTargetM:   (v) => set({ obSleepTargetM: v }),
   setObDisplayName:    (v) => set({ obDisplayName: v }),
   setObBio:            (v) => set({ obBio: v }),
+  setObAvatar:         (v) => set({ obAvatar: v }),
+  setMainTab:          (v) => set({ mainTab: v }),
+
+  commitProfile: () => {
+    const s = useAppStore.getState()
+    setProfile({
+      displayName: s.obDisplayName,
+      bio: s.obBio,
+      avatar: s.obAvatar,
+    })
+  },
 
   resetObState: () => set({ ...initialObState }),
 

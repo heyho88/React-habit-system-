@@ -27,10 +27,11 @@ const STYLES = `
 `;
 
 export default function ObCompleteFinal() {
-  const { setScreen, category } = useAppStore();
+  const { setScreen, category, commitProfile } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    commitProfile();
     const t = setTimeout(() => setMounted(true), 50);
     return () => clearTimeout(t);
   }, []);
