@@ -581,6 +581,434 @@ function MissionsSection() {
   )
 }
 
+const PROBLEM_STATS = [
+  { tag: 'NEW YEAR RESOLUTION', value: '92', unit: '%',  label: '실패율',        note: 'University of Scranton' },
+  { tag: 'AVG HABIT DURATION',  value: '3.2', unit: '일', label: '평균 작심삼일',  note: 'Habit app telemetry'   },
+  { tag: 'YEARLY LOOPS',        value: '4.7', unit: '회', label: '같은 실패 반복', note: 'Annual self-report'    },
+]
+
+const SERVICES = [
+  {
+    id: 'level', tag: 'SERVICE 01', title: '레벨 기반 미션', icon: '🎯',
+    subtitle: '"팔굽혀펴기 100개"가 아니라 "1개"부터.',
+    desc: '10단계로 설계된 미션. 단계별 난이도는 15%씩만 상승합니다. 의지력이 필요한 순간을 구조적으로 제거했습니다.',
+    highlight: '87%', highlightLabel: 'Lv5 이상 도달률',
+  },
+  {
+    id: 'compound', tag: 'SERVICE 02', title: '복리 성장 대시보드', icon: '📈',
+    subtitle: '눈에 안 보이는 성장은 믿기 어렵습니다.',
+    desc: '일간·주간·월간 복리 곡선을 실시간 추적. "오늘 빼먹으면 얼마나 손해인지" 기회비용까지 숫자로 표시됩니다.',
+    highlight: '37.8x', highlightLabel: '1년 성장 궤적',
+  },
+  {
+    id: 'dual', tag: 'SERVICE 03', title: '성장 / 유지 이중 모드', icon: '⚙️',
+    subtitle: 'All-or-nothing이 당신을 포기하게 만듭니다.',
+    desc: '컨디션이 안 좋은 날엔 유지 모드로 최소 미션만. 연속 기록은 끊기지 않고, 시스템은 멈추지 않습니다.',
+    highlight: '−64%', highlightLabel: '중도 포기율 감소',
+  },
+]
+
+const PROOF_PILLARS = [
+  {
+    tag: 'ROOT CAUSE 01', why: '강도가 너무 컸다',
+    research: 'BJ Fogg Behavior Model — 행동 = 동기 × 능력 × 트리거. 어려운 미션은 동기가 높을 때만 실행되고, 동기는 반드시 식습니다.',
+    fix: 'Lv1은 2분 이하로 고정. 저항 0% 진입점을 강제 설계.',
+  },
+  {
+    tag: 'ROOT CAUSE 02', why: '지속성이 보이지 않았다',
+    research: 'Reinforcement Theory — 피드백 루프가 없는 행동은 소멸합니다. 성장이 "느껴지지" 않으면 두뇌는 그 행동을 지웁니다.',
+    fix: '복리 곡선과 기회비용을 365일 실시간 렌더링.',
+  },
+  {
+    tag: 'ROOT CAUSE 03', why: 'All-or-nothing 구조였다',
+    research: 'Streak Psychology — 단 한 번의 0일 기록이 전체 동력을 리셋합니다. 완벽주의 구조는 평균 3.2일에 붕괴합니다.',
+    fix: '성장·유지 이중 모드로 "0일"이라는 상태 자체를 제거.',
+  },
+]
+
+const CTA_COMPARISON = [
+  { label: '가입비',         founding: '무료',          regular: '유료 전환 예정' },
+  { label: '모든 기능 이용',  founding: '평생 무료',     regular: '유료 플랜 적용' },
+  { label: '신규 유료 기능',  founding: '평생 무료 제공', regular: '별도 결제'      },
+  { label: '모집 인원',       founding: '50명 한정',     regular: '제한 없음'      },
+]
+
+function ProblemSection() {
+  return (
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ maxWidth: 720, marginBottom: 56 }}>
+        <div style={{
+          fontSize: 10, fontFamily: 'monospace', color: '#fb7185',
+          letterSpacing: '0.15em', marginBottom: 12, textTransform: 'uppercase',
+        }}>
+          ROOT-CAUSE ANALYSIS
+        </div>
+        <h2 style={{
+          margin: 0, fontSize: 40, fontWeight: 700, color: '#fff',
+          letterSpacing: '-0.02em', lineHeight: 1.15,
+        }}>
+          작심삼일은 의지력 문제가 아닙니다.<br />
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>시스템 설계 문제입니다.</span>
+        </h2>
+        <p style={{
+          marginTop: 20, fontSize: 15, lineHeight: 1.7,
+          color: 'rgba(255,255,255,0.55)', maxWidth: 560,
+        }}>
+          92%가 같은 이유로 실패합니다. 이건 우연이 아닙니다.
+          문제는 당신이 아니라, 지금까지의 습관 앱들이 설계된 방식입니다.
+        </p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+        {PROBLEM_STATS.map(s => (
+          <div key={s.tag} style={{
+            background: 'rgba(255,255,255,0.025)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 14, padding: '28px 24px',
+          }}>
+            <div style={{
+              fontSize: 9, fontFamily: 'monospace',
+              color: 'rgba(255,255,255,0.4)', letterSpacing: '0.15em',
+              marginBottom: 24,
+            }}>
+              {s.tag}
+            </div>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+              <span style={{
+                fontSize: 68, fontWeight: 800, color: '#fff',
+                letterSpacing: '-0.04em', lineHeight: 1,
+              }}>
+                {s.value}
+              </span>
+              <span style={{ fontSize: 24, fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>
+                {s.unit}
+              </span>
+            </div>
+            <div style={{
+              fontSize: 14, color: 'rgba(255,255,255,0.7)',
+              marginTop: 16, fontWeight: 500,
+            }}>
+              {s.label}
+            </div>
+            <div style={{
+              fontSize: 9, fontFamily: 'monospace',
+              color: 'rgba(255,255,255,0.25)', letterSpacing: '0.12em',
+              marginTop: 20, paddingTop: 16,
+              borderTop: '1px solid rgba(255,255,255,0.04)',
+              textTransform: 'uppercase',
+            }}>
+              SOURCE — {s.note}
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function ServicesSection() {
+  return (
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+        marginBottom: 56,
+      }}>
+        <div style={{ maxWidth: 640 }}>
+          <div style={{
+            fontSize: 10, fontFamily: 'monospace', color: 'var(--color-purple)',
+            letterSpacing: '0.15em', marginBottom: 12, textTransform: 'uppercase',
+          }}>
+            SYSTEM ARCHITECTURE
+          </div>
+          <h2 style={{
+            margin: 0, fontSize: 40, fontWeight: 700, color: '#fff',
+            letterSpacing: '-0.02em', lineHeight: 1.15,
+          }}>
+            3가지 설계 원칙으로<br />
+            <span style={{
+              background: 'linear-gradient(90deg, #8B5CF6 0%, #E040FB 50%, #F472B6 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }}>
+              복리 성장을 작동시킵니다.
+            </span>
+          </h2>
+        </div>
+        <div style={{
+          fontSize: 9, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+        }}>
+          03 CORE MECHANISMS
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        {SERVICES.map(s => (
+          <div key={s.id} style={{
+            background: 'rgba(255,255,255,0.025)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 14, padding: 28,
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              marginBottom: 24,
+            }}>
+              <div style={{
+                fontSize: 9, fontFamily: 'monospace',
+                color: 'rgba(255,255,255,0.35)', letterSpacing: '0.15em',
+              }}>
+                {s.tag}
+              </div>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10,
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 16,
+              }}>
+                {s.icon}
+              </div>
+            </div>
+            <div style={{
+              fontSize: 22, fontWeight: 700, color: '#fff',
+              letterSpacing: '-0.02em', marginBottom: 12,
+            }}>
+              {s.title}
+            </div>
+            <div style={{
+              fontSize: 13, color: 'rgba(255,255,255,0.55)',
+              marginBottom: 18, lineHeight: 1.6, fontStyle: 'italic',
+            }}>
+              "{s.subtitle}"
+            </div>
+            <div style={{
+              fontSize: 13, color: 'rgba(255,255,255,0.5)',
+              lineHeight: 1.65, marginBottom: 28, flex: 1,
+            }}>
+              {s.desc}
+            </div>
+            <div style={{ paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{
+                fontSize: 9, fontFamily: 'monospace',
+                color: 'rgba(255,255,255,0.35)', letterSpacing: '0.15em',
+                marginBottom: 8,
+              }}>
+                MEASURED IMPACT
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
+                <span style={{
+                  fontSize: 28, fontWeight: 800, color: '#A78BFA',
+                  letterSpacing: '-0.03em', lineHeight: 1,
+                }}>
+                  {s.highlight}
+                </span>
+                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
+                  {s.highlightLabel}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
+function ProofEngineSection() {
+  return (
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ textAlign: 'center', marginBottom: 64 }}>
+        <div style={{
+          fontSize: 10, fontFamily: 'monospace', color: 'var(--color-purple)',
+          letterSpacing: '0.15em', marginBottom: 12, textTransform: 'uppercase',
+        }}>
+          PROOF ENGINE
+        </div>
+        <h2 style={{
+          margin: 0, fontSize: 40, fontWeight: 700, color: '#fff',
+          letterSpacing: '-0.02em', lineHeight: 1.15,
+        }}>
+          왜 이번엔 다를까?<br />
+          <span style={{ color: 'rgba(255,255,255,0.5)' }}>심리학이 알려준 3가지 실패 원인.</span>
+        </h2>
+        <p style={{
+          marginTop: 20, fontSize: 14, lineHeight: 1.7,
+          color: 'rgba(255,255,255,0.55)', maxWidth: 600, margin: '20px auto 0',
+        }}>
+          SLOO는 유저 후기가 아니라 연구 위에 만들어졌습니다.
+          당신이 지금까지 실패한 정확한 원인을, 구조로 해체해 재설계했습니다.
+        </p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+        {PROOF_PILLARS.map((p, i) => (
+          <div key={i} style={{
+            background: 'rgba(255,255,255,0.025)',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: 14, padding: 28,
+            display: 'flex', flexDirection: 'column',
+          }}>
+            <div style={{
+              fontSize: 9, fontFamily: 'monospace', color: '#fb7185',
+              letterSpacing: '0.15em', marginBottom: 18,
+            }}>
+              {p.tag}
+            </div>
+            <div style={{
+              fontSize: 22, fontWeight: 700, color: '#fff',
+              letterSpacing: '-0.02em', marginBottom: 16, lineHeight: 1.3,
+            }}>
+              "{p.why}"
+            </div>
+            <div style={{
+              fontSize: 12, color: 'rgba(255,255,255,0.5)',
+              lineHeight: 1.7, marginBottom: 28, flex: 1,
+            }}>
+              {p.research}
+            </div>
+
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14,
+            }}>
+              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.2)' }} />
+              <span style={{
+                fontSize: 9, fontFamily: 'monospace', color: '#A78BFA',
+                letterSpacing: '0.15em',
+              }}>
+                SLOO FIX
+              </span>
+              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.2)' }} />
+            </div>
+
+            <div style={{
+              background: 'rgba(139,92,246,0.08)',
+              border: '1px solid rgba(139,92,246,0.25)',
+              borderRadius: 10, padding: '14px 16px',
+              fontSize: 13, fontWeight: 600, color: '#fff',
+              lineHeight: 1.5, textAlign: 'center',
+            }}>
+              {p.fix}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{
+        marginTop: 40,
+        display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 28,
+        fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)',
+        letterSpacing: '0.15em', flexWrap: 'wrap',
+      }}>
+        <span>◦ BJ FOGG · STANFORD BEHAVIOR DESIGN LAB</span>
+        <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+        <span>◦ REINFORCEMENT THEORY</span>
+        <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+        <span>◦ STREAK PSYCHOLOGY RESEARCH</span>
+      </div>
+    </section>
+  )
+}
+
+function FoundingCTASection({ onStart }: { onStart: () => void }) {
+  return (
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{
+        position: 'relative', overflow: 'hidden',
+        background: 'radial-gradient(ellipse at top, rgba(139,92,246,0.12), transparent 70%), rgba(255,255,255,0.025)',
+        border: '1px solid rgba(139,92,246,0.2)',
+        borderRadius: 20, padding: '72px 48px', textAlign: 'center',
+      }}>
+        <div style={{
+          position: 'absolute', top: 20, left: 24,
+          fontSize: 9, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+        }}>
+          ● LIMITED AVAILABILITY
+        </div>
+        <div style={{
+          position: 'absolute', top: 20, right: 24,
+          fontSize: 9, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+        }}>
+          V1.0 FOUNDING PROGRAM
+        </div>
+
+        <div style={{
+          fontSize: 10, fontFamily: 'monospace', color: '#A78BFA',
+          letterSpacing: '0.2em', marginBottom: 18,
+        }}>
+          FOUNDING USER 모집 중
+        </div>
+        <h2 style={{
+          margin: 0, fontSize: 60, fontWeight: 800,
+          letterSpacing: '-0.04em', lineHeight: 1.05,
+          background: 'linear-gradient(90deg, #ffffff 0%, #A78BFA 55%, #fb923c 100%)',
+          WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          backgroundClip: 'text',
+        }}>
+          50명 한정,<br />평생 무료.
+        </h2>
+        <p style={{
+          marginTop: 24, fontSize: 15, lineHeight: 1.75,
+          color: 'rgba(255,255,255,0.6)', maxWidth: 560, margin: '24px auto 0',
+        }}>
+          SLOO는 지금 가장 초기 단계입니다.
+          정식 출시 전, 함께 서비스를 만들어갈 Founding User 50명을 찾고 있습니다.
+          지금 합류하시면 모든 기능을 평생 무료로 사용하실 수 있습니다.
+        </p>
+
+        <div style={{
+          marginTop: 48, maxWidth: 640, margin: '48px auto 0',
+          background: 'rgba(0,0,0,0.3)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 12, overflow: 'hidden',
+        }}>
+          <div style={{
+            display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr',
+            padding: '14px 20px',
+            borderBottom: '1px solid rgba(255,255,255,0.06)',
+            fontSize: 9, fontFamily: 'monospace', letterSpacing: '0.15em',
+            color: 'rgba(255,255,255,0.35)',
+          }}>
+            <span></span>
+            <span style={{ color: '#A78BFA', textAlign: 'center' }}>FOUNDING USER</span>
+            <span style={{ textAlign: 'center' }}>정식 출시 후</span>
+          </div>
+          {CTA_COMPARISON.map((row, i) => (
+            <div key={i} style={{
+              display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr',
+              padding: '14px 20px',
+              borderBottom: i < CTA_COMPARISON.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+              fontSize: 13, alignItems: 'center', textAlign: 'left',
+            }}>
+              <span style={{ color: 'rgba(255,255,255,0.55)' }}>{row.label}</span>
+              <span style={{ color: '#fff', fontWeight: 700, textAlign: 'center' }}>{row.founding}</span>
+              <span style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center' }}>{row.regular}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ marginTop: 44 }}>
+          <button
+            className="ls-cta-btn"
+            onClick={onStart}
+            style={{ padding: '16px 40px', fontSize: 16 }}
+          >
+            Founding User로 시작하기 →
+          </button>
+          <div style={{
+            marginTop: 18, fontSize: 11, fontFamily: 'monospace',
+            color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em',
+          }}>
+            카드 등록 없음 · 평생 무료 · 50명 마감 시 종료
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function LandingScreen() {
   const setScreen = useAppStore(s => s.setScreen)
   const [showMore, setShowMore] = useState(false)
@@ -931,6 +1359,15 @@ export default function LandingScreen() {
                   </div>
                 </section>
 
+                {/* Problem */}
+                <ProblemSection />
+
+                {/* Services */}
+                <ServicesSection />
+
+                {/* Proof Engine */}
+                <ProofEngineSection />
+
                 {/* Categories */}
                 <section style={{ padding: '40px 0 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
                   <div style={{
@@ -1003,6 +1440,9 @@ export default function LandingScreen() {
                     ))}
                   </div>
                 </section>
+
+                {/* Founding User CTA */}
+                <FoundingCTASection onStart={() => setScreen('ob-category')} />
 
                 {/* Footer */}
                 <footer style={{
