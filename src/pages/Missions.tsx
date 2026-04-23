@@ -111,7 +111,8 @@ function getStatus(data: Record<string, unknown> | null, todayStr: string): Stat
   return 'active'
 }
 
-function getProgressPct(data: Record<string, unknown>): number {
+function getProgressPct(data: Record<string, unknown>, status: StatusKey): number {
+  if (status === 'pending') return 0
   const level = Number(data.level) || 1
   return Math.min(100, Math.round((level / 7) * 100))
 }
@@ -169,7 +170,7 @@ export default function Missions() {
       const protocol = getProtocol(cat, type)
       const status = getStatus(data, todayStr)
       const streak = Number(data.streak) || 0
-      const progress = getProgressPct(data)
+      const progress = getProgressPct(data, status)
       const doneToday = String(data.last_date) === todayStr
       return { cat, type, data, protocol, status, streak, progress, doneToday }
     }).filter((x): x is NonNullable<typeof x> => x !== null)
