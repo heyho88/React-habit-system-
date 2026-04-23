@@ -16,45 +16,12 @@ const ObProfile = () => {
   }
 
   return (
-    <div style={{
-      position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: '#050505',
-      display: 'flex', flexDirection: 'column',
-      alignItems: 'center', justifyContent: 'center',
-      padding: '24px 20px',
-    }}>
-      {/* 상단 네비 */}
+    <>
+      {/* 메인 그리드 */}
       <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0,
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '20px 40px', zIndex: 10,
+        display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48,
+        alignItems: 'start', flex: 1,
       }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>● SLOO</span>
-        <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)' }}>ONBOARDING V1.0</span>
-      </div>
-
-      {/* 카드 컨테이너 */}
-      <div style={{
-        width: '100%', maxWidth: '900px',
-        minHeight: '580px',
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '20px',
-        padding: '40px 48px',
-        display: 'flex', flexDirection: 'column',
-      }}>
-        {/* 진행바 - 3번 활성 */}
-        <div style={{ display: 'flex', gap: 8, marginBottom: 48 }}>
-          <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'rgba(255,255,255,0.15)' }} />
-          <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'rgba(255,255,255,0.15)' }} />
-          <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'linear-gradient(90deg,#E040FB,#6C5CE7)' }} />
-        </div>
-
-        {/* 메인 그리드 */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48,
-          alignItems: 'start', flex: 1,
-        }}>
           {/* 좌측 */}
           <div>
             <div style={{
@@ -169,41 +136,28 @@ const ObProfile = () => {
               />
             </div>
           </div>
-        </div>
-
-        {/* 하단 버튼 */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 24, marginTop: 40 }}>
-          <button
-            onClick={() => setScreen('ob-step2')}
-            style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', cursor: 'pointer', background: 'none', border: 'none' }}
-          >
-            이전 단계로
-          </button>
-          <button
-            onClick={() => setScreen('ob-complete')}
-            style={{
-              background: 'white', color: '#050505',
-              borderRadius: 50, padding: '14px 32px',
-              fontSize: 14, fontWeight: 700, cursor: 'pointer', border: 'none',
-            }}
-          >
-            다음 단계: 시스템 시작 →
-          </button>
-        </div>
       </div>
 
-      {/* 푸터 */}
-      <div style={{ display: 'flex', gap: 48, justifyContent: 'center', marginTop: 24 }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>DATA PRIVACY</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>AES-256 ENCRYPTED</div>
-        </div>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>NETWORK</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>SYSTEM READY</div>
-        </div>
+      {/* 하단 버튼 */}
+      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 24, marginTop: 40 }}>
+        <button
+          onClick={() => setScreen('ob-step2')}
+          style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', cursor: 'pointer', background: 'none', border: 'none' }}
+        >
+          이전 단계로
+        </button>
+        <button
+          onClick={() => setScreen('ob-complete')}
+          style={{
+            background: 'white', color: '#050505',
+            borderRadius: 50, padding: '14px 32px',
+            fontSize: 14, fontWeight: 700, cursor: 'pointer', border: 'none',
+          }}
+        >
+          다음 단계: 시스템 시작 →
+        </button>
       </div>
-    </div>
+    </>
   );
 };
 

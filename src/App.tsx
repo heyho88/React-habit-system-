@@ -29,6 +29,13 @@ import DailyState       from './pages/mission/DailyState'
 import LandingScreen   from './pages/LandingScreen'
 
 import LeftSidebar      from './components/layout/LeftSidebar'
+import ObStepsShell    from './components/onboarding/ObStepsShell'
+
+const OB_STEP_SCREENS: Record<string, 1 | 2 | 3> = {
+  'ob-category': 1,
+  'ob-step2':    2,
+  'ob-profile':  3,
+}
 
 
 function renderOnboardingOrMission(screen: string) {
@@ -119,9 +126,15 @@ export default function App() {
           <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.04em', color: '#ffffff' }}>SLOO</span>
         </div>
 
-        <div key={screen}>
-          {renderOnboardingOrMission(screen)}
-        </div>
+        {OB_STEP_SCREENS[screen] ? (
+          <ObStepsShell step={OB_STEP_SCREENS[screen]} screenKey={screen}>
+            {renderOnboardingOrMission(screen)}
+          </ObStepsShell>
+        ) : (
+          <div key={screen}>
+            {renderOnboardingOrMission(screen)}
+          </div>
+        )}
       </div>
     </div>
   )

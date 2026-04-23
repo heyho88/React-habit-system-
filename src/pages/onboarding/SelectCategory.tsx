@@ -180,62 +180,16 @@ export default function SelectCategory() {
   }, [step, setScreen])
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0, left: 0, right: 0, bottom: 0,
-      background: '#050505',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px 20px',
-      zIndex: 100,
-      overflowY: 'auto',
-    }}>
-
-      {/* 상단 네비 */}
+    <>
+      {/* sub-step 전환용 내부 래퍼 (shell 의 화면 전환과 별개로 동작) */}
       <div style={{
-        position: 'absolute',
-        top: 0, left: 0, right: 0,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '20px 40px',
-        zIndex: 10,
-      }}>
-        <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>● SLOO</span>
-        <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
-          ONBOARDING V1.0
-        </span>
-      </div>
-
-      {/* 외부 카드 컨테이너 — 고정 */}
-      <div style={{
-        width: '100%',
-        maxWidth: '900px',
-        minHeight: '580px',
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '20px',
-        padding: '40px 48px',
+        flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        position: 'relative',
+        opacity: animating ? 0 : 1,
+        transform: animating ? 'translateY(8px)' : 'translateY(0)',
+        transition: 'opacity 0.25s ease, transform 0.25s ease',
       }}>
-
-        {/* 진행 바 */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '48px' }}>
-          <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'linear-gradient(90deg, #E040FB, #6C5CE7)' }} />
-          <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'rgba(255,255,255,0.15)' }} />
-          <div style={{ height: 3, borderRadius: 2, flex: 1, background: 'rgba(255,255,255,0.15)' }} />
-        </div>
-
-        {/* 콘텐츠 래퍼 */}
-        <div style={{
-          flex: 1,
-          opacity: animating ? 0 : 1,
-          transform: animating ? 'translateY(8px)' : 'translateY(0)',
-          transition: 'opacity 0.25s ease, transform 0.25s ease',
-        }}>
 
           {/* ─── CATEGORY ─── */}
           {step === 'category' && (
@@ -688,25 +642,7 @@ export default function SelectCategory() {
             </div>
           )}
 
-        </div>
       </div>
-
-      {/* 하단 푸터 */}
-      <div style={{
-        position: 'absolute',
-        bottom: 24, left: 0, right: 0,
-        display: 'flex', gap: 48, justifyContent: 'center',
-      }}>
-        <div>
-          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>DATA PRIVACY</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>AES-256 ENCRYPTED</div>
-        </div>
-        <div>
-          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.25)', letterSpacing: '0.1em' }}>NETWORK</div>
-          <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.2)' }}>SYSTEM READY</div>
-        </div>
-      </div>
-
-    </div>
+    </>
   )
 }
