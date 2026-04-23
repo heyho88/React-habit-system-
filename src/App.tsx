@@ -19,7 +19,6 @@ import ObStep2          from './pages/onboarding/ObStep2'
 import ObProfile        from './pages/onboarding/ObProfile'
 import ObNeuralSync     from './pages/onboarding/ObNeuralSync'
 import ObCompleteFinal  from './pages/onboarding/ObCompleteFinal'
-import Home             from './pages/Home'
 import Dashboard        from './pages/Dashboard'
 import Missions         from './pages/Missions'
 import Analytics        from './pages/Analytics'
@@ -56,7 +55,6 @@ function renderOnboardingOrMission(screen: string) {
     case 'mission-grow':      return <MissionScreen choice="grow" />
     case 'mission-maintain':  return <MissionScreen choice="maintain" />
     case 'daily-state':       return <DailyState />
-    case 'home-legacy':       return <Home />
     default:                  return <SelectCategory />
   }
 }
@@ -85,7 +83,7 @@ function ComingSoon({ title, sub }: { title: string; sub: string }) {
   )
 }
 
-const MAIN_APP_SCREENS = new Set(['home', 'home-legacy'])
+const MAIN_APP_SCREENS = new Set(['home'])
 
 export default function App() {
   const screen = useAppStore(s => s.screen)

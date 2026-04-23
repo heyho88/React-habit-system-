@@ -206,8 +206,7 @@ export default function Missions() {
             onLog={() => startMission(cat)}
             onDetails={() => {
               setCurrentMissionCategory(cat)
-              // 상세 페이지가 아직 없으므로 홈 레거시로 폴백 (추후 /mission/:cat 라우트로 교체)
-              setScreen('home')
+              // 상세 페이지는 추후 구현 — 현재는 no-op
             }}
           />
         ))}
