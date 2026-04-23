@@ -93,7 +93,10 @@ export default function ObCompleteFinal() {
           padding: '20px 40px',
           zIndex: 10,
         }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: 'white' }}>● SLOO</span>
+          <span style={{ fontSize: 14, fontWeight: 700, color: 'white', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6', boxShadow: '0 0 12px #8b5cf6', display: 'inline-block' }} />
+            SLOO
+          </span>
           <span style={{ fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
             ONBOARDING V1.0
           </span>

@@ -5,6 +5,10 @@ import {
   type DoctrineEntry, type LibraryItem, type LibraryKind,
 } from '../data/archive-knowledge'
 import { getCategoryImage } from '../lib/categoryImages'
+import CompoundIdentitySelector from '../components/landing/CompoundIdentitySelector'
+import ADayAsArchitect from '../components/landing/ADayAsArchitect'
+import FounderNote from '../components/landing/FounderNote'
+import ProofAccordion from '../components/landing/ProofAccordion'
 
 type PageType = 'home' | 'missions' | 'compound' | 'archive'
 
@@ -1891,9 +1895,10 @@ export default function LandingScreen() {
             <button
               className="ls-nav-link"
               onClick={() => setActivePage('home')}
-              style={{ fontWeight: 700, fontSize: 13, opacity: 1 }}
+              style={{ fontWeight: 700, fontSize: 13, opacity: 1, display: 'inline-flex', alignItems: 'center', gap: 8 }}
             >
-              ● SLOO
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#8b5cf6', boxShadow: '0 0 12px #8b5cf6', display: 'inline-block' }} />
+              SLOO
             </button>
             <span style={{ opacity: 0.2, margin: '0 16px' }}>│</span>
 
@@ -1945,203 +1950,138 @@ export default function LandingScreen() {
                     {/* Left */}
                     <div>
                       <div style={{
-                        display: 'inline-block',
-                        background: 'rgba(255,255,255,0.07)',
-                        border: '1px solid rgba(255,255,255,0.2)',
+                        display: 'inline-flex', alignItems: 'center', gap: 10,
+                        background: 'rgba(139,92,246,0.1)',
+                        border: '1px solid rgba(139,92,246,0.3)',
                         borderRadius: 20,
-                        padding: '4px 12px',
+                        padding: '5px 14px',
                         fontSize: 10,
                         fontFamily: 'monospace',
-                        color: 'rgba(255,255,255,0.6)',
+                        color: '#C4B5FD',
                         marginBottom: 24,
+                        fontWeight: 700,
+                        letterSpacing: '0.12em',
                       }}>
-                        SYSTEM VERSION 1.0.0
+                        <span style={{
+                          width: 6, height: 6, borderRadius: '50%',
+                          background: '#8b5cf6',
+                          boxShadow: '0 0 8px rgba(139,92,246,0.8)',
+                        }} />
+                        FOUNDING · 37/50
                       </div>
 
                       <h1 style={{
                         margin: 0,
                         fontSize: 'clamp(36px, 5vw, 62px)',
-                        fontWeight: 600,
-                        lineHeight: 1.1,
-                        letterSpacing: '-0.02em',
+                        fontWeight: 700,
+                        lineHeight: 1.08,
+                        letterSpacing: '-0.03em',
                       }}>
-                        <div style={{ color: 'white' }}>작심삼일이</div>
+                        <div style={{ color: 'white' }}>1년 뒤 당신은</div>
                         <div>
                           <span style={{
                             background: 'linear-gradient(90deg, #8B5CF6 0%, #C084FC 30%, #E040FB 60%, #F472B6 100%)',
                             WebkitBackgroundClip: 'text',
                             WebkitTextFillColor: 'transparent',
                             backgroundClip: 'text',
-                          }}>작심 365일이</span>
+                          }}>어떤 Architect</span>
                         </div>
-                        <div style={{ color: 'white' }}>되는 방법.</div>
+                        <div style={{ color: 'white' }}>인가?</div>
                       </h1>
 
                       <p style={{
                         marginTop: 24,
                         fontSize: 15,
-                        lineHeight: 1.7,
-                        color: 'rgba(255,255,255,0.7)',
-                        maxWidth: 380,
+                        lineHeight: 1.75,
+                        color: 'rgba(255,255,255,0.78)',
+                        maxWidth: 420,
                       }}>
-                        매일 1%의 <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>성장</b>은 1년 뒤{' '}
-                        <b style={{ color: 'rgba(255,255,255,0.95)', fontWeight: 700 }}>37.8배</b>의 결과가 됩니다.
-                        의지력이 아닌 설계된 레벨 미션으로 당신의 습관을 스택하세요.
+                        매일 <b style={{ color: '#fff', fontWeight: 700 }}>1%</b>의 차이가 1년 뒤 당신을 완전히 다른 사람으로 만듭니다.
+                        의지력이 아닌 <b style={{ color: '#fff', fontWeight: 700 }}>설계된 시스템</b>으로 당신의 복리 곡선을 시작하세요.
                       </p>
 
-                      <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 24 }}>
+                      <div style={{ marginTop: 36, display: 'flex', alignItems: 'center', gap: 20 }}>
                         <button className="ls-cta-btn" onClick={launchOnboarding}>
-                          지금 무료로 시작하기
+                          Founding User로 시작하기 →
                         </button>
                         <div>
                           <div style={{
                             fontSize: 9,
                             fontFamily: 'monospace',
-                            color: 'rgba(255,255,255,0.35)',
-                            letterSpacing: '0.1em',
-                          }}>FOUNDING USER</div>
+                            color: 'rgba(255,255,255,0.45)',
+                            letterSpacing: '0.12em',
+                            fontWeight: 600,
+                          }}>LIFETIME FREE</div>
                           <div style={{
                             fontSize: 11,
-                            color: 'rgba(255,255,255,0.55)',
+                            color: 'rgba(255,255,255,0.7)',
                             fontWeight: 600,
-                          }}>모집 중</div>
+                            marginTop: 2,
+                          }}>50명 한정 · 13자리 남음</div>
                         </div>
                       </div>
                     </div>
 
-                    {/* Right Card */}
+                    {/* Right — Compound Identity Selector */}
                     <div className="ls-hero-right">
-                      <div
-                        className="card-border-animated"
-                        style={{ width: 460, aspectRatio: '1 / 1', maxWidth: '100%' }}
-                      >
-                        <div style={{
-                          background: '#080808',
-                          borderRadius: 18.5,
-                          padding: 32,
-                          height: '100%',
-                          position: 'relative',
-                          overflow: 'hidden',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          boxSizing: 'border-box',
-                        }}>
-                          <div style={{ flex: 0 }}>
-                            <div style={{
-                              fontSize: 10, fontFamily: 'monospace',
-                              color: 'rgba(255,255,255,0.5)', letterSpacing: '0.15em',
-                            }}>MISSION: ACTIVE</div>
-                            <div style={{ height: 2, background: '#ff3355', width: 48, marginTop: 6 }} />
-                          </div>
-
-                          <div style={{
-                            flex: 1, display: 'flex', flexDirection: 'column',
-                            justifyContent: 'center', alignItems: 'center', textAlign: 'center',
-                            position: 'relative', zIndex: 1,
-                          }}>
-                            <div style={{
-                              fontSize: 9, fontFamily: 'monospace',
-                              color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
-                            }}>COMPOUND MULTIPLIER</div>
-                            <div style={{ marginTop: 10, display: 'flex', alignItems: 'baseline', justifyContent: 'center' }}>
-                              <span style={{ fontSize: 68, fontWeight: 800, color: 'white', lineHeight: 1 }}>37.8</span>
-                              <span style={{ fontSize: 26, fontWeight: 400, color: 'rgba(255,255,255,0.5)', marginLeft: 2 }}>x</span>
-                            </div>
-                            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
-                              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#FF4444' }} />
-                              <span style={{ fontSize: 10, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.1em' }}>GROWTH CALIBRATED</span>
-                            </div>
-                          </div>
-
-                          <div style={{ flex: 0, display: 'flex', justifyContent: 'flex-end', position: 'relative', zIndex: 1 }}>
-                            <div>
-                              <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>EFFICIENCY</div>
-                              <div style={{ fontSize: 20, fontWeight: 800, color: 'white' }}>+1.00%</div>
-                            </div>
-                          </div>
-
-                          <svg
-                            viewBox="0 0 460 200"
-                            preserveAspectRatio="none"
-                            style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '200px', zIndex: 0 }}
-                          >
-                            <defs>
-                              <linearGradient id="expFill" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#4C1D95" stopOpacity="0.12" />
-                                <stop offset="100%" stopColor="#4C1D95" stopOpacity="0" />
-                              </linearGradient>
-                            </defs>
-                            <path
-                              d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30"
-                              fill="none" stroke="#4C1D95" strokeWidth="1.5" opacity="0.7"
-                            />
-                            <path
-                              d="M 0,195 C 60,193 120,188 180,175 C 240,160 300,135 360,100 C 400,75 430,55 460,30 L 460,200 L 0,200 Z"
-                              fill="url(#expFill)"
-                            />
-                          </svg>
-                        </div>
-                      </div>
+                      <CompoundIdentitySelector />
                     </div>
 
                   </div>
                 </section>
+
+                {/* Founding User 희소성 block — Hero 직하 */}
+                <FoundingCTASection onStart={launchOnboarding} />
+
+                {/* A Day as Architect */}
+                <ADayAsArchitect />
 
                 {/* Problem */}
                 <ProblemSection />
 
-                {/* Services */}
-                <ServicesSection />
+                {/* Founder Note */}
+                <FounderNote />
 
-                {/* Proof Engine */}
-                <ProofEngineSection />
-
-                {/* Categories */}
-                <section style={{ padding: '40px 0 80px', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                {/* 최종 CTA strip */}
+                <section style={{ padding: '40px 0 80px' }}>
                   <div style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    marginBottom: 40,
+                    maxWidth: 720, margin: '0 auto',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    textAlign: 'center', gap: 16,
                   }}>
-                    <div>
-                      <div style={{
-                        fontSize: 10,
-                        fontFamily: 'monospace',
-                        color: 'var(--color-purple)',
-                        letterSpacing: '0.15em',
-                        marginBottom: 10,
-                      }}>LEVEL MISSIONS</div>
-                      <div style={{ fontSize: 24, fontWeight: 700, color: 'white' }}>
-                        Select Your Focus Area
-                      </div>
+                    <div style={{
+                      fontSize: 10, fontFamily: 'monospace',
+                      color: '#C4B5FD', letterSpacing: '0.2em',
+                      fontWeight: 700,
+                    }}>
+                      ● 37 / 50 FOUNDING SEATS REMAIN
                     </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <button
-                        className="ls-arrow-btn"
-                        onClick={() => setShowMore(false)}
-                        style={{ opacity: showMore ? 1 : 0.25, pointerEvents: showMore ? 'auto' : 'none' }}
-                      >‹</button>
-                      <button
-                        className="ls-arrow-btn"
-                        onClick={() => setShowMore(true)}
-                        style={{ opacity: showMore ? 0.25 : 1, pointerEvents: showMore ? 'none' : 'auto' }}
-                      >›</button>
+                    <div style={{
+                      fontSize: 26, fontWeight: 700, color: '#fff',
+                      letterSpacing: '-0.02em', lineHeight: 1.3,
+                      maxWidth: 520,
+                    }}>
+                      당신의 첫 1%를 지금 시작하세요.
                     </div>
-                  </div>
-
-                  <div
-                    key={showMore ? 'more' : 'base'}
-                    style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 20, width: '100%' }}
-                  >
-                    {currentCards.map(cat => (
-                      <CategoryIcon key={cat.id} cat={cat} />
-                    ))}
+                    <button
+                      className="ls-cta-btn"
+                      onClick={launchOnboarding}
+                      style={{ padding: '16px 40px', fontSize: 16, marginTop: 8 }}
+                    >
+                      Founding User로 시작하기 →
+                    </button>
+                    <div style={{
+                      fontSize: 11, fontFamily: 'monospace',
+                      color: 'rgba(255,255,255,0.5)', letterSpacing: '0.12em',
+                      fontWeight: 500,
+                    }}>
+                      카드 등록 없음 · 평생 무료 · 50명 마감 시 종료
+                    </div>
                   </div>
                 </section>
 
-                {/* Founding User CTA */}
-                <FoundingCTASection onStart={launchOnboarding} />
+                {/* Proof Accordion — trust 강화 자료, default closed */}
+                <ProofAccordion />
 
                 {/* Footer */}
                 <footer style={{
