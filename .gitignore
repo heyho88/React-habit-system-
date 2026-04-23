@@ -126,3 +126,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .gstack/
+
+# image originals (large backups)
+public/images/categories/_original/

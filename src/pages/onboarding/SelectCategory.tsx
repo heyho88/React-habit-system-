@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '../../store/appStore'
 import { type CategoryKey } from '../../lib/missions'
+import { getCategoryImage } from '../../lib/categoryImages'
 
 type Step =
   | 'category'
@@ -50,6 +51,48 @@ const gradientText: React.CSSProperties = {
   WebkitBackgroundClip: 'text',
   WebkitTextFillColor: 'transparent',
   backgroundClip: 'text',
+}
+
+function CatAvatar({
+  id, emoji, color, size,
+}: { id: string; emoji: string; color: string; size: number }) {
+  const img = getCategoryImage(id)
+  const [imgOk, setImgOk] = useState(Boolean(img))
+  const showImg = imgOk && img
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: 8, flexShrink: 0,
+      overflow: 'hidden', position: 'relative',
+      background: showImg ? '#0a0a0a' : `linear-gradient(135deg,${color}22,${color}44)`,
+      border: `1px solid ${color}55`,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: Math.round(size * 0.46),
+    }}>
+      {showImg ? (
+        <>
+          <img
+            src={img}
+            alt=""
+            width={size}
+            height={size}
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgOk(false)}
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover',
+              filter: 'brightness(0.85) saturate(0.95)',
+              display: 'block',
+            }}
+          />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 100%)',
+            pointerEvents: 'none',
+          }} />
+        </>
+      ) : emoji}
+    </div>
+  )
 }
 
 function InfoCard({ dot, label, body }: { dot: string; label: string; body: string }) {
@@ -219,12 +262,7 @@ export default function SelectCategory() {
                         background: isSel ? 'rgba(108,92,231,0.12)' : 'rgba(255,255,255,0.03)',
                         border: isSel ? '1px solid rgba(139,92,246,0.7)' : '1px solid rgba(255,255,255,0.08)',
                       }}>
-                        <div style={{ width: 56, height: 56, borderRadius: 8, flexShrink: 0,
-                          background: `linear-gradient(135deg,${cat.color}22,${cat.color}44)`,
-                          border: `1px solid ${cat.color}55`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 26 }}>
-                          {cat.emoji}
-                        </div>
+                        <CatAvatar id={cat.id} emoji={cat.emoji} color={cat.color} size={56} />
                         <div style={{ flex: 1 }}>
                           <div style={{ fontSize: 16, fontWeight: 700, color: 'white', marginBottom: 4 }}>{cat.label}</div>
                           <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', lineHeight: 1.4 }}>{cat.desc}</div>
@@ -512,12 +550,7 @@ export default function SelectCategory() {
                         border: isSel ? '1px solid rgba(139,92,246,0.7)' : '1px solid rgba(255,255,255,0.08)',
                       }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <div style={{ width: 40, height: 40, borderRadius: 8, flexShrink: 0,
-                            background: `linear-gradient(135deg,${item.color}22,${item.color}44)`,
-                            border: `1px solid ${item.color}55`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
-                            {item.emoji}
-                          </div>
+                          <CatAvatar id={item.id} emoji={item.emoji} color={item.color} size={40} />
                           <div style={{ width: 16, height: 16, borderRadius: '50%',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             border: isSel ? '2px solid #8B5CF6' : '2px solid rgba(255,255,255,0.2)' }}>

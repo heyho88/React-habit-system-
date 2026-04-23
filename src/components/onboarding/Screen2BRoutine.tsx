@@ -1,6 +1,7 @@
 import SelectionCard from './SelectionCard'
 import ProgressBar from './ProgressBar'
 import { useOnboardingStore } from '../../store/useOnboardingStore'
+import { getCategoryImage } from '../../lib/categoryImages'
 
 const types = [
   { emoji: '🌅', label: '아침 루틴', value: 'morning' },
@@ -33,6 +34,7 @@ export default function Screen2BRoutine() {
           <SelectionCard
             key={t.value}
             emoji={t.emoji}
+            image={getCategoryImage(t.value)}
             label={t.label}
             onClick={() => handleSelect(t.value)}
           />

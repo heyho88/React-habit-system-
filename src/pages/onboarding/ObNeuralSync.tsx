@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../../store/appStore';
+import { APP_BACKGROUND } from '../../styles/appBackground';
 
 const logs = [
   { tag: '[OK]',   tagColor: '#00D2D3', text: 'Core engine v1.0 loaded' },
@@ -65,7 +66,7 @@ const ObNeuralSync = () => {
   return (
     <div style={{
       position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
-      background: '#050505',
+      background: APP_BACKGROUND,
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
     }}>

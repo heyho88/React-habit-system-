@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { useAppStore } from '../../store/appStore'
 import { ROUTINE_TYPE_META, type RoutineType } from '../../lib/missions'
 import { getRoutineSlots } from '../../store/appStore'
+import { getCategoryImage } from '../../lib/categoryImages'
 
 const detailScreens: Record<string, string> = {
   mental:  'ob-mental',
@@ -46,37 +48,74 @@ export default function SelectRoutine() {
         {available.map(type => {
           const meta = ROUTINE_TYPE_META[type]
           return (
-            <button
+            <RoutineCard
               key={type}
+              type={type}
+              label={meta.label}
+              icon={meta.icon}
               onClick={() => handleSelect(type)}
-              style={{
-                background: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 16,
-                padding: '20px 16px',
-                cursor: 'pointer',
-                color: '#fff',
-                fontSize: 14,
-                fontWeight: 600,
-                textAlign: 'left',
-                lineHeight: 1.5,
-                transition: 'all 0.15s',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(139,92,246,0.12)'
-                ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(139,92,246,0.4)'
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLButtonElement).style.background = 'rgba(255,255,255,0.05)'
-                ;(e.currentTarget as HTMLButtonElement).style.borderColor = 'rgba(255,255,255,0.08)'
-              }}
-            >
-              <span style={{ fontSize: 22, display: 'block', marginBottom: 6 }}>{meta.icon}</span>
-              {meta.label}
-            </button>
+            />
           )
         })}
       </div>
     </div>
+  )
+}
+
+function RoutineCard({
+  type, label, icon, onClick,
+}: { type: RoutineType; label: string; icon: string; onClick: () => void }) {
+  const img = getCategoryImage(type)
+  const [imgOk, setImgOk] = useState(Boolean(img))
+  const [hover, setHover] = useState(false)
+  const showImg = imgOk && img
+
+  return (
+    <button
+      onClick={onClick}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: hover ? 'rgba(139,92,246,0.12)' : 'rgba(255,255,255,0.05)',
+        border: `1px solid ${hover ? 'rgba(139,92,246,0.4)' : 'rgba(255,255,255,0.08)'}`,
+        borderRadius: 16,
+        padding: '20px 16px',
+        cursor: 'pointer',
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: 600,
+        textAlign: 'left',
+        lineHeight: 1.5,
+        transition: 'all 0.15s',
+      }}
+    >
+      {showImg ? (
+        <span style={{
+          width: 48, height: 48, borderRadius: '50%',
+          overflow: 'hidden', display: 'block',
+          marginBottom: 10,
+          border: '1px solid rgba(255,255,255,0.12)',
+          position: 'relative',
+        }}>
+          <img
+            src={img as string}
+            alt=""
+            width={48}
+            height={48}
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgOk(false)}
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover',
+              filter: 'brightness(0.82) saturate(0.95)',
+              display: 'block',
+            }}
+          />
+        </span>
+      ) : (
+        <span style={{ fontSize: 22, display: 'block', marginBottom: 6 }}>{icon}</span>
+      )}
+      {label}
+    </button>
   )
 }

@@ -3,12 +3,15 @@ import { useState } from 'react'
 interface SelectionCardProps {
   emoji: string
   label: string
+  image?: string | null
   selected?: boolean
   onClick: () => void
 }
 
-export default function SelectionCard({ emoji, label, selected = false, onClick }: SelectionCardProps) {
+export default function SelectionCard({ emoji, label, image, selected = false, onClick }: SelectionCardProps) {
   const [hovered, setHovered] = useState(false)
+  const [imgOk, setImgOk] = useState(Boolean(image))
+  const showImg = imgOk && image
 
   const bg = selected
     ? 'rgba(167,139,250,0.12)'
@@ -43,7 +46,31 @@ export default function SelectionCard({ emoji, label, selected = false, onClick 
         gap: 8,
       }}
     >
-      <span style={{ fontSize: 28 }}>{emoji}</span>
+      {showImg ? (
+        <span style={{
+          width: 56, height: 56, borderRadius: '50%',
+          overflow: 'hidden', position: 'relative',
+          border: '1px solid rgba(255,255,255,0.12)',
+          display: 'block',
+        }}>
+          <img
+            src={image as string}
+            alt=""
+            width={56}
+            height={56}
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgOk(false)}
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover',
+              filter: 'brightness(0.82) saturate(0.95)',
+              display: 'block',
+            }}
+          />
+        </span>
+      ) : (
+        <span style={{ fontSize: 28 }}>{emoji}</span>
+      )}
       <span style={{
         color: selected ? '#a78bfa' : '#ffffff',
         fontWeight: 600,

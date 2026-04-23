@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAppStore } from '../../store/appStore';
+import { APP_BACKGROUND } from '../../styles/appBackground';
 
 type CategoryKey = 'exercise' | 'sleep' | 'routine';
 
@@ -73,7 +74,7 @@ export default function ObCompleteFinal() {
       <div style={{
         position: 'fixed',
         top: 0, left: 0, right: 0, bottom: 0,
-        background: '#050505',
+        background: APP_BACKGROUND,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',

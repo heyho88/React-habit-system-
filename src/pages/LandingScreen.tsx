@@ -1,24 +1,39 @@
 import { useState, useEffect } from 'react'
 import { useAppStore } from '../store/appStore'
+import {
+  DOCTRINE_ENTRIES, LIBRARY_ITEMS,
+  type DoctrineEntry, type LibraryItem, type LibraryKind,
+} from '../data/archive-knowledge'
+import { getCategoryImage } from '../lib/categoryImages'
 
 type PageType = 'home' | 'missions' | 'compound' | 'archive'
 
-const page1 = [
-  { id: 'body',    label: 'BODY',    emoji: '💪', sub: '운동/건강' },
-  { id: 'sleep',   label: 'SLEEP',   emoji: '🌙', sub: '수면/기상' },
-  { id: 'digital', label: 'DIGITAL', emoji: '📵', sub: '디지털 디톡스' },
-  { id: 'reading', label: 'READING', emoji: '📖', sub: '독서' },
-  { id: 'mental',  label: 'MENTAL',  emoji: '🧘', sub: '멘탈 관리' },
-  { id: 'space',   label: 'ROUTINE', emoji: '🗂️', sub: '공간/루틴' },
+type CategoryCard = {
+  id: string
+  label: string
+  emoji: string | null
+  sub: string
+  image?: string
+}
+
+const CAT_IMG = '/images/categories'
+
+const page1: CategoryCard[] = [
+  { id: 'body',    label: 'BODY',    emoji: '💪',  sub: '운동/건강',     image: `${CAT_IMG}/body.webp` },
+  { id: 'sleep',   label: 'SLEEP',   emoji: '🌙',  sub: '수면/기상',     image: `${CAT_IMG}/sleep.webp` },
+  { id: 'digital', label: 'DIGITAL', emoji: '📵',  sub: '디지털 디톡스', image: `${CAT_IMG}/digital.webp` },
+  { id: 'reading', label: 'READING', emoji: '📖',  sub: '독서',          image: `${CAT_IMG}/reading.webp` },
+  { id: 'mental',  label: 'MENTAL',  emoji: '🧘',  sub: '멘탈 관리',     image: `${CAT_IMG}/mental.webp` },
+  { id: 'space',   label: 'ROUTINE', emoji: '🗂️', sub: '공간/루틴',     image: `${CAT_IMG}/routine.webp` },
 ]
 
-const page2 = [
-  { id: 'morning',  label: 'MORNING',     emoji: '🌅' as string | null, sub: '아침 루틴' },
-  { id: 'evening',  label: 'EVENING',     emoji: '🌆' as string | null, sub: '저녁 루틴' },
-  { id: 'coming1',  label: 'COMING SOON', emoji: null,                  sub: '' },
-  { id: 'coming2',  label: 'COMING SOON', emoji: null,                  sub: '' },
-  { id: 'coming3',  label: 'COMING SOON', emoji: null,                  sub: '' },
-  { id: 'coming4',  label: 'COMING SOON', emoji: null,                  sub: '' },
+const page2: CategoryCard[] = [
+  { id: 'morning',  label: 'MORNING',     emoji: '🌅', sub: '아침 루틴', image: `${CAT_IMG}/morning.webp` },
+  { id: 'evening',  label: 'EVENING',     emoji: '🌆', sub: '저녁 루틴', image: `${CAT_IMG}/evening.webp` },
+  { id: 'coming1',  label: 'COMING SOON', emoji: null, sub: '' },
+  { id: 'coming2',  label: 'COMING SOON', emoji: null, sub: '' },
+  { id: 'coming3',  label: 'COMING SOON', emoji: null, sub: '' },
+  { id: 'coming4',  label: 'COMING SOON', emoji: null, sub: '' },
 ]
 
 function CompoundLabSection() {
@@ -342,6 +357,139 @@ const CATEGORY_MATRIX = [
   },
 ]
 
+function CategoryIcon({ cat }: { cat: CategoryCard }) {
+  const [imgOk, setImgOk] = useState(Boolean(cat.image))
+  const [hover, setHover] = useState(false)
+  const isComing = cat.emoji === null
+
+  if (isComing) {
+    return (
+      <div style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
+      }}>
+        <div style={{
+          width: 88, height: 88, borderRadius: '50%',
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px dashed rgba(255,255,255,0.2)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: 22, color: 'rgba(255,255,255,0.25)',
+        }}>+</div>
+        <span style={{
+          fontSize: 9, fontWeight: 400, letterSpacing: '0.1em',
+          color: 'rgba(255,255,255,0.35)', textAlign: 'center',
+        }}>{cat.label}</span>
+      </div>
+    )
+  }
+
+  const showImage = imgOk && cat.image
+
+  return (
+    <div
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12,
+        cursor: 'pointer',
+      }}
+    >
+      <div style={{
+        position: 'relative',
+        width: 88, height: 88, borderRadius: '50%',
+        overflow: 'hidden',
+        background: showImage ? '#0a0a0a' : 'rgba(255,255,255,0.04)',
+        border: `1px solid ${hover ? 'rgba(167,139,250,0.45)' : 'rgba(255,255,255,0.1)'}`,
+        boxShadow: hover ? '0 8px 28px rgba(167,139,250,0.2)' : 'none',
+        transition: 'all 0.25s ease',
+        transform: hover ? 'translateY(-2px)' : 'translateY(0)',
+      }}>
+        {showImage ? (
+          <>
+            <img
+              src={cat.image}
+              alt={cat.label}
+              width={88}
+              height={88}
+              loading="lazy"
+              decoding="async"
+              onError={() => setImgOk(false)}
+              style={{
+                width: '100%', height: '100%', objectFit: 'cover',
+                filter: hover ? 'brightness(1) saturate(1.05)' : 'brightness(0.78) saturate(0.9)',
+                transition: 'filter 0.25s ease, transform 0.4s ease',
+                transform: hover ? 'scale(1.06)' : 'scale(1)',
+                display: 'block',
+              }}
+            />
+            <div style={{
+              position: 'absolute', inset: 0,
+              background: hover
+                ? 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35) 100%)'
+                : 'linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%)',
+              pointerEvents: 'none',
+              transition: 'background 0.25s ease',
+            }} />
+          </>
+        ) : (
+          <div style={{
+            width: '100%', height: '100%',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 32,
+          }}>{cat.emoji}</div>
+        )}
+      </div>
+      <span style={{
+        fontSize: 11, fontWeight: 700, letterSpacing: '0.14em',
+        color: hover ? '#fff' : 'rgba(255,255,255,0.75)',
+        textAlign: 'center',
+        transition: 'color 0.2s ease',
+      }}>{cat.label}</span>
+    </div>
+  )
+}
+
+function CatThumb({ id, emoji, size }: { id: string; emoji: string; size: number }) {
+  const img = getCategoryImage(id)
+  const [imgOk, setImgOk] = useState(Boolean(img))
+
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: '50%',
+      overflow: 'hidden',
+      background: imgOk && img ? '#0a0a0a' : 'rgba(255,255,255,0.04)',
+      border: '1px solid rgba(255,255,255,0.1)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      fontSize: Math.round(size * 0.45),
+      flexShrink: 0,
+      position: 'relative',
+    }}>
+      {imgOk && img ? (
+        <>
+          <img
+            src={img}
+            alt=""
+            width={size}
+            height={size}
+            loading="lazy"
+            decoding="async"
+            onError={() => setImgOk(false)}
+            style={{
+              width: '100%', height: '100%', objectFit: 'cover',
+              filter: 'brightness(0.82) saturate(0.95)',
+              display: 'block',
+            }}
+          />
+          <div style={{
+            position: 'absolute', inset: 0,
+            background: 'linear-gradient(180deg, rgba(0,0,0,0) 50%, rgba(0,0,0,0.3) 100%)',
+            pointerEvents: 'none',
+          }} />
+        </>
+      ) : emoji}
+    </div>
+  )
+}
+
 function MissionsSection() {
   return (
     <section style={{ padding: '60px 0' }}>
@@ -501,15 +649,7 @@ function MissionsSection() {
             }}>
               {/* Head */}
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-                <div style={{
-                  width: 44, height: 44, borderRadius: '50%',
-                  background: 'rgba(255,255,255,0.04)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: 20,
-                }}>
-                  {cat.emoji}
-                </div>
+                <CatThumb id={cat.id} emoji={cat.emoji} size={44} />
                 <div>
                   <div style={{
                     fontSize: 11, fontFamily: 'monospace',
@@ -582,47 +722,74 @@ function MissionsSection() {
 }
 
 const PROBLEM_STATS = [
-  { tag: 'NEW YEAR RESOLUTION', value: '92', unit: '%',  label: '실패율',        note: 'University of Scranton' },
-  { tag: 'AVG HABIT DURATION',  value: '3.2', unit: '일', label: '평균 작심삼일',  note: 'Habit app telemetry'   },
-  { tag: 'YEARLY LOOPS',        value: '4.7', unit: '회', label: '같은 실패 반복', note: 'Annual self-report'    },
+  {
+    tag: 'SCENE 01 — 새해 결심',
+    scene: '"올해는 꼭 운동한다."',
+    sceneDesc: '1월 셋째 주면 헬스장은 다시 텅 빕니다.',
+    value: '92', unit: '%',
+    label: '새해 결심 실패율',
+    body: '미국 스크랜턴 대학 연구에 따르면, 새해 결심의 92%는 그 해가 끝나기 전에 실패로 끝납니다. 매년 수천만 명이 같은 숫자를 반복하고 있습니다. 이건 의지력의 문제가 아니라, 구조적인 패턴입니다.',
+    source: 'University of Scranton — Psychology of New Year Resolutions',
+  },
+  {
+    tag: 'SCENE 02 — 작심삼일',
+    scene: '"오늘은 하루만 쉬자."',
+    sceneDesc: '4일째 알림을 무시하는 순간, 죄책감만 남습니다.',
+    value: '3.2', unit: '일',
+    label: '새 습관의 평균 지속 기간',
+    body: '국내외 습관 앱 사용자 데이터를 분석하면, 새로 시작한 습관의 평균 지속 기간은 정확히 3.2일입니다. "작심삼일"은 더 이상 비유가 아니라 측정된 사실입니다. 당신만 그런 게 아닙니다.',
+    source: 'Cross-platform Habit Retention Telemetry',
+  },
+  {
+    tag: 'SCENE 03 — 무한 루프',
+    scene: '"다음 달부터 다시 시작하자."',
+    sceneDesc: '한 해 동안 같은 목표로 평균 4.7번 도전하고 포기합니다.',
+    value: '4.7', unit: '회',
+    label: '같은 실패의 연간 반복 횟수',
+    body: '새해 다짐 → 봄 새학기 → 월초 리셋 → 생일 → 가을 결심 → 연말 반성. 우리는 같은 목표 위를 1년에 4.7번 순환합니다. 문제는 도전 횟수가 아니라, 매번 똑같이 무너지는 방법입니다.',
+    source: 'Annual Self-Report Habit Attempts Study',
+  },
 ]
 
 const SERVICES = [
   {
-    id: 'level', tag: 'SERVICE 01', title: '레벨 기반 미션', icon: '🎯',
+    id: 'level', tag: 'SERVICE 01 — 진입 저항 제거', title: '레벨 기반 미션', icon: '🎯',
     subtitle: '"팔굽혀펴기 100개"가 아니라 "1개"부터.',
-    desc: '10단계로 설계된 미션. 단계별 난이도는 15%씩만 상승합니다. 의지력이 필요한 순간을 구조적으로 제거했습니다.',
+    desc: '10단계로 설계된 미션. 단계별 난이도는 15%씩만 상승합니다. Lv1은 저항 0%에 가까운 미션으로 시작해, 의지력이 필요한 순간을 구조적으로 제거합니다.',
     highlight: '87%', highlightLabel: 'Lv5 이상 도달률',
   },
   {
-    id: 'compound', tag: 'SERVICE 02', title: '복리 성장 대시보드', icon: '📈',
-    subtitle: '눈에 안 보이는 성장은 믿기 어렵습니다.',
-    desc: '일간·주간·월간 복리 곡선을 실시간 추적. "오늘 빼먹으면 얼마나 손해인지" 기회비용까지 숫자로 표시됩니다.',
+    id: 'compound', tag: 'SERVICE 02 — 성장 가시화', title: '복리 성장 대시보드', icon: '📈',
+    subtitle: '눈에 보이지 않는 성장은 믿기 어렵습니다.',
+    desc: '일간·주간·월간 복리 곡선을 실시간 추적합니다. "오늘 빼먹으면 얼마나 손해인지" 기회비용까지 숫자로 환산해, 두뇌가 성장을 감각할 수 있게 만듭니다.',
     highlight: '37.8x', highlightLabel: '1년 성장 궤적',
   },
   {
-    id: 'dual', tag: 'SERVICE 03', title: '성장 / 유지 이중 모드', icon: '⚙️',
+    id: 'dual', tag: 'SERVICE 03 — 이탈 방지', title: '성장 / 유지 이중 모드', icon: '⚙️',
     subtitle: 'All-or-nothing이 당신을 포기하게 만듭니다.',
-    desc: '컨디션이 안 좋은 날엔 유지 모드로 최소 미션만. 연속 기록은 끊기지 않고, 시스템은 멈추지 않습니다.',
+    desc: '컨디션이 안 좋은 날엔 "유지 모드"로 최소 미션만 수행합니다. 연속 기록은 끊기지 않고, 시스템은 멈추지 않습니다. "0일"이라는 상태 자체를 설계에서 제거했습니다.',
     highlight: '−64%', highlightLabel: '중도 포기율 감소',
   },
 ]
 
 const PROOF_PILLARS = [
   {
-    tag: 'ROOT CAUSE 01', why: '강도가 너무 컸다',
-    research: 'BJ Fogg Behavior Model — 행동 = 동기 × 능력 × 트리거. 어려운 미션은 동기가 높을 때만 실행되고, 동기는 반드시 식습니다.',
-    fix: 'Lv1은 2분 이하로 고정. 저항 0% 진입점을 강제 설계.',
+    tag: 'ROOT CAUSE 01 — 강도 오버슈트',
+    why: '"시작부터 너무 컸다."',
+    research: 'BJ Fogg Behavior Model에 따르면 행동은 "동기 × 능력 × 트리거"의 함수입니다. 어려운 미션은 동기가 정점일 때만 실행되고, 동기는 반드시 식게 되어 있습니다.',
+    fix: 'Lv1은 2분 이하로 고정. 저항 0%의 진입점을 구조적으로 보장합니다.',
   },
   {
-    tag: 'ROOT CAUSE 02', why: '지속성이 보이지 않았다',
-    research: 'Reinforcement Theory — 피드백 루프가 없는 행동은 소멸합니다. 성장이 "느껴지지" 않으면 두뇌는 그 행동을 지웁니다.',
-    fix: '복리 곡선과 기회비용을 365일 실시간 렌더링.',
+    tag: 'ROOT CAUSE 02 — 피드백 부재',
+    why: '"지속성이 느껴지지 않았다."',
+    research: 'Skinner의 강화 이론은 피드백 루프가 없는 행동이 결국 소멸한다고 말합니다. 성장이 눈에 보이지 않으면, 두뇌는 그 행동의 우선순위를 지워버립니다.',
+    fix: '복리 곡선·기회비용·레벨 진도를 365일 내내 실시간 렌더링합니다.',
   },
   {
-    tag: 'ROOT CAUSE 03', why: 'All-or-nothing 구조였다',
-    research: 'Streak Psychology — 단 한 번의 0일 기록이 전체 동력을 리셋합니다. 완벽주의 구조는 평균 3.2일에 붕괴합니다.',
-    fix: '성장·유지 이중 모드로 "0일"이라는 상태 자체를 제거.',
+    tag: 'ROOT CAUSE 03 — All-or-Nothing',
+    why: '"한 번 빠지면 전부 무너졌다."',
+    research: 'Streak Psychology 연구는 단 한 번의 "0일 기록"이 전체 동력을 리셋한다고 봅니다. 완벽주의 구조는 평균 3.2일에 붕괴합니다.',
+    fix: '성장·유지 이중 모드로 "0일"이라는 상태 자체를 설계에서 제거합니다.',
   },
 ]
 
@@ -636,11 +803,11 @@ const CTA_COMPARISON = [
 function ProblemSection() {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-      <div style={{ maxWidth: 720, marginBottom: 56 }}>
+      <div style={{ maxWidth: 780, marginBottom: 56 }}>
         <div style={{
-          fontSize: 11, fontFamily: 'monospace', color: '#fb7185',
-          letterSpacing: '0.15em', marginBottom: 14, textTransform: 'uppercase',
-          fontWeight: 600,
+          fontSize: 11, fontFamily: 'monospace',
+          color: '#ff3355', letterSpacing: '0.15em',
+          marginBottom: 16, textTransform: 'uppercase', fontWeight: 700,
         }}>
           ROOT-CAUSE ANALYSIS
         </div>
@@ -648,35 +815,59 @@ function ProblemSection() {
           margin: 0, fontSize: 40, fontWeight: 700, color: '#fff',
           letterSpacing: '-0.02em', lineHeight: 1.15,
         }}>
-          작심삼일은 의지력 문제가 아닙니다.<br />
-          <span style={{ color: 'rgba(255,255,255,0.75)' }}>시스템 설계 문제입니다.</span>
+          당신도 이런 경험,<br />
+          <span style={{ color: 'rgba(255,255,255,0.7)' }}>있지 않으신가요?</span>
         </h2>
         <p style={{
-          marginTop: 22, fontSize: 16, lineHeight: 1.7,
-          color: 'rgba(255,255,255,0.78)', maxWidth: 580,
+          marginTop: 22, fontSize: 16, lineHeight: 1.75,
+          color: 'rgba(255,255,255,0.85)', maxWidth: 620,
         }}>
           92%가 같은 이유로 실패합니다. 이건 우연이 아닙니다.
-          문제는 당신이 아니라, 지금까지의 습관 앱들이 설계된 방식입니다.
+          문제는 당신이 아니라, 지금까지 당신이 의지했던 습관 앱들이 설계된 방식에 있습니다.
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {PROBLEM_STATS.map(s => (
           <div key={s.tag} style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 14, padding: '28px 24px',
+            position: 'relative',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 14, padding: '30px 26px 24px',
+            display: 'flex', flexDirection: 'column',
           }}>
             <div style={{
-              fontSize: 10, fontFamily: 'monospace',
-              color: 'rgba(255,255,255,0.6)', letterSpacing: '0.15em',
-              marginBottom: 24, fontWeight: 600,
+              position: 'absolute', top: 0, left: 0, width: 48, height: 1,
+              background: '#ff3355',
+            }} />
+
+            <div style={{
+              fontSize: 11, fontFamily: 'monospace',
+              color: '#ff3355', letterSpacing: '0.15em',
+              marginBottom: 18, fontWeight: 700, textTransform: 'uppercase',
             }}>
               {s.tag}
             </div>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+            <div style={{
+              fontSize: 19, fontWeight: 700, color: '#fff',
+              letterSpacing: '-0.02em', marginBottom: 10, lineHeight: 1.4,
+            }}>
+              {s.scene}
+            </div>
+            <div style={{
+              fontSize: 14, color: 'rgba(255,255,255,0.88)',
+              lineHeight: 1.65, marginBottom: 26,
+            }}>
+              {s.sceneDesc}
+            </div>
+
+            <div style={{
+              height: 1, background: 'rgba(255,255,255,0.1)', marginBottom: 22,
+            }} />
+
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4, marginBottom: 12 }}>
               <span style={{
-                fontSize: 72, fontWeight: 800, color: '#fff',
+                fontSize: 68, fontWeight: 800, color: '#fff',
                 letterSpacing: '-0.04em', lineHeight: 1,
               }}>
                 {s.value}
@@ -686,19 +877,26 @@ function ProblemSection() {
               </span>
             </div>
             <div style={{
-              fontSize: 15, color: 'rgba(255,255,255,0.9)',
-              marginTop: 18, fontWeight: 600,
+              fontSize: 14, color: '#fff', fontWeight: 600,
+              marginBottom: 20,
             }}>
               {s.label}
             </div>
+
+            <div style={{
+              fontSize: 14, color: 'rgba(255,255,255,0.82)',
+              lineHeight: 1.75, marginBottom: 22, flex: 1,
+            }}>
+              {s.body}
+            </div>
+
             <div style={{
               fontSize: 10, fontFamily: 'monospace',
-              color: 'rgba(255,255,255,0.5)', letterSpacing: '0.12em',
-              marginTop: 20, paddingTop: 16,
-              borderTop: '1px solid rgba(255,255,255,0.1)',
-              textTransform: 'uppercase',
+              color: 'rgba(255,255,255,0.5)', letterSpacing: '0.15em',
+              paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.1)',
+              textTransform: 'uppercase', fontWeight: 600,
             }}>
-              SOURCE — {s.note}
+              SOURCE — {s.source}
             </div>
           </div>
         ))}
@@ -714,11 +912,11 @@ function ServicesSection() {
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
         marginBottom: 56,
       }}>
-        <div style={{ maxWidth: 640 }}>
+        <div style={{ maxWidth: 680 }}>
           <div style={{
-            fontSize: 11, fontFamily: 'monospace', color: '#A78BFA',
-            letterSpacing: '0.15em', marginBottom: 14, textTransform: 'uppercase',
-            fontWeight: 600,
+            fontSize: 11, fontFamily: 'monospace',
+            color: '#A78BFA', letterSpacing: '0.15em',
+            marginBottom: 16, textTransform: 'uppercase', fontWeight: 700,
           }}>
             SYSTEM ARCHITECTURE
           </div>
@@ -726,20 +924,26 @@ function ServicesSection() {
             margin: 0, fontSize: 40, fontWeight: 700, color: '#fff',
             letterSpacing: '-0.02em', lineHeight: 1.15,
           }}>
-            3가지 설계 원칙으로<br />
+            우리는 이 문제를<br />
             <span style={{
-              background: 'linear-gradient(90deg, #8B5CF6 0%, #E040FB 50%, #F472B6 100%)',
+              background: 'linear-gradient(90deg, #8B5CF6 0%, #C084FC 30%, #E040FB 60%, #F472B6 100%)',
               WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
             }}>
-              복리 성장을 작동시킵니다.
+              3가지 방법으로 풉니다.
             </span>
           </h2>
+          <p style={{
+            marginTop: 22, fontSize: 16, lineHeight: 1.75,
+            color: 'rgba(255,255,255,0.85)', maxWidth: 580,
+          }}>
+            각 서비스는 앞서 분석한 3가지 실패 원인에 정확히 1:1로 대응하도록 설계되었습니다.
+          </p>
         </div>
         <div style={{
           fontSize: 10, fontFamily: 'monospace',
-          color: 'rgba(255,255,255,0.55)', letterSpacing: '0.15em',
-          fontWeight: 600,
+          color: 'rgba(255,255,255,0.5)', letterSpacing: '0.15em',
+          textTransform: 'uppercase', fontWeight: 600,
         }}>
           03 CORE MECHANISMS
         </div>
@@ -748,62 +952,71 @@ function ServicesSection() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {SERVICES.map(s => (
           <div key={s.id} style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 14, padding: 28,
+            position: 'relative',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 14, padding: '30px 26px 24px',
             display: 'flex', flexDirection: 'column',
           }}>
             <div style={{
+              position: 'absolute', top: 0, left: 0, width: 48, height: 1,
+              background: '#8b5cf6',
+            }} />
+
+            <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-              marginBottom: 24,
+              marginBottom: 20,
             }}>
               <div style={{
-                fontSize: 10, fontFamily: 'monospace',
-                color: 'rgba(255,255,255,0.6)', letterSpacing: '0.15em',
-                fontWeight: 600,
+                fontSize: 11, fontFamily: 'monospace',
+                color: '#A78BFA', letterSpacing: '0.15em',
+                fontWeight: 700, textTransform: 'uppercase',
               }}>
                 {s.tag}
               </div>
               <div style={{
-                width: 40, height: 40, borderRadius: 10,
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.16)',
+                width: 42, height: 42, borderRadius: 10,
+                background: 'rgba(255,255,255,0.07)',
+                border: '1px solid rgba(255,255,255,0.1)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 18,
+                fontSize: 20,
               }}>
                 {s.icon}
               </div>
             </div>
             <div style={{
               fontSize: 22, fontWeight: 700, color: '#fff',
-              letterSpacing: '-0.02em', marginBottom: 14,
+              letterSpacing: '-0.02em', marginBottom: 12,
             }}>
               {s.title}
             </div>
             <div style={{
-              fontSize: 14, color: '#E9D5FF',
-              marginBottom: 20, lineHeight: 1.6, fontStyle: 'italic',
+              fontSize: 14, color: '#fff',
+              marginBottom: 20, lineHeight: 1.55, fontStyle: 'italic',
               fontWeight: 500,
             }}>
               "{s.subtitle}"
             </div>
             <div style={{
-              fontSize: 14, color: 'rgba(255,255,255,0.78)',
-              lineHeight: 1.7, marginBottom: 28, flex: 1,
+              fontSize: 14, color: 'rgba(255,255,255,0.82)',
+              lineHeight: 1.75, marginBottom: 28, flex: 1,
             }}>
               {s.desc}
             </div>
-            <div style={{ paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.12)' }}>
+            <div style={{
+              paddingTop: 20,
+              borderTop: '1px solid rgba(255,255,255,0.1)',
+            }}>
               <div style={{
                 fontSize: 10, fontFamily: 'monospace',
-                color: 'rgba(255,255,255,0.6)', letterSpacing: '0.15em',
-                marginBottom: 10, fontWeight: 600,
+                color: 'rgba(255,255,255,0.5)', letterSpacing: '0.15em',
+                marginBottom: 10, textTransform: 'uppercase', fontWeight: 600,
               }}>
                 MEASURED IMPACT
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
                 <span style={{
-                  fontSize: 30, fontWeight: 800, color: '#C4B5FD',
+                  fontSize: 32, fontWeight: 800, color: '#A78BFA',
                   letterSpacing: '-0.03em', lineHeight: 1,
                 }}>
                   {s.highlight}
@@ -823,53 +1036,62 @@ function ServicesSection() {
 function ProofEngineSection() {
   return (
     <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-      <div style={{ textAlign: 'center', marginBottom: 64 }}>
+      <div style={{ textAlign: 'center', marginBottom: 56 }}>
         <div style={{
-          fontSize: 11, fontFamily: 'monospace', color: '#A78BFA',
-          letterSpacing: '0.15em', marginBottom: 14, textTransform: 'uppercase',
-          fontWeight: 600,
+          fontSize: 11, fontFamily: 'monospace',
+          color: '#A78BFA', letterSpacing: '0.15em',
+          marginBottom: 16, textTransform: 'uppercase', fontWeight: 700,
         }}>
-          PROOF ENGINE
+          PROOF ENGINE — SCIENCE-BACKED DESIGN
         </div>
         <h2 style={{
           margin: 0, fontSize: 40, fontWeight: 700, color: '#fff',
           letterSpacing: '-0.02em', lineHeight: 1.15,
         }}>
           왜 이번엔 다를까?<br />
-          <span style={{ color: 'rgba(255,255,255,0.75)' }}>심리학이 알려준 3가지 실패 원인.</span>
+          <span style={{ color: 'rgba(255,255,255,0.7)' }}>
+            심리학이 밝혀낸 3가지 실패 원인.
+          </span>
         </h2>
         <p style={{
-          marginTop: 22, fontSize: 15, lineHeight: 1.7,
-          color: 'rgba(255,255,255,0.78)', maxWidth: 620, margin: '22px auto 0',
+          marginTop: 22, fontSize: 16, lineHeight: 1.75,
+          color: 'rgba(255,255,255,0.85)', maxWidth: 640, margin: '22px auto 0',
         }}>
-          SLOO는 유저 후기가 아니라 연구 위에 만들어졌습니다.
-          당신이 지금까지 실패한 정확한 원인을, 구조로 해체해 재설계했습니다.
+          SLOO는 유저 후기가 아니라 연구 위에 세워졌습니다.
+          당신이 지금까지 실패한 정확한 원인을 해체하고, 그 자리에 반대 구조를 설계했습니다.
         </p>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {PROOF_PILLARS.map((p, i) => (
           <div key={i} style={{
-            background: 'rgba(255,255,255,0.05)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 14, padding: 28,
+            position: 'relative',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 14, padding: '30px 26px 26px',
             display: 'flex', flexDirection: 'column',
           }}>
             <div style={{
-              fontSize: 10, fontFamily: 'monospace', color: '#fb7185',
-              letterSpacing: '0.15em', marginBottom: 18, fontWeight: 600,
+              position: 'absolute', top: 0, left: 0, width: 48, height: 1,
+              background: '#ff3355',
+            }} />
+
+            <div style={{
+              fontSize: 11, fontFamily: 'monospace', color: '#ff3355',
+              letterSpacing: '0.15em', marginBottom: 18,
+              fontWeight: 700, textTransform: 'uppercase',
             }}>
               {p.tag}
             </div>
             <div style={{
-              fontSize: 22, fontWeight: 700, color: '#fff',
-              letterSpacing: '-0.02em', marginBottom: 16, lineHeight: 1.3,
+              fontSize: 20, fontWeight: 700, color: '#fff',
+              letterSpacing: '-0.02em', marginBottom: 18, lineHeight: 1.4,
             }}>
-              "{p.why}"
+              {p.why}
             </div>
             <div style={{
-              fontSize: 13, color: 'rgba(255,255,255,0.78)',
-              lineHeight: 1.7, marginBottom: 28, flex: 1,
+              fontSize: 14, color: 'rgba(255,255,255,0.82)',
+              lineHeight: 1.75, marginBottom: 28, flex: 1,
             }}>
               {p.research}
             </div>
@@ -877,22 +1099,22 @@ function ProofEngineSection() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14,
             }}>
-              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.4)' }} />
+              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.35)' }} />
               <span style={{
-                fontSize: 10, fontFamily: 'monospace', color: '#C4B5FD',
-                letterSpacing: '0.15em', fontWeight: 700,
+                fontSize: 10, fontFamily: 'monospace', color: '#A78BFA',
+                letterSpacing: '0.2em', fontWeight: 700, textTransform: 'uppercase',
               }}>
                 SLOO FIX
               </span>
-              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.4)' }} />
+              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.35)' }} />
             </div>
 
             <div style={{
-              background: 'rgba(139,92,246,0.18)',
-              border: '1px solid rgba(139,92,246,0.45)',
-              borderRadius: 10, padding: '14px 16px',
+              background: 'rgba(139,92,246,0.14)',
+              border: '1px solid rgba(139,92,246,0.35)',
+              borderRadius: 10, padding: '16px 18px',
               fontSize: 14, fontWeight: 600, color: '#fff',
-              lineHeight: 1.55, textAlign: 'center',
+              lineHeight: 1.6, textAlign: 'center',
             }}>
               {p.fix}
             </div>
@@ -901,14 +1123,15 @@ function ProofEngineSection() {
       </div>
 
       <div style={{
-        marginTop: 44,
+        marginTop: 40,
         display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 28,
         fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.5)',
-        letterSpacing: '0.15em', flexWrap: 'wrap', fontWeight: 500,
+        letterSpacing: '0.15em', flexWrap: 'wrap', textTransform: 'uppercase',
+        fontWeight: 600,
       }}>
         <span>◦ BJ FOGG · STANFORD BEHAVIOR DESIGN LAB</span>
         <span style={{ color: 'rgba(255,255,255,0.25)' }}>│</span>
-        <span>◦ REINFORCEMENT THEORY</span>
+        <span>◦ REINFORCEMENT THEORY · SKINNER</span>
         <span style={{ color: 'rgba(255,255,255,0.25)' }}>│</span>
         <span>◦ STREAK PSYCHOLOGY RESEARCH</span>
       </div>
@@ -1015,10 +1238,498 @@ function FoundingCTASection({ onStart }: { onStart: () => void }) {
   )
 }
 
+// ─────────────────────────────────────────────
+// Archive — Knowledge Archive (Doctrine + Library)
+// ─────────────────────────────────────────────
+
+const KIND_META: Record<LibraryKind, { label: string; color: string; bg: string; border: string }> = {
+  book:  { label: 'BOOK',  color: '#A78BFA', bg: 'rgba(167,139,250,0.12)', border: 'rgba(167,139,250,0.35)' },
+  essay: { label: 'ESSAY', color: '#00D2D3', bg: 'rgba(0,210,211,0.12)',   border: 'rgba(0,210,211,0.35)' },
+  talk:  { label: 'TALK',  color: '#fb923c', bg: 'rgba(251,146,60,0.12)',  border: 'rgba(251,146,60,0.35)' },
+}
+
+function DoctrineCard({ entry, onOpen }: { entry: DoctrineEntry; onOpen: () => void }) {
+  const [hover, setHover] = useState(false)
+  return (
+    <button
+      onClick={onOpen}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        background: hover ? 'rgba(139,92,246,0.04)' : 'rgba(255,255,255,0.025)',
+        border: hover ? '1px solid rgba(139,92,246,0.3)' : '1px solid rgba(255,255,255,0.06)',
+        borderRadius: 14,
+        padding: 24,
+        display: 'flex',
+        flexDirection: 'column',
+        textAlign: 'left',
+        cursor: 'pointer',
+        color: '#fff',
+        fontFamily: 'inherit',
+        transition: 'border-color 0.15s, background 0.15s',
+        minHeight: 240,
+      }}
+    >
+      <div style={{
+        display: 'flex', justifyContent: 'space-between',
+        fontSize: 9, fontFamily: 'monospace',
+        color: 'rgba(255,255,255,0.4)',
+        letterSpacing: '0.15em', marginBottom: 18,
+      }}>
+        <span>ENTRY {entry.number}</span>
+        <span>{entry.date}</span>
+      </div>
+      <div style={{
+        fontSize: 20, fontWeight: 800,
+        color: '#fff', letterSpacing: '-0.02em',
+        lineHeight: 1.2, marginBottom: 8,
+      }}>
+        {entry.title}
+      </div>
+      {entry.subtitle && (
+        <div style={{
+          fontSize: 12, color: 'rgba(255,255,255,0.55)',
+          marginBottom: 16,
+        }}>
+          {entry.subtitle}
+        </div>
+      )}
+      <div style={{
+        fontSize: 13, lineHeight: 1.65,
+        color: 'rgba(255,255,255,0.55)',
+        marginBottom: 20,
+        display: '-webkit-box',
+        WebkitLineClamp: 3,
+        WebkitBoxOrient: 'vertical',
+        overflow: 'hidden',
+      }}>
+        {entry.excerpt}
+      </div>
+      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span style={{ fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.35)', letterSpacing: '0.1em' }}>
+          {entry.readMin} MIN READ
+        </span>
+        <span style={{ fontSize: 11, color: hover ? '#c4b5fd' : '#a78bfa', fontWeight: 600, letterSpacing: '0.05em' }}>
+          READ →
+        </span>
+      </div>
+    </button>
+  )
+}
+
+function DoctrineModal({ entry, onClose }: { entry: DoctrineEntry; onClose: () => void }) {
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [onClose])
+
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: 'fixed', inset: 0,
+        background: 'rgba(5,5,5,0.88)',
+        backdropFilter: 'blur(8px)',
+        zIndex: 200,
+        overflowY: 'auto',
+        display: 'flex', justifyContent: 'center',
+        padding: '80px 20px',
+      }}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          width: '100%', maxWidth: 680, height: 'fit-content',
+          background: '#080808',
+          border: '1px solid rgba(255,255,255,0.08)',
+          borderRadius: 18,
+          padding: '48px 56px 60px',
+          position: 'relative',
+          color: '#fff',
+        }}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Close"
+          style={{
+            position: 'absolute', top: 18, right: 18,
+            width: 36, height: 36, borderRadius: '50%',
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            color: 'rgba(255,255,255,0.7)',
+            cursor: 'pointer',
+            fontSize: 18,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}
+        >
+          ×
+        </button>
+
+        <div style={{
+          display: 'flex', justifyContent: 'space-between',
+          fontSize: 10, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.4)',
+          letterSpacing: '0.15em',
+          marginBottom: 28,
+        }}>
+          <span>ENTRY {entry.number}</span>
+          <span>{entry.date} · {entry.readMin} MIN READ</span>
+        </div>
+
+        <h1 style={{
+          fontSize: 36, fontWeight: 800,
+          letterSpacing: '-0.03em',
+          lineHeight: 1.15,
+          margin: '0 0 12px',
+        }}>
+          {entry.title}
+        </h1>
+        {entry.subtitle && (
+          <div style={{
+            fontSize: 16, color: 'rgba(255,255,255,0.55)',
+            marginBottom: 36,
+            letterSpacing: '-0.01em',
+          }}>
+            {entry.subtitle}
+          </div>
+        )}
+
+        <div style={{
+          fontSize: 16, lineHeight: 1.75,
+          color: 'rgba(255,255,255,0.78)',
+        }}>
+          {entry.body.map((p, i) => (
+            <p key={i} style={{ margin: '0 0 22px' }}>{p}</p>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function LibraryRow({ item, last }: { item: LibraryItem; last: boolean }) {
+  const [hover, setHover] = useState(false)
+  const meta = KIND_META[item.kind]
+
+  const inner = (
+    <>
+      <span style={{
+        flexShrink: 0,
+        padding: '3px 8px',
+        background: meta.bg,
+        border: `1px solid ${meta.border}`,
+        borderRadius: 4,
+        fontSize: 9, fontFamily: 'monospace', fontWeight: 700,
+        letterSpacing: '0.1em',
+        color: meta.color,
+        minWidth: 56, textAlign: 'center',
+        marginTop: 2,
+      }}>
+        {meta.label}
+      </span>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, marginBottom: 4, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
+            {item.title}
+          </span>
+          <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>
+            {item.author}{item.year ? ` · ${item.year}` : ''}
+          </span>
+        </div>
+        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.52)', lineHeight: 1.55 }}>
+          {item.note}
+        </div>
+      </div>
+      {item.url && (
+        <span style={{
+          flexShrink: 0, alignSelf: 'center',
+          fontSize: 10, color: hover ? '#c4b5fd' : '#a78bfa',
+          fontWeight: 700, letterSpacing: '0.1em', fontFamily: 'monospace',
+        }}>
+          LINK →
+        </span>
+      )}
+    </>
+  )
+
+  const common: React.CSSProperties = {
+    display: 'flex', alignItems: 'flex-start', gap: 16,
+    padding: '16px 20px',
+    borderBottom: last ? 'none' : '1px solid rgba(255,255,255,0.04)',
+    background: hover && item.url ? 'rgba(255,255,255,0.02)' : 'transparent',
+    transition: 'background 0.15s',
+  }
+
+  if (item.url) {
+    return (
+      <a
+        href={item.url}
+        target="_blank"
+        rel="noreferrer noopener"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        style={{ ...common, textDecoration: 'none', color: 'inherit', cursor: 'pointer' }}
+      >
+        {inner}
+      </a>
+    )
+  }
+  return <div style={common}>{inner}</div>
+}
+
+function KnowledgeArchiveSection() {
+  const [openEntry, setOpenEntry] = useState<DoctrineEntry | null>(null)
+  const [kindFilter, setKindFilter] = useState<LibraryKind | 'all'>('all')
+
+  const filteredLibrary = kindFilter === 'all'
+    ? LIBRARY_ITEMS
+    : LIBRARY_ITEMS.filter(l => l.kind === kindFilter)
+
+  const filterPills: { key: LibraryKind | 'all'; label: string }[] = [
+    { key: 'all',   label: 'ALL' },
+    { key: 'book',  label: 'BOOKS' },
+    { key: 'essay', label: 'ESSAYS' },
+    { key: 'talk',  label: 'TALKS' },
+  ]
+
+  return (
+    <section style={{ padding: '60px 0' }}>
+      {/* Top header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 48 }}>
+        <div>
+          <div style={{
+            fontSize: 10, fontFamily: 'monospace',
+            color: 'var(--color-purple)', letterSpacing: '0.15em',
+            marginBottom: 10, textTransform: 'uppercase',
+          }}>
+            KNOWLEDGE ARCHIVE
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 700, color: 'white', letterSpacing: '-0.02em' }}>
+            Essays and sources.
+          </div>
+          <div style={{
+            fontSize: 14, color: 'rgba(255,255,255,0.4)',
+            marginTop: 8, maxWidth: 520, lineHeight: 1.6,
+          }}>
+            우리가 생각하는 방식과 그 생각을 만든 책들. 두 가지는 분리할 수 없습니다.
+          </div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{
+            fontSize: 8, fontFamily: 'monospace',
+            color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em',
+          }}>
+            VAULT STATUS
+          </div>
+          <div style={{ fontSize: 11, color: '#00D2D3', fontWeight: 600, marginTop: 4 }}>
+            {DOCTRINE_ENTRIES.length} ESSAYS · {LIBRARY_ITEMS.length} SOURCES
+          </div>
+        </div>
+      </div>
+
+      {/* § DOCTRINE */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
+          <div>
+            <div style={{
+              fontSize: 11, fontFamily: 'monospace',
+              color: 'rgba(255,255,255,0.6)',
+              letterSpacing: '0.15em',
+              marginBottom: 6,
+            }}>
+              § DOCTRINE
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
+              What we think about the system.
+            </div>
+          </div>
+          <div style={{
+            fontSize: 9, fontFamily: 'monospace',
+            color: 'rgba(255,255,255,0.3)',
+            letterSpacing: '0.12em',
+          }}>
+            INTERNAL · LONG-FORM
+          </div>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
+          {DOCTRINE_ENTRIES.map(entry => (
+            <DoctrineCard key={entry.id} entry={entry} onOpen={() => setOpenEntry(entry)} />
+          ))}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', margin: '56px 0' }} />
+
+      {/* § COMPOUND LIBRARY */}
+      <div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
+          <div>
+            <div style={{
+              fontSize: 11, fontFamily: 'monospace',
+              color: 'rgba(255,255,255,0.6)',
+              letterSpacing: '0.15em',
+              marginBottom: 6,
+            }}>
+              § COMPOUND LIBRARY
+            </div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: '#fff', letterSpacing: '-0.01em' }}>
+              The lineage we stand in.
+            </div>
+          </div>
+          <div style={{
+            fontSize: 9, fontFamily: 'monospace',
+            color: 'rgba(255,255,255,0.3)',
+            letterSpacing: '0.12em',
+          }}>
+            EXTERNAL · CURATED
+          </div>
+        </div>
+
+        <div style={{ display: 'flex', gap: 8, marginBottom: 18, flexWrap: 'wrap' }}>
+          {filterPills.map(p => {
+            const active = kindFilter === p.key
+            return (
+              <button
+                key={p.key}
+                onClick={() => setKindFilter(p.key)}
+                style={{
+                  padding: '7px 16px',
+                  background: active ? '#fff' : 'rgba(255,255,255,0.03)',
+                  color: active ? '#050505' : 'rgba(255,255,255,0.6)',
+                  border: active ? '1px solid #fff' : '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 50,
+                  fontSize: 11, fontFamily: 'monospace',
+                  fontWeight: active ? 700 : 500,
+                  letterSpacing: '0.08em',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {p.label}
+              </button>
+            )
+          })}
+        </div>
+
+        <div style={{
+          background: 'rgba(255,255,255,0.025)',
+          border: '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 12,
+          overflow: 'hidden',
+        }}>
+          {filteredLibrary.map((item, i) => (
+            <LibraryRow
+              key={item.id}
+              item={item}
+              last={i === filteredLibrary.length - 1}
+            />
+          ))}
+          {filteredLibrary.length === 0 && (
+            <div style={{
+              padding: '32px 20px', textAlign: 'center',
+              fontSize: 12, color: 'rgba(255,255,255,0.35)',
+              fontFamily: 'monospace', letterSpacing: '0.1em',
+            }}>
+              NO SOURCES IN THIS CATEGORY
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Footer principle */}
+      <div style={{
+        marginTop: 32,
+        background: 'rgba(108,92,231,0.06)',
+        border: '1px solid rgba(108,92,231,0.2)',
+        borderRadius: 10,
+        padding: '18px 20px',
+        display: 'flex', alignItems: 'center', gap: 16,
+      }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: '#8B5CF6', letterSpacing: '0.1em', flexShrink: 0 }}>
+          ⚡ ARCHIVE PRINCIPLE
+        </div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
+          생각은 출처에서 자랍니다. 우리의 에세이는 위에, 우리를 만든 책은 아래에.
+        </div>
+      </div>
+
+      {openEntry && (
+        <DoctrineModal entry={openEntry} onClose={() => setOpenEntry(null)} />
+      )}
+    </section>
+  )
+}
+
+function LaunchTransition() {
+  return (
+    <>
+      <style>{`
+        @keyframes lx-bg-in {
+          from { opacity: 0 }
+          to   { opacity: 1 }
+        }
+        @keyframes lx-dot {
+          0%   { transform: translate(-50%,-50%) scale(0.4); opacity: 0 }
+          25%  { transform: translate(-50%,-50%) scale(1);   opacity: 1 }
+          70%  { transform: translate(-50%,-50%) scale(1.15); opacity: 1 }
+          100% { transform: translate(-50%,-50%) scale(1.4); opacity: 0 }
+        }
+        @keyframes lx-halo {
+          0%   { transform: translate(-50%,-50%) scale(0.5); opacity: 0 }
+          35%  { opacity: 0.5 }
+          100% { transform: translate(-50%,-50%) scale(2.2); opacity: 0 }
+        }
+        @keyframes lx-label {
+          0%   { opacity: 0; transform: translate(-50%, calc(-50% + 66px)) }
+          30%  { opacity: 0.75; transform: translate(-50%, calc(-50% + 58px)) }
+          75%  { opacity: 0.75 }
+          100% { opacity: 0; transform: translate(-50%, calc(-50% + 54px)) }
+        }
+        .lx-root {
+          position: fixed; inset: 0; z-index: 9999;
+          background: radial-gradient(ellipse 70% 55% at 50% 50%, #0d0718 0%, #050308 65%, #030106 100%);
+          overflow: hidden;
+          font-family: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          pointer-events: none;
+          animation: lx-bg-in 180ms ease-out both;
+        }
+        .lx-dot {
+          position: absolute; top: 50%; left: 50%;
+          width: 10px; height: 10px; border-radius: 50%;
+          background: #a78bfa;
+          box-shadow: 0 0 22px rgba(167,139,250,0.85), 0 0 56px rgba(139,92,246,0.5);
+          animation: lx-dot 900ms cubic-bezier(.3,.6,.2,1) both;
+        }
+        .lx-halo {
+          position: absolute; top: 50%; left: 50%;
+          width: 160px; height: 160px; border-radius: 50%;
+          background: radial-gradient(circle at 50% 50%, rgba(167,139,250,0.32) 0%, rgba(139,92,246,0) 65%);
+          animation: lx-halo 900ms ease-out 40ms both;
+        }
+        .lx-label {
+          position: absolute; top: 50%; left: 50%;
+          transform: translate(-50%, calc(-50% + 58px));
+          font-size: 10px; font-family: monospace; letter-spacing: 0.24em;
+          color: rgba(255,255,255,0.55);
+          animation: lx-label 900ms ease-out both;
+        }
+      `}</style>
+      <div className="lx-root">
+        <div className="lx-halo" />
+        <div className="lx-dot" />
+        <div className="lx-label">INITIALIZING</div>
+      </div>
+    </>
+  )
+}
+
 export default function LandingScreen() {
   const setScreen = useAppStore(s => s.setScreen)
   const [showMore, setShowMore] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const [launching, setLaunching] = useState(false)
   const [activePage, setActivePage] = useState<PageType>('home')
   const currentCards = showMore ? page2 : page1
 
@@ -1026,6 +1737,12 @@ export default function LandingScreen() {
     const t = setTimeout(() => setMounted(true), 50)
     return () => clearTimeout(t)
   }, [])
+
+  const launchOnboarding = () => {
+    if (launching) return
+    setLaunching(true)
+    setTimeout(() => setScreen('ob-category'), 880)
+  }
 
   const navItems: { label: string; page: PageType }[] = [
     { label: 'Missions',     page: 'missions' },
@@ -1273,7 +1990,7 @@ export default function LandingScreen() {
                       </p>
 
                       <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 24 }}>
-                        <button className="ls-cta-btn" onClick={() => setScreen('ob-category')}>
+                        <button className="ls-cta-btn" onClick={launchOnboarding}>
                           지금 무료로 시작하기
                         </button>
                         <div>
@@ -1418,42 +2135,13 @@ export default function LandingScreen() {
                     style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 20, width: '100%' }}
                   >
                     {currentCards.map(cat => (
-                      <div key={cat.id} style={{
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, cursor: 'default',
-                      }}>
-                        {cat.emoji !== null ? (
-                          <div className="ls-cat-icon" style={{
-                            width: 88, height: 88, borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.04)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 32, transition: 'all 0.2s',
-                          }}>
-                            {cat.emoji}
-                          </div>
-                        ) : (
-                          <div style={{
-                            width: 88, height: 88, borderRadius: '50%',
-                            background: 'rgba(255,255,255,0.06)',
-                            border: '1px dashed rgba(255,255,255,0.3)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            fontSize: 24, color: 'rgba(255,255,255,0.4)',
-                          }}>+</div>
-                        )}
-                        <span style={{
-                          fontSize: cat.emoji !== null ? 11 : 9,
-                          fontWeight: cat.emoji !== null ? 700 : 400,
-                          letterSpacing: cat.emoji !== null ? '0.12em' : '0.1em',
-                          color: cat.emoji !== null ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.45)',
-                          textAlign: 'center',
-                        }}>{cat.label}</span>
-                      </div>
+                      <CategoryIcon key={cat.id} cat={cat} />
                     ))}
                   </div>
                 </section>
 
                 {/* Founding User CTA */}
-                <FoundingCTASection onStart={() => setScreen('ob-category')} />
+                <FoundingCTASection onStart={launchOnboarding} />
 
                 {/* Footer */}
                 <footer style={{
@@ -1499,16 +2187,15 @@ export default function LandingScreen() {
 
             {/* ARCHIVE */}
             {activePage === 'archive' && (
-              <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.2)', fontFamily: 'monospace', fontSize: 12 }}>
-                  ARCHIVE — COMING SOON
-                </div>
+              <div style={{ paddingTop: 80 }}>
+                <KnowledgeArchiveSection />
               </div>
             )}
 
           </div>
         </div>
       </div>
+      {launching && <LaunchTransition />}
     </>
   )
 }

@@ -30,6 +30,7 @@ import LandingScreen   from './pages/LandingScreen'
 
 import LeftSidebar      from './components/layout/LeftSidebar'
 import ObStepsShell    from './components/onboarding/ObStepsShell'
+import { APP_BACKGROUND } from './styles/appBackground'
 
 const OB_STEP_SCREENS: Record<string, 1 | 2 | 3> = {
   'ob-category': 1,
@@ -84,7 +85,7 @@ function DesktopOnlyNotice() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#050505',
+      background: APP_BACKGROUND,
       color: '#fff',
       display: 'flex',
       flexDirection: 'column',
@@ -166,7 +167,7 @@ export default function App() {
     return (
       <div style={{
         minHeight: '100vh',
-        background: '#050505',
+        background: APP_BACKGROUND,
         fontFamily: "'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
         color: '#fff',
       }}>
@@ -185,7 +186,7 @@ export default function App() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: '#050505',
+      background: APP_BACKGROUND,
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'flex-start',
@@ -201,15 +202,24 @@ export default function App() {
           <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.04em', color: '#ffffff' }}>SLOO</span>
         </div>
 
-        {OB_STEP_SCREENS[screen] ? (
-          <ObStepsShell step={OB_STEP_SCREENS[screen]} screenKey={screen}>
-            {renderOnboardingOrMission(screen)}
-          </ObStepsShell>
-        ) : (
-          <div key={screen}>
-            {renderOnboardingOrMission(screen)}
-          </div>
-        )}
+        <div
+          key={screen}
+          style={{ animation: 'screen-fade-in 380ms ease-out both' }}
+        >
+          {OB_STEP_SCREENS[screen] ? (
+            <ObStepsShell step={OB_STEP_SCREENS[screen]} screenKey={screen}>
+              {renderOnboardingOrMission(screen)}
+            </ObStepsShell>
+          ) : (
+            renderOnboardingOrMission(screen)
+          )}
+        </div>
+        <style>{`
+          @keyframes screen-fade-in {
+            from { opacity: 0; transform: translateY(4px) }
+            to   { opacity: 1; transform: translateY(0) }
+          }
+        `}</style>
       </div>
     </div>
   )
