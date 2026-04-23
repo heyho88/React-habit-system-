@@ -283,6 +283,304 @@ function CompoundLabSection() {
   )
 }
 
+const LEVEL_TIERS = [
+  { level: 1,  label: 'ENTRY',        name: '입문',     desc: '0%의 저항. 2분 이하 미션.' },
+  { level: 3,  label: 'FOUNDATION',   name: '기반 형성', desc: '행동이 루틴으로 굳기 시작.' },
+  { level: 5,  label: 'STABILIZED',   name: '안정',     desc: '의지력 없이 작동. 복리 시작.' },
+  { level: 7,  label: 'ACCELERATED',  name: '가속',     desc: '수익 곡선이 가파르게 기울어짐.' },
+  { level: 10, label: 'ARCHITECT',    name: '마스터',   desc: '시스템 전체가 자동화.', highlight: true },
+]
+
+const CATEGORY_MATRIX = [
+  {
+    id: 'body',    label: 'BODY',    emoji: '💪', accent: '#A78BFA',
+    missions: {
+      l1:  '제자리 걷기 2분',
+      l5:  '근력운동 20분 + 유산소 10분',
+      l10: '주 6회 트레이닝 루틴 자동화',
+    },
+  },
+  {
+    id: 'sleep',   label: 'SLEEP',   emoji: '🌙', accent: '#A78BFA',
+    missions: {
+      l1:  '취침 5분 앞당기기',
+      l5:  '목표 시간 ±15분 내 취침 유지',
+      l10: '수면-기상 사이클 자가 조정',
+    },
+  },
+  {
+    id: 'digital', label: 'DIGITAL', emoji: '📵', accent: '#A78BFA',
+    missions: {
+      l1:  'SNS 30분 감소',
+      l5:  '핸드폰 없는 아침 루틴 확립',
+      l10: '의도된 사용만 남김 (Deep Focus)',
+    },
+  },
+  {
+    id: 'reading', label: 'READING', emoji: '📖', accent: '#A78BFA',
+    missions: {
+      l1:  '한 페이지 읽기',
+      l5:  '매일 20분 독서 고정',
+      l10: '월 4권 + 리텐션 노트 시스템',
+    },
+  },
+  {
+    id: 'mental',  label: 'MENTAL',  emoji: '🧘', accent: '#A78BFA',
+    missions: {
+      l1:  '호흡 1분 관찰',
+      l5:  '명상 10분 + 저널링',
+      l10: '자기 상태 실시간 인지',
+    },
+  },
+  {
+    id: 'routine', label: 'ROUTINE', emoji: '🗂️', accent: '#A78BFA',
+    missions: {
+      l1:  '기상 후 물 한 잔',
+      l5:  '아침/저녁 루틴 각 5단계',
+      l10: '하루 전체가 설계된 시스템',
+    },
+  },
+]
+
+function MissionsSection() {
+  return (
+    <section style={{ padding: '60px 0' }}>
+      {/* Header */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div style={{
+            fontSize: 10, fontFamily: 'monospace',
+            color: 'var(--color-purple)', letterSpacing: '0.15em',
+            marginBottom: 10, textTransform: 'uppercase',
+          }}>
+            MISSION ARCHITECTURE
+          </div>
+          <div style={{ fontSize: 32, fontWeight: 700, color: 'white', letterSpacing: '-0.02em' }}>
+            10 Levels. 1% at a time.
+          </div>
+          <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.4)', marginTop: 8, maxWidth: 520, lineHeight: 1.6 }}>
+            모든 미션은 10단계로 설계되어 있습니다. 의지력이 아닌 저항의 부재로 시작하고, 복리로 확장합니다.
+          </div>
+        </div>
+        <div style={{ textAlign: 'right' }}>
+          <div style={{ fontSize: 8, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)', letterSpacing: '0.1em' }}>
+            LEVEL SYSTEM
+          </div>
+          <div style={{ fontSize: 11, color: '#00D2D3', fontWeight: 600, marginTop: 4 }}>v1.0-STABLE</div>
+        </div>
+      </div>
+
+      {/* Level roadmap */}
+      <div style={{
+        marginTop: 48,
+        background: 'rgba(255,255,255,0.025)',
+        border: '1px solid rgba(255,255,255,0.06)',
+        borderRadius: 12,
+        padding: 32,
+      }}>
+        <div style={{
+          fontSize: 9, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+          marginBottom: 24, textTransform: 'uppercase',
+        }}>
+          PROGRESSION CURVE — L1 → L10
+        </div>
+
+        {/* Rail */}
+        <div style={{ position: 'relative', height: 4, background: 'rgba(255,255,255,0.04)', borderRadius: 2, marginBottom: 48 }}>
+          <div style={{
+            position: 'absolute', left: 0, top: 0, height: '100%', width: '100%',
+            background: 'linear-gradient(90deg, rgba(139,92,246,0.25), rgba(236,72,153,0.35), rgba(251,146,60,0.5))',
+            borderRadius: 2,
+          }} />
+          {LEVEL_TIERS.map((tier, i) => {
+            const pct = ((tier.level - 1) / 9) * 100
+            return (
+              <div
+                key={tier.level}
+                style={{
+                  position: 'absolute', left: `${pct}%`, top: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: tier.highlight ? 14 : 10,
+                  height: tier.highlight ? 14 : 10,
+                  borderRadius: '50%',
+                  background: tier.highlight ? '#fb923c' : '#A78BFA',
+                  boxShadow: tier.highlight
+                    ? '0 0 16px rgba(251,146,60,0.6)'
+                    : '0 0 10px rgba(167,139,250,0.35)',
+                  zIndex: i + 1,
+                }}
+              />
+            )
+          })}
+        </div>
+
+        {/* Tier cards */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+          {LEVEL_TIERS.map(tier => (
+            <div key={tier.level} style={{
+              background: tier.highlight ? 'rgba(251,146,60,0.06)' : 'rgba(255,255,255,0.025)',
+              border: tier.highlight
+                ? '1px solid rgba(251,146,60,0.35)'
+                : '1px solid rgba(255,255,255,0.06)',
+              borderRadius: 10,
+              padding: 16,
+            }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10 }}>
+                <span style={{
+                  fontSize: 9, fontFamily: 'monospace',
+                  color: tier.highlight ? '#fb923c' : 'rgba(255,255,255,0.35)',
+                  letterSpacing: '0.15em',
+                }}>
+                  LV {String(tier.level).padStart(2, '0')}
+                </span>
+                <span style={{
+                  fontSize: 22, fontWeight: 800,
+                  color: tier.highlight ? '#fb923c' : '#fff',
+                  letterSpacing: '-0.03em', lineHeight: 1,
+                }}>
+                  {tier.level}
+                </span>
+              </div>
+              <div style={{
+                fontSize: 11, fontFamily: 'monospace',
+                color: 'rgba(255,255,255,0.5)',
+                letterSpacing: '0.1em', marginBottom: 6,
+              }}>
+                {tier.label}
+              </div>
+              <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 6 }}>
+                {tier.name}
+              </div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
+                {tier.desc}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Category matrix */}
+      <div style={{ marginTop: 48 }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+          marginBottom: 20,
+        }}>
+          <div>
+            <div style={{
+              fontSize: 10, fontFamily: 'monospace',
+              color: 'var(--color-purple)', letterSpacing: '0.15em',
+              marginBottom: 8, textTransform: 'uppercase',
+            }}>
+              CATEGORY MATRIX
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>
+              6 Domains × 3 Stages
+            </div>
+          </div>
+          <div style={{
+            fontSize: 9, fontFamily: 'monospace',
+            color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+          }}>
+            SAMPLE MISSIONS — L1 / L5 / L10
+          </div>
+        </div>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: 16,
+        }}>
+          {CATEGORY_MATRIX.map(cat => (
+            <div key={cat.id} style={{
+              background: 'rgba(255,255,255,0.025)',
+              border: '1px solid rgba(255,255,255,0.06)',
+              borderRadius: 12,
+              padding: 20,
+              display: 'flex', flexDirection: 'column',
+            }}>
+              {/* Head */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
+                <div style={{
+                  width: 44, height: 44, borderRadius: '50%',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 20,
+                }}>
+                  {cat.emoji}
+                </div>
+                <div>
+                  <div style={{
+                    fontSize: 11, fontFamily: 'monospace',
+                    color: '#fff', fontWeight: 700,
+                    letterSpacing: '0.15em',
+                  }}>
+                    {cat.label}
+                  </div>
+                  <div style={{
+                    fontSize: 9, fontFamily: 'monospace',
+                    color: 'rgba(255,255,255,0.35)',
+                    letterSpacing: '0.12em', marginTop: 2,
+                  }}>
+                    10 LEVELS
+                  </div>
+                </div>
+              </div>
+
+              {/* Rows */}
+              {[
+                { tag: 'L01', label: cat.missions.l1,  tone: 'rgba(255,255,255,0.55)' },
+                { tag: 'L05', label: cat.missions.l5,  tone: 'rgba(255,255,255,0.75)' },
+                { tag: 'L10', label: cat.missions.l10, tone: '#fb923c' },
+              ].map((row, i) => (
+                <div key={i} style={{
+                  display: 'flex', alignItems: 'flex-start', gap: 10,
+                  paddingTop: i === 0 ? 0 : 10,
+                  paddingBottom: i === 2 ? 0 : 10,
+                  borderBottom: i < 2 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                }}>
+                  <span style={{
+                    fontSize: 9, fontFamily: 'monospace',
+                    color: row.tone === '#fb923c' ? '#fb923c' : 'rgba(255,255,255,0.3)',
+                    letterSpacing: '0.12em',
+                    minWidth: 28, paddingTop: 2,
+                  }}>
+                    {row.tag}
+                  </span>
+                  <span style={{
+                    fontSize: 13, color: row.tone,
+                    lineHeight: 1.5, fontWeight: row.tone === '#fb923c' ? 600 : 400,
+                  }}>
+                    {row.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer insight */}
+      <div style={{
+        marginTop: 32,
+        background: 'rgba(108,92,231,0.06)',
+        border: '1px solid rgba(108,92,231,0.2)',
+        borderRadius: 10,
+        padding: '18px 20px',
+        display: 'flex', alignItems: 'center', gap: 16,
+      }}>
+        <div style={{ fontSize: 10, fontWeight: 700, color: '#8B5CF6', letterSpacing: '0.1em' }}>
+          ⚡ DESIGN PRINCIPLE
+        </div>
+        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
+          레벨업은 의지가 아닌 시간의 함수입니다. 매일 같은 강도를 유지하면 시스템이 자동으로 다음 단계를 해금합니다.
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function LandingScreen() {
   const setScreen = useAppStore(s => s.setScreen)
   const [showMore, setShowMore] = useState(false)
@@ -743,10 +1041,8 @@ export default function LandingScreen() {
 
             {/* MISSIONS */}
             {activePage === 'missions' && (
-              <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <div style={{ textAlign: 'center', color: 'rgba(255,255,255,0.2)', fontFamily: 'monospace', fontSize: 12 }}>
-                  MISSIONS — COMING SOON
-                </div>
+              <div style={{ paddingTop: 80 }}>
+                <MissionsSection />
               </div>
             )}
 
