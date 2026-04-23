@@ -635,11 +635,12 @@ const CTA_COMPARISON = [
 
 function ProblemSection() {
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
       <div style={{ maxWidth: 720, marginBottom: 56 }}>
         <div style={{
-          fontSize: 10, fontFamily: 'monospace', color: '#fb7185',
-          letterSpacing: '0.15em', marginBottom: 12, textTransform: 'uppercase',
+          fontSize: 11, fontFamily: 'monospace', color: '#fb7185',
+          letterSpacing: '0.15em', marginBottom: 14, textTransform: 'uppercase',
+          fontWeight: 600,
         }}>
           ROOT-CAUSE ANALYSIS
         </div>
@@ -648,11 +649,11 @@ function ProblemSection() {
           letterSpacing: '-0.02em', lineHeight: 1.15,
         }}>
           작심삼일은 의지력 문제가 아닙니다.<br />
-          <span style={{ color: 'rgba(255,255,255,0.5)' }}>시스템 설계 문제입니다.</span>
+          <span style={{ color: 'rgba(255,255,255,0.75)' }}>시스템 설계 문제입니다.</span>
         </h2>
         <p style={{
-          marginTop: 20, fontSize: 15, lineHeight: 1.7,
-          color: 'rgba(255,255,255,0.55)', maxWidth: 560,
+          marginTop: 22, fontSize: 16, lineHeight: 1.7,
+          color: 'rgba(255,255,255,0.78)', maxWidth: 580,
         }}>
           92%가 같은 이유로 실패합니다. 이건 우연이 아닙니다.
           문제는 당신이 아니라, 지금까지의 습관 앱들이 설계된 방식입니다.
@@ -662,39 +663,39 @@ function ProblemSection() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 20 }}>
         {PROBLEM_STATS.map(s => (
           <div key={s.tag} style={{
-            background: 'rgba(255,255,255,0.025)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.12)',
             borderRadius: 14, padding: '28px 24px',
           }}>
             <div style={{
-              fontSize: 9, fontFamily: 'monospace',
-              color: 'rgba(255,255,255,0.4)', letterSpacing: '0.15em',
-              marginBottom: 24,
+              fontSize: 10, fontFamily: 'monospace',
+              color: 'rgba(255,255,255,0.6)', letterSpacing: '0.15em',
+              marginBottom: 24, fontWeight: 600,
             }}>
               {s.tag}
             </div>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
               <span style={{
-                fontSize: 68, fontWeight: 800, color: '#fff',
+                fontSize: 72, fontWeight: 800, color: '#fff',
                 letterSpacing: '-0.04em', lineHeight: 1,
               }}>
                 {s.value}
               </span>
-              <span style={{ fontSize: 24, fontWeight: 600, color: 'rgba(255,255,255,0.5)' }}>
+              <span style={{ fontSize: 26, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>
                 {s.unit}
               </span>
             </div>
             <div style={{
-              fontSize: 14, color: 'rgba(255,255,255,0.7)',
-              marginTop: 16, fontWeight: 500,
+              fontSize: 15, color: 'rgba(255,255,255,0.9)',
+              marginTop: 18, fontWeight: 600,
             }}>
               {s.label}
             </div>
             <div style={{
-              fontSize: 9, fontFamily: 'monospace',
-              color: 'rgba(255,255,255,0.25)', letterSpacing: '0.12em',
+              fontSize: 10, fontFamily: 'monospace',
+              color: 'rgba(255,255,255,0.5)', letterSpacing: '0.12em',
               marginTop: 20, paddingTop: 16,
-              borderTop: '1px solid rgba(255,255,255,0.04)',
+              borderTop: '1px solid rgba(255,255,255,0.1)',
               textTransform: 'uppercase',
             }}>
               SOURCE — {s.note}
@@ -708,15 +709,16 @@ function ProblemSection() {
 
 function ServicesSection() {
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
       <div style={{
         display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
         marginBottom: 56,
       }}>
         <div style={{ maxWidth: 640 }}>
           <div style={{
-            fontSize: 10, fontFamily: 'monospace', color: 'var(--color-purple)',
-            letterSpacing: '0.15em', marginBottom: 12, textTransform: 'uppercase',
+            fontSize: 11, fontFamily: 'monospace', color: '#A78BFA',
+            letterSpacing: '0.15em', marginBottom: 14, textTransform: 'uppercase',
+            fontWeight: 600,
           }}>
             SYSTEM ARCHITECTURE
           </div>
@@ -735,8 +737,9 @@ function ServicesSection() {
           </h2>
         </div>
         <div style={{
-          fontSize: 9, fontFamily: 'monospace',
-          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+          fontSize: 10, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.55)', letterSpacing: '0.15em',
+          fontWeight: 600,
         }}>
           03 CORE MECHANISMS
         </div>
@@ -745,8 +748,8 @@ function ServicesSection() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {SERVICES.map(s => (
           <div key={s.id} style={{
-            background: 'rgba(255,255,255,0.025)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.12)',
             borderRadius: 14, padding: 28,
             display: 'flex', flexDirection: 'column',
           }}>
@@ -755,55 +758,57 @@ function ServicesSection() {
               marginBottom: 24,
             }}>
               <div style={{
-                fontSize: 9, fontFamily: 'monospace',
-                color: 'rgba(255,255,255,0.35)', letterSpacing: '0.15em',
+                fontSize: 10, fontFamily: 'monospace',
+                color: 'rgba(255,255,255,0.6)', letterSpacing: '0.15em',
+                fontWeight: 600,
               }}>
                 {s.tag}
               </div>
               <div style={{
-                width: 36, height: 36, borderRadius: 10,
-                background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
+                width: 40, height: 40, borderRadius: 10,
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.16)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 16,
+                fontSize: 18,
               }}>
                 {s.icon}
               </div>
             </div>
             <div style={{
               fontSize: 22, fontWeight: 700, color: '#fff',
-              letterSpacing: '-0.02em', marginBottom: 12,
+              letterSpacing: '-0.02em', marginBottom: 14,
             }}>
               {s.title}
             </div>
             <div style={{
-              fontSize: 13, color: 'rgba(255,255,255,0.55)',
-              marginBottom: 18, lineHeight: 1.6, fontStyle: 'italic',
+              fontSize: 14, color: '#E9D5FF',
+              marginBottom: 20, lineHeight: 1.6, fontStyle: 'italic',
+              fontWeight: 500,
             }}>
               "{s.subtitle}"
             </div>
             <div style={{
-              fontSize: 13, color: 'rgba(255,255,255,0.5)',
-              lineHeight: 1.65, marginBottom: 28, flex: 1,
+              fontSize: 14, color: 'rgba(255,255,255,0.78)',
+              lineHeight: 1.7, marginBottom: 28, flex: 1,
             }}>
               {s.desc}
             </div>
-            <div style={{ paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ paddingTop: 20, borderTop: '1px solid rgba(255,255,255,0.12)' }}>
               <div style={{
-                fontSize: 9, fontFamily: 'monospace',
-                color: 'rgba(255,255,255,0.35)', letterSpacing: '0.15em',
-                marginBottom: 8,
+                fontSize: 10, fontFamily: 'monospace',
+                color: 'rgba(255,255,255,0.6)', letterSpacing: '0.15em',
+                marginBottom: 10, fontWeight: 600,
               }}>
                 MEASURED IMPACT
               </div>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 10 }}>
                 <span style={{
-                  fontSize: 28, fontWeight: 800, color: '#A78BFA',
+                  fontSize: 30, fontWeight: 800, color: '#C4B5FD',
                   letterSpacing: '-0.03em', lineHeight: 1,
                 }}>
                   {s.highlight}
                 </span>
-                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)' }}>
+                <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.7)' }}>
                   {s.highlightLabel}
                 </span>
               </div>
@@ -817,11 +822,12 @@ function ServicesSection() {
 
 function ProofEngineSection() {
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
       <div style={{ textAlign: 'center', marginBottom: 64 }}>
         <div style={{
-          fontSize: 10, fontFamily: 'monospace', color: 'var(--color-purple)',
-          letterSpacing: '0.15em', marginBottom: 12, textTransform: 'uppercase',
+          fontSize: 11, fontFamily: 'monospace', color: '#A78BFA',
+          letterSpacing: '0.15em', marginBottom: 14, textTransform: 'uppercase',
+          fontWeight: 600,
         }}>
           PROOF ENGINE
         </div>
@@ -830,11 +836,11 @@ function ProofEngineSection() {
           letterSpacing: '-0.02em', lineHeight: 1.15,
         }}>
           왜 이번엔 다를까?<br />
-          <span style={{ color: 'rgba(255,255,255,0.5)' }}>심리학이 알려준 3가지 실패 원인.</span>
+          <span style={{ color: 'rgba(255,255,255,0.75)' }}>심리학이 알려준 3가지 실패 원인.</span>
         </h2>
         <p style={{
-          marginTop: 20, fontSize: 14, lineHeight: 1.7,
-          color: 'rgba(255,255,255,0.55)', maxWidth: 600, margin: '20px auto 0',
+          marginTop: 22, fontSize: 15, lineHeight: 1.7,
+          color: 'rgba(255,255,255,0.78)', maxWidth: 620, margin: '22px auto 0',
         }}>
           SLOO는 유저 후기가 아니라 연구 위에 만들어졌습니다.
           당신이 지금까지 실패한 정확한 원인을, 구조로 해체해 재설계했습니다.
@@ -844,14 +850,14 @@ function ProofEngineSection() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
         {PROOF_PILLARS.map((p, i) => (
           <div key={i} style={{
-            background: 'rgba(255,255,255,0.025)',
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.12)',
             borderRadius: 14, padding: 28,
             display: 'flex', flexDirection: 'column',
           }}>
             <div style={{
-              fontSize: 9, fontFamily: 'monospace', color: '#fb7185',
-              letterSpacing: '0.15em', marginBottom: 18,
+              fontSize: 10, fontFamily: 'monospace', color: '#fb7185',
+              letterSpacing: '0.15em', marginBottom: 18, fontWeight: 600,
             }}>
               {p.tag}
             </div>
@@ -862,7 +868,7 @@ function ProofEngineSection() {
               "{p.why}"
             </div>
             <div style={{
-              fontSize: 12, color: 'rgba(255,255,255,0.5)',
+              fontSize: 13, color: 'rgba(255,255,255,0.78)',
               lineHeight: 1.7, marginBottom: 28, flex: 1,
             }}>
               {p.research}
@@ -871,22 +877,22 @@ function ProofEngineSection() {
             <div style={{
               display: 'flex', alignItems: 'center', gap: 12, marginBottom: 14,
             }}>
-              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.2)' }} />
+              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.4)' }} />
               <span style={{
-                fontSize: 9, fontFamily: 'monospace', color: '#A78BFA',
-                letterSpacing: '0.15em',
+                fontSize: 10, fontFamily: 'monospace', color: '#C4B5FD',
+                letterSpacing: '0.15em', fontWeight: 700,
               }}>
                 SLOO FIX
               </span>
-              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.2)' }} />
+              <div style={{ height: 1, flex: 1, background: 'rgba(139,92,246,0.4)' }} />
             </div>
 
             <div style={{
-              background: 'rgba(139,92,246,0.08)',
-              border: '1px solid rgba(139,92,246,0.25)',
+              background: 'rgba(139,92,246,0.18)',
+              border: '1px solid rgba(139,92,246,0.45)',
               borderRadius: 10, padding: '14px 16px',
-              fontSize: 13, fontWeight: 600, color: '#fff',
-              lineHeight: 1.5, textAlign: 'center',
+              fontSize: 14, fontWeight: 600, color: '#fff',
+              lineHeight: 1.55, textAlign: 'center',
             }}>
               {p.fix}
             </div>
@@ -895,15 +901,15 @@ function ProofEngineSection() {
       </div>
 
       <div style={{
-        marginTop: 40,
+        marginTop: 44,
         display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 28,
-        fontSize: 9, fontFamily: 'monospace', color: 'rgba(255,255,255,0.3)',
-        letterSpacing: '0.15em', flexWrap: 'wrap',
+        fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.5)',
+        letterSpacing: '0.15em', flexWrap: 'wrap', fontWeight: 500,
       }}>
         <span>◦ BJ FOGG · STANFORD BEHAVIOR DESIGN LAB</span>
-        <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+        <span style={{ color: 'rgba(255,255,255,0.25)' }}>│</span>
         <span>◦ REINFORCEMENT THEORY</span>
-        <span style={{ color: 'rgba(255,255,255,0.15)' }}>│</span>
+        <span style={{ color: 'rgba(255,255,255,0.25)' }}>│</span>
         <span>◦ STREAK PSYCHOLOGY RESEARCH</span>
       </div>
     </section>
@@ -912,46 +918,46 @@ function ProofEngineSection() {
 
 function FoundingCTASection({ onStart }: { onStart: () => void }) {
   return (
-    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+    <section style={{ padding: '100px 0', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
       <div style={{
         position: 'relative', overflow: 'hidden',
-        background: 'radial-gradient(ellipse at top, rgba(139,92,246,0.12), transparent 70%), rgba(255,255,255,0.025)',
-        border: '1px solid rgba(139,92,246,0.2)',
+        background: 'radial-gradient(ellipse at top, rgba(139,92,246,0.22), transparent 70%), rgba(255,255,255,0.05)',
+        border: '1px solid rgba(139,92,246,0.4)',
         borderRadius: 20, padding: '72px 48px', textAlign: 'center',
       }}>
         <div style={{
           position: 'absolute', top: 20, left: 24,
-          fontSize: 9, fontFamily: 'monospace',
-          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+          fontSize: 10, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.55)', letterSpacing: '0.15em', fontWeight: 600,
         }}>
           ● LIMITED AVAILABILITY
         </div>
         <div style={{
           position: 'absolute', top: 20, right: 24,
-          fontSize: 9, fontFamily: 'monospace',
-          color: 'rgba(255,255,255,0.3)', letterSpacing: '0.15em',
+          fontSize: 10, fontFamily: 'monospace',
+          color: 'rgba(255,255,255,0.55)', letterSpacing: '0.15em', fontWeight: 600,
         }}>
           V1.0 FOUNDING PROGRAM
         </div>
 
         <div style={{
-          fontSize: 10, fontFamily: 'monospace', color: '#A78BFA',
-          letterSpacing: '0.2em', marginBottom: 18,
+          fontSize: 11, fontFamily: 'monospace', color: '#C4B5FD',
+          letterSpacing: '0.2em', marginBottom: 18, fontWeight: 700,
         }}>
           FOUNDING USER 모집 중
         </div>
         <h2 style={{
           margin: 0, fontSize: 60, fontWeight: 800,
           letterSpacing: '-0.04em', lineHeight: 1.05,
-          background: 'linear-gradient(90deg, #ffffff 0%, #A78BFA 55%, #fb923c 100%)',
+          background: 'linear-gradient(90deg, #ffffff 0%, #C4B5FD 55%, #fb923c 100%)',
           WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
           backgroundClip: 'text',
         }}>
           50명 한정,<br />평생 무료.
         </h2>
         <p style={{
-          marginTop: 24, fontSize: 15, lineHeight: 1.75,
-          color: 'rgba(255,255,255,0.6)', maxWidth: 560, margin: '24px auto 0',
+          marginTop: 24, fontSize: 16, lineHeight: 1.75,
+          color: 'rgba(255,255,255,0.82)', maxWidth: 580, margin: '24px auto 0',
         }}>
           SLOO는 지금 가장 초기 단계입니다.
           정식 출시 전, 함께 서비스를 만들어갈 Founding User 50명을 찾고 있습니다.
@@ -960,31 +966,31 @@ function FoundingCTASection({ onStart }: { onStart: () => void }) {
 
         <div style={{
           marginTop: 48, maxWidth: 640, margin: '48px auto 0',
-          background: 'rgba(0,0,0,0.3)',
-          border: '1px solid rgba(255,255,255,0.06)',
+          background: 'rgba(0,0,0,0.45)',
+          border: '1px solid rgba(255,255,255,0.14)',
           borderRadius: 12, overflow: 'hidden',
         }}>
           <div style={{
             display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr',
             padding: '14px 20px',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
-            fontSize: 9, fontFamily: 'monospace', letterSpacing: '0.15em',
-            color: 'rgba(255,255,255,0.35)',
+            borderBottom: '1px solid rgba(255,255,255,0.12)',
+            fontSize: 10, fontFamily: 'monospace', letterSpacing: '0.15em',
+            color: 'rgba(255,255,255,0.6)', fontWeight: 600,
           }}>
             <span></span>
-            <span style={{ color: '#A78BFA', textAlign: 'center' }}>FOUNDING USER</span>
+            <span style={{ color: '#C4B5FD', textAlign: 'center' }}>FOUNDING USER</span>
             <span style={{ textAlign: 'center' }}>정식 출시 후</span>
           </div>
           {CTA_COMPARISON.map((row, i) => (
             <div key={i} style={{
               display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr',
-              padding: '14px 20px',
-              borderBottom: i < CTA_COMPARISON.length - 1 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-              fontSize: 13, alignItems: 'center', textAlign: 'left',
+              padding: '16px 20px',
+              borderBottom: i < CTA_COMPARISON.length - 1 ? '1px solid rgba(255,255,255,0.08)' : 'none',
+              fontSize: 14, alignItems: 'center', textAlign: 'left',
             }}>
-              <span style={{ color: 'rgba(255,255,255,0.55)' }}>{row.label}</span>
+              <span style={{ color: 'rgba(255,255,255,0.82)', fontWeight: 500 }}>{row.label}</span>
               <span style={{ color: '#fff', fontWeight: 700, textAlign: 'center' }}>{row.founding}</span>
-              <span style={{ color: 'rgba(255,255,255,0.4)', textAlign: 'center' }}>{row.regular}</span>
+              <span style={{ color: 'rgba(255,255,255,0.55)', textAlign: 'center' }}>{row.regular}</span>
             </div>
           ))}
         </div>
@@ -999,7 +1005,7 @@ function FoundingCTASection({ onStart }: { onStart: () => void }) {
           </button>
           <div style={{
             marginTop: 18, fontSize: 11, fontFamily: 'monospace',
-            color: 'rgba(255,255,255,0.35)', letterSpacing: '0.12em',
+            color: 'rgba(255,255,255,0.6)', letterSpacing: '0.12em', fontWeight: 500,
           }}>
             카드 등록 없음 · 평생 무료 · 50명 마감 시 종료
           </div>
@@ -1034,7 +1040,12 @@ export default function LandingScreen() {
           position: fixed;
           inset: 0;
           overflow-y: auto;
-          background: #050505;
+          background:
+            linear-gradient(rgba(139,92,246,0.055) 1px, transparent 1px) 0 0 / 48px 48px,
+            linear-gradient(90deg, rgba(139,92,246,0.055) 1px, transparent 1px) 0 0 / 48px 48px,
+            radial-gradient(ellipse 85% 60% at 20% 0%, rgba(139,92,246,0.22) 0%, transparent 55%),
+            radial-gradient(ellipse 80% 55% at 90% 100%, rgba(244,63,94,0.16) 0%, transparent 55%),
+            radial-gradient(ellipse 100% 80% at 50% 50%, #0c0618 0%, #070410 50%, #050308 100%);
           color: white;
           z-index: 100;
           font-family: 'Geist Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
