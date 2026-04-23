@@ -96,6 +96,7 @@ interface AppState {
   dailyEnergy: string | null
   dailyMental: string | null
   pendingResetCategory: string | null
+  profileVersion: number
 }
 
 interface AppActions {
@@ -116,6 +117,7 @@ interface AppActions {
   setObAvatar: (v: string | null) => void
   setMainTab: (v: 'dashboard' | 'missions' | 'analytics' | 'settings') => void
   commitProfile: () => void
+  saveProfile: (p: Partial<ProfileData>) => void
   commitOnboardingData: () => void
   resetObState: () => void
   initializeApp: () => void
@@ -180,6 +182,7 @@ export const useAppStore = create<AppStore>((set) => ({
   dailyEnergy: null,
   dailyMental: null,
   pendingResetCategory: null,
+  profileVersion: 0,
   ...initialObState,
 
   setScreen: (screen) => set({ screen }),
@@ -211,6 +214,12 @@ export const useAppStore = create<AppStore>((set) => ({
       bio: s.obBio,
       avatar: s.obAvatar,
     })
+    set(st => ({ profileVersion: st.profileVersion + 1 }))
+  },
+
+  saveProfile: (p) => {
+    setProfile(p)
+    set(st => ({ profileVersion: st.profileVersion + 1 }))
   },
 
   commitOnboardingData: () => {

@@ -46,6 +46,7 @@ const NAV: { key: Tab; label: string; icon: React.ReactNode }[] = [
 export default function LeftSidebar() {
   const mainTab = useAppStore(s => s.mainTab)
   const setMainTab = useAppStore(s => s.setMainTab)
+  useAppStore(s => s.profileVersion)
   const profile = getProfile()
   const name = profile.displayName || 'Architect_01'
 

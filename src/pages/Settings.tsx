@@ -2,7 +2,6 @@ import { useMemo, useRef, useState } from 'react'
 import {
   useAppStore,
   getProfile,
-  setProfile,
   getAllActiveCatKeys,
 } from '../store/appStore'
 import { getCatName } from '../lib/helpers'
@@ -13,6 +12,7 @@ export default function Settings() {
   const setScreen = useAppStore(s => s.setScreen)
   const setMainTab = useAppStore(s => s.setMainTab)
   const resetObState = useAppStore(s => s.resetObState)
+  const saveProfileAction = useAppStore(s => s.saveProfile)
 
   const initial = useMemo(() => getProfile(), [])
   const [name, setName] = useState(initial.displayName)
@@ -44,7 +44,7 @@ export default function Settings() {
   }
 
   function saveProfile() {
-    setProfile({ displayName: name, bio, avatar })
+    saveProfileAction({ displayName: name, bio, avatar })
     showFlash('saved')
   }
 
