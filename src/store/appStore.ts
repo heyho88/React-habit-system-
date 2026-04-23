@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { getRoutineCat } from '../lib/helpers'
+import { getRoutineCat, sleepTimeToMins } from '../lib/helpers'
 
 // ── localStorage 헬퍼 ──
 
@@ -116,6 +116,7 @@ interface AppActions {
   setObAvatar: (v: string | null) => void
   setMainTab: (v: 'dashboard' | 'missions' | 'analytics' | 'settings') => void
   commitProfile: () => void
+  commitOnboardingData: () => void
   resetObState: () => void
   initializeApp: () => void
 }
@@ -210,6 +211,78 @@ export const useAppStore = create<AppStore>((set) => ({
       bio: s.obBio,
       avatar: s.obAvatar,
     })
+  },
+
+  commitOnboardingData: () => {
+    const s = useAppStore.getState()
+    const cat = s.category
+    if (!cat) return
+
+    if (cat === 'health') {
+      if (getCatData('health') !== null) return
+      setCatData('health', {
+        active: true,
+        type: s.obExerciseType || 'hometraining',
+        level: 1,
+        growth_count: 0,
+        total_count: 0,
+        maintain_count: 0,
+        last_date: null,
+        history: [],
+        fail_reason: s.obFailReason ?? 0,
+        max_reached: false,
+      })
+      return
+    }
+
+    if (cat === 'sleep') {
+      if (getCatData('sleep') !== null) return
+      const curStr = `${String(s.obSleepCurrentH).padStart(2, '0')}:${String(s.obSleepCurrentM).padStart(2, '0')}`
+      const tgtStr = `${String(s.obSleepTargetH).padStart(2, '0')}:${String(s.obSleepTargetM).padStart(2, '0')}`
+      const diffMins = Math.max(0, sleepTimeToMins(curStr) - sleepTimeToMins(tgtStr))
+      const alreadyDone = diffMins <= 0
+      setCatData('sleep', {
+        active: true,
+        type: 'sleep',
+        level: 1,
+        growth_count: alreadyDone ? 1 : 0,
+        total_count: 0,
+        maintain_count: 0,
+        last_date: null,
+        history: [],
+        fail_reason: 0,
+        max_reached: false,
+        current_bedtime: curStr,
+        target_bedtime: tgtStr,
+        current_target: alreadyDone ? tgtStr : curStr,
+        total_minutes_diff: alreadyDone ? 0 : diffMins,
+      })
+      return
+    }
+
+    if (cat === 'routine') {
+      const type = s.obRoutineType
+      if (!type) return
+      const slots = getRoutineSlots()
+      if (!slots.includes(type)) {
+        slots.push(type)
+        setRoutineSlots(slots)
+      }
+      const routineCat = getRoutineCat(type)
+      if (getCatData(routineCat) !== null) return
+      setCatData(routineCat, {
+        active: true,
+        type,
+        level: 1,
+        growth_count: 0,
+        total_count: 0,
+        maintain_count: 0,
+        last_date: null,
+        history: [],
+        fail_reason: s.obFailReason ?? 0,
+        max_reached: false,
+      })
+    }
   },
 
   resetObState: () => set({ ...initialObState }),

@@ -22,6 +22,7 @@ import ObCompleteFinal  from './pages/onboarding/ObCompleteFinal'
 import Dashboard        from './pages/Dashboard'
 import Missions         from './pages/Missions'
 import Analytics        from './pages/Analytics'
+import Settings         from './pages/Settings'
 import ABChoice         from './pages/mission/ABChoice'
 import MissionScreen    from './pages/mission/MissionScreen'
 import DailyState       from './pages/mission/DailyState'
@@ -64,23 +65,8 @@ function MainContent() {
   if (tab === 'dashboard') return <Dashboard />
   if (tab === 'missions') return <Missions />
   if (tab === 'analytics') return <Analytics />
-  if (tab === 'settings') return <ComingSoon title="Settings" sub="프로필, 알림, 데이터 관리 설정을 준비 중입니다." />
+  if (tab === 'settings') return <Settings />
   return <Dashboard />
-}
-
-function ComingSoon({ title, sub }: { title: string; sub: string }) {
-  return (
-    <div style={{
-      maxWidth: 1200, margin: '0 auto', padding: '80px 40px', color: '#fff',
-    }}>
-      <div style={{
-        fontSize: 10, fontFamily: 'monospace', color: 'rgba(255,255,255,0.45)',
-        letterSpacing: '0.15em', marginBottom: 12,
-      }}>COMING SOON</div>
-      <h1 style={{ fontSize: 32, fontWeight: 800, marginBottom: 10 }}>{title}</h1>
-      <p style={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }}>{sub}</p>
-    </div>
-  )
 }
 
 const MAIN_APP_SCREENS = new Set(['home'])
