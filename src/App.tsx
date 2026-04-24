@@ -159,6 +159,7 @@ export default function App() {
 
   if (isMobile) return <DesktopOnlyNotice />
 
+  if (screen === 'landing') return <LandingScreen />
 
   const inMainApp = MAIN_APP_SCREENS.has(screen) && getAllActiveCatKeys().length > 0
 
@@ -202,22 +203,22 @@ export default function App() {
           <span style={{ fontWeight: 800, fontSize: 16, letterSpacing: '-0.04em', color: '#ffffff' }}>SLOO</span>
         </div>
 
-        <div
-          key={screen}
-          style={{ animation: 'screen-fade-in 380ms ease-out both' }}
-        >
-          {OB_STEP_SCREENS[screen] ? (
-            <ObStepsShell step={OB_STEP_SCREENS[screen]} screenKey={screen}>
-              {renderOnboardingOrMission(screen)}
-            </ObStepsShell>
-          ) : (
-            renderOnboardingOrMission(screen)
-          )}
-        </div>
+        {OB_STEP_SCREENS[screen] ? (
+          <ObStepsShell step={OB_STEP_SCREENS[screen]} screenKey={screen}>
+            {renderOnboardingOrMission(screen)}
+          </ObStepsShell>
+        ) : (
+          <div
+            key={screen}
+            style={{ animation: 'screen-fade-in 380ms ease-out both' }}
+          >
+            {renderOnboardingOrMission(screen)}
+          </div>
+        )}
         <style>{`
           @keyframes screen-fade-in {
-            from { opacity: 0; transform: translateY(4px) }
-            to   { opacity: 1; transform: translateY(0) }
+            from { opacity: 0 }
+            to   { opacity: 1 }
           }
         `}</style>
       </div>
